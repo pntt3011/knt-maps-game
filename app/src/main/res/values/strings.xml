@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MapLogin</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="facebook_application_id" translatable="false">573979743309376</string>
+</resources>

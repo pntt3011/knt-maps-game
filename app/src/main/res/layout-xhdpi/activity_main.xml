@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:scaleType="centerCrop"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingTop="180dp"
+        android:paddingRight="20dp" />
+
+    <ImageView
+        android:id="@+id/buttonLoginGoogle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayout"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_button_login_google" />
+
+    <ImageView
+        android:id="@+id/buttonLoginGuest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:src="@drawable/ic_button_login_guest"
+        android:layout_below="@+id/buttonLoginGoogle"
+        android:layout_centerHorizontal="true"/>
+
+
+
+
+
+
+
+
+
+</RelativeLayout>
