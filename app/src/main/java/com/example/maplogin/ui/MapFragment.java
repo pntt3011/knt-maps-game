@@ -57,8 +57,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     private DatabaseAdapter mDatabase;
 
     // Map information
-    public static final int DEFAULT_UPDATE_INTERVAL = 500;
-    public static final int FASTEST_UPDATE_INTERVAL = 200;
+    public static final int DEFAULT_UPDATE_INTERVAL = 1000;
+    public static final int FASTEST_UPDATE_INTERVAL = 500;
     public static final int POLYLINE_WIDTH = 7;
 
     private GoogleMap mMap;
@@ -251,15 +251,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
         }
     }
 
-
     /***** start of routing call back functions *****/
     @Override
     public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
         clearRoutesUI();
 
         polylines = new ArrayList<>();
-
-        // add route(s) to the map using polyline
         int color;
         for (int i = 0; i < route.size(); i++) {
             if (i == shortestRouteIndex)
@@ -290,34 +287,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     @Override
     public void onRoutingFailure(RouteException e) {
     }
+
     @Override
     public void onRoutingStart() {
     }
+
     @Override
     public void onRoutingCancelled() {
     }
+
     /***** end of routing call back functions *****/
 
     private void setupBottomSheet() {
-        View view = getView();
-        if (view == null)
-            return;
-
-        CoordinatorLayout coordinatorLayout = view.findViewById(R.id.coordinatorlayout);
+        CoordinatorLayout coordinatorLayout = mActivity.findViewById(R.id.coordinatorlayout);
         View bottomSheet = coordinatorLayout.findViewById(R.id.bottom_sheet);
         BottomSheetBehaviorGoogleMapsLike<View> behavior = BottomSheetBehaviorGoogleMapsLike.from(bottomSheet);
 
-        MergedAppBarLayout mergedAppBarLayout = view.findViewById(R.id.mergedappbarlayout);
+        MergedAppBarLayout mergedAppBarLayout = mActivity.findViewById(R.id.mergedappbarlayout);
         MergedAppBarLayoutBehavior mergedAppBarLayoutBehavior = MergedAppBarLayoutBehavior.from(mergedAppBarLayout);
         mergedAppBarLayoutBehavior.setToolbarTitle("Title Dummy");
         mergedAppBarLayoutBehavior.setNavigationOnClickListener(v ->
                 behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT));
-
-//        ItemPagerAdapter adapter = new ItemPagerAdapter(this,mDrawables);
-//        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-//        viewPager.setAdapter(adapter);
-
-//        ImageButton checkInButton = view.findViewById(R.id.location_check_in_button);
 
         behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT);
     }
