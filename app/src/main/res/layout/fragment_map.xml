@@ -44,10 +44,4 @@
             android:fitsSystemWindows="true"/>
     </androidx.core.widget.NestedScrollView>
 
-    <com.mahc.custombottomsheetbehavior.MergedAppBarLayout
-        android:id="@+id/mergedappbarlayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/MergedAppBarLayoutBehavior"/>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

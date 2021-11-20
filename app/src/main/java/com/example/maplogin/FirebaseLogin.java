@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthMethodPickerLayout;
@@ -153,6 +154,7 @@ public class FirebaseLogin extends AppCompatActivity {
                 startMainActivity();
 
             } else {
+                Log.e("hehe", response.getError().getMessage());
                 Toast.makeText(
                         FirebaseLogin.this,
                         "Login error",

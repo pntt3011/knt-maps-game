@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -76,9 +78,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
 
     private Location lastKnownLocation;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mActivity = getActivity();
+        mDatabase = DatabaseAdapter.getInstance();
+        getLocationPermission();
+        setupLocationAttribute();
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        mDatabase = DatabaseAdapter.getInstance();
         binding = FragmentMapBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -87,9 +97,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mActivity = getActivity();
         if (mActivity != null) {
-            setupLocationAttribute();
             startSyncMap();
         }
     }
@@ -136,18 +144,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Prompt the user for permission.
-        getLocationPermission();
-
-        // Turn on the My Location layer and the related control on the map.
-        updateLocationUI();
-
-        // Get the current location of the device and set the position of the map.
-        getDeviceLocation();
-
         setupBottomSheet();
         setupMarkerController();
         mDatabase.startSync();
+
     }
 
 
@@ -159,37 +159,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
 
     private void stopLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-    }
-
-    // Prompts the user for permission to use the device location.
-    private void getLocationPermission() {
-        if (ContextCompat.checkSelfPermission(mActivity.getApplicationContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            locationPermissionGranted = true;
-        }
-        else {
-            ActivityCompat.requestPermissions(mActivity,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        }
-    }
-
-    // Handles the result of the request for location permissions.
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        locationPermissionGranted = false;
-        if (requestCode == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
-            // If request is cancelled, the result arrays are empty.
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                locationPermissionGranted = true;
-            }
-        }
-        updateLocationUI();
     }
 
     @SuppressLint("MissingPermission")
@@ -212,25 +181,32 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
         }
     }
 
+    // Prompts the user for permission to use the device location.
+    private void getLocationPermission() {
+        if (ContextCompat.checkSelfPermission(mActivity,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            locationPermissionGranted = true;
+        }
+        else {
+            ActivityResultLauncher<String> requestPermissionLauncher =
+                    registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                        locationPermissionGranted = isGranted;
+                        updateLocationUI();
+                    });
+            requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+    }
+
     // Updates the map's UI settings based on whether the user has granted location permission.
     @SuppressLint("MissingPermission")
     private void updateLocationUI() {
-        if (mMap == null) {
-            return;
-        }
-
-        if (locationPermissionGranted) {
+        if (locationPermissionGranted && mMap != null) {
+            mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(mActivity, R.raw.map_style));
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
+            getDeviceLocation();
         }
-        else {
-            mMap.setMyLocationEnabled(false);
-            mMap.getUiSettings().setMyLocationButtonEnabled(false);
-            lastKnownLocation = null;
-            getLocationPermission();
-        }
-
-        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(mActivity, R.raw.map_style));
     }
 
     // find routes from startLatLng to endLatLng with specific travelMode.
@@ -251,12 +227,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
         }
     }
 
+
     /***** start of routing call back functions *****/
     @Override
     public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
         clearRoutesUI();
 
         polylines = new ArrayList<>();
+
+        // add route(s) to the map using polyline
         int color;
         for (int i = 0; i < route.size(); i++) {
             if (i == shortestRouteIndex)
@@ -287,29 +266,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     @Override
     public void onRoutingFailure(RouteException e) {
     }
-
     @Override
     public void onRoutingStart() {
     }
-
     @Override
     public void onRoutingCancelled() {
     }
-
     /***** end of routing call back functions *****/
 
     private void setupBottomSheet() {
-        CoordinatorLayout coordinatorLayout = mActivity.findViewById(R.id.coordinatorlayout);
+        View view = getView();
+        if (view == null)
+            return;
+
+        CoordinatorLayout coordinatorLayout = view.findViewById(R.id.coordinatorlayout);
         View bottomSheet = coordinatorLayout.findViewById(R.id.bottom_sheet);
         BottomSheetBehaviorGoogleMapsLike<View> behavior = BottomSheetBehaviorGoogleMapsLike.from(bottomSheet);
 
-        MergedAppBarLayout mergedAppBarLayout = mActivity.findViewById(R.id.mergedappbarlayout);
-        MergedAppBarLayoutBehavior mergedAppBarLayoutBehavior = MergedAppBarLayoutBehavior.from(mergedAppBarLayout);
-        mergedAppBarLayoutBehavior.setToolbarTitle("Title Dummy");
-        mergedAppBarLayoutBehavior.setNavigationOnClickListener(v ->
-                behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT));
-
-        behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT);
+        behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED);
     }
 
     private void setupMarkerController() {
