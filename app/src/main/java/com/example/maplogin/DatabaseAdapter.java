@@ -37,7 +37,7 @@ public class DatabaseAdapter {
 
     // Data syncs
     private HashMap<String, LocationMarker> mAllLocations;
-    private HashMap<String, Boolean> mCapturedLocations;
+    private HashMap<String, Long> mCapturedLocations;
 
     // Listeners
     private ArrayList<OnModifyCaptureListener> mCaptureListeners;
@@ -97,7 +97,7 @@ public class DatabaseAdapter {
         return new HashMap<>(mAllLocations);
     }
 
-    public Map<String, Boolean> getCapturedLocations() {
+    public Map<String, Long> getCapturedLocations() {
         return new HashMap<>(mCapturedLocations);
     }
 
@@ -220,9 +220,9 @@ public class DatabaseAdapter {
         ChildEventListener childListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Boolean b = snapshot.getValue(Boolean.class);
+                Long num = snapshot.getValue(Long.class);
                 String key = snapshot.getKey();
-                mCapturedLocations.put(key, b);
+                mCapturedLocations.put(key, num);
                 for (OnModifyCaptureListener listener: mCaptureListeners) {
                     listener.add(key);
                 }
