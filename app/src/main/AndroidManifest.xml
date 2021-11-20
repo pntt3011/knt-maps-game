@@ -20,6 +20,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MapLogin">
 
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/title_activity_navigation_drawer"
+            android:theme="@style/Theme.MapLogin.NoActionBar"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" >
+        </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -40,17 +48,15 @@
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".MainActivity"
-            android:exported="true" />
-
-        <provider android:authorities="com.facebook.app.FacebookContentProvider573979743309376"
+        <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:exported="false"/>
+            android:authorities="com.facebook.app.FacebookContentProvider573979743309376"
+            android:exported="false" />
     </application>
 
 </manifest>

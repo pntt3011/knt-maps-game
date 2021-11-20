@@ -1,9 +1,9 @@
-package com.example.maplogin;
+package com.example.maplogin.datastructure;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
-public class QuestionInfo implements Info{
+public class QuestionInfo implements Info {
     public String content;
     public String imageUrl;
 

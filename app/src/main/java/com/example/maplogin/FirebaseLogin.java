@@ -96,7 +96,7 @@ public class FirebaseLogin extends AppCompatActivity {
     private void launchSignInProviders() {
         // Custom layout
         AuthMethodPickerLayout customLayout = new AuthMethodPickerLayout
-                .Builder(R.layout.activity_main)
+                .Builder(R.layout.activity_login)
                 .setGoogleButtonId(R.id.buttonLoginGoogle)
                 .setAnonymousButtonId(R.id.buttonLoginGuest)
                 .build();

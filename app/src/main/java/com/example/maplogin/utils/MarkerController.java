@@ -1,5 +1,6 @@
-package com.example.maplogin;
+package com.example.maplogin.utils;
 
+import com.example.maplogin.datastructure.LocationMarker;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;

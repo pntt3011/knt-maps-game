@@ -1,4 +1,4 @@
-package com.example.maplogin;
+package com.example.maplogin.utils;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.viewpager.widget.PagerAdapter;
+
+import com.example.maplogin.R;
 
 public class ItemPagerAdapter extends PagerAdapter {
 

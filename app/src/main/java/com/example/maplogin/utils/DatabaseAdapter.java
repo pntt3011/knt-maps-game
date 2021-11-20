@@ -1,4 +1,4 @@
-package com.example.maplogin;
+package com.example.maplogin.utils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.maplogin.FirebaseLogin;
+import com.example.maplogin.datastructure.Info;
+import com.example.maplogin.datastructure.InfoType;
+import com.example.maplogin.datastructure.LocationMarker;
+import com.example.maplogin.datastructure.QuestionInfo;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
