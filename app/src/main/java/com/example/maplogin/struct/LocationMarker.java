@@ -1,4 +1,4 @@
-package com.example.maplogin.datastructure;
+package com.example.maplogin.struct;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 

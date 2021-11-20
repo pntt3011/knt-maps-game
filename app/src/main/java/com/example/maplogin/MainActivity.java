@@ -3,10 +3,13 @@ package com.example.maplogin;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.maplogin.ui.map.MapFragment;
-import com.example.maplogin.ui.user.UserFragment;
+import com.example.maplogin.ui.MapFragment;
+import com.example.maplogin.ui.UserFragment;
 import com.example.maplogin.utils.DatabaseAdapter;
 import com.google.android.material.navigation.NavigationView;
 
@@ -18,10 +21,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.maplogin.databinding.ActivityNavigationDrawerBinding;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    // Handle navigation item select
-    private NavigationView navigationView;
+    // Handle navigation drawer view
+    private NavigationView mNavigationView;
+    private View mHeaderView;
 
     // Supporting modules
     private DatabaseAdapter mDatabase;
@@ -31,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
 
         setupDatabase();
-        setupNavigationView(savedInstanceState);
+        setupNavigation(savedInstanceState);
     }
 
     private void setupDatabase() {
@@ -39,27 +44,72 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDatabase = DatabaseAdapter.getInstance();
     }
 
-    private void setupNavigationView(Bundle savedInstanceState) {
+    private void setupNavigation(Bundle savedInstanceState) {
         ActivityNavigationDrawerBinding binding =
                 ActivityNavigationDrawerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setupNavigationView(binding);
+        setupNavigationToggle(binding);
+        setupNavigationUserInfo();
 
+        if (savedInstanceState == null) {
+            switchToMap();
+        }
+    }
+
+    private void setupNavigationView(ActivityNavigationDrawerBinding binding) {
+        mNavigationView = binding.navView;
+        mNavigationView.setNavigationItemSelectedListener(this);
+    }
+
+    private void setupNavigationToggle(ActivityNavigationDrawerBinding binding) {
         Toolbar toolbar = binding.appBarNavigationDrawer.toolbar;
         setSupportActionBar(toolbar);
-
         DrawerLayout drawer = binding.drawerLayout;
-        navigationView = binding.navView;
-        navigationView.setNavigationItemSelectedListener(this);
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+    }
 
-        if (savedInstanceState == null) {
-            switchToMap();
+    private void setupNavigationUserInfo() {
+        mHeaderView = mNavigationView.getHeaderView(0);
+        setupNavigationPhoto();
+        setupNavigationName();
+        setupNavigationEmail();
+    }
+
+    private void setupNavigationPhoto() {
+        ImageView photoView = mHeaderView.findViewById(R.id.nav_header_photo);
+        if (!mDatabase.isAnonymousUser()) {
+            Picasso.get().load(mDatabase.getCurrentUser().getPhotoUrl())
+                    .fit().into(photoView);
+        } else {
+             photoView.setImageResource(R.mipmap.ic_launcher_round);
         }
+    }
+
+    private void setupNavigationName() {
+        TextView nameView = mHeaderView.findViewById(R.id.nav_header_name);
+        String name;
+        if (!mDatabase.isAnonymousUser()) {
+            name = mDatabase.getCurrentUser().getDisplayName();
+        } else {
+            name = "Anonymous user";
+        }
+        nameView.setText(name);
+    }
+
+    private void setupNavigationEmail() {
+        TextView emailView = mHeaderView.findViewById(R.id.nav_header_email);
+        String email;
+        if (!mDatabase.isAnonymousUser()) {
+            email = mDatabase.getCurrentUser().getEmail();
+        } else {
+            email = "";
+        }
+        emailView.setText(email);
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -91,13 +141,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void switchToMap() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new MapFragment()).commit();
-        navigationView.setCheckedItem(R.id.nav_map);
+        mNavigationView.setCheckedItem(R.id.nav_map);
     }
 
     private void switchToUser() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new UserFragment()).commit();
-        navigationView.setCheckedItem(R.id.nav_user);
+        mNavigationView.setCheckedItem(R.id.nav_user);
     }
 
     private void linkAccount() {

@@ -36,7 +36,7 @@ public class ItemPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         View itemView = mLayoutInflater.inflate(R.layout.pager_item, container, false);
-        ImageView imageView = (ImageView) itemView.findViewById(R.id.imageView);
+        ImageView imageView = (ImageView) itemView.findViewById(R.id.nav_header_photo);
         imageView.setImageResource(mItems[position]);
         container.addView(itemView);
         return itemView;

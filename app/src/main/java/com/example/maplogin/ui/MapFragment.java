@@ -1,4 +1,4 @@
-package com.example.maplogin.ui.map;
+package com.example.maplogin.ui;
 
 import android.content.Context;
 import android.os.Bundle;

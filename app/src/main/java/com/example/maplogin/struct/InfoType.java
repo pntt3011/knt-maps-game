@@ -1,4 +1,4 @@
-package com.example.maplogin.datastructure;
+package com.example.maplogin.struct;
 
 public enum InfoType {
     QUESTION,

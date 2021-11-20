@@ -9,10 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.maplogin.FirebaseLogin;
-import com.example.maplogin.datastructure.Info;
-import com.example.maplogin.datastructure.InfoType;
-import com.example.maplogin.datastructure.LocationMarker;
-import com.example.maplogin.datastructure.QuestionInfo;
+import com.example.maplogin.struct.Info;
+import com.example.maplogin.struct.InfoType;
+import com.example.maplogin.struct.LocationMarker;
+import com.example.maplogin.struct.QuestionInfo;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -131,8 +131,12 @@ public class DatabaseAdapter {
         ref.addListenerForSingleValueEvent(listener);
     }
 
+    public FirebaseUser getCurrentUser() {
+        return FirebaseAuth.getInstance().getCurrentUser();
+    }
+
     public boolean isAnonymousUser() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = getCurrentUser();
         if (user == null)
             return false;
         return user.isAnonymous();
@@ -282,8 +286,12 @@ public class DatabaseAdapter {
     private String getRoot(InfoType type) {
         if (type == InfoType.LOCATION) {
             return LOCATION_INFO_ROOT;
+
+        } else if (type == InfoType.QUESTION) {
+            return QUESTION_INFO_ROOT;
         }
-        return QUESTION_INFO_ROOT;
+
+        return "";
     }
 
     private void deleteAnonymousUser(Context context) {
