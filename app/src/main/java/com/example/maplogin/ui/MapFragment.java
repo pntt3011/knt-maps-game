@@ -143,11 +143,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
+        updateLocationUI();
 
         setupBottomSheet();
         setupMarkerController();
         mDatabase.startSync();
-
     }
 
 
