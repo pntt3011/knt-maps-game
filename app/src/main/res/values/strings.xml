@@ -2,7 +2,7 @@
     <string name="app_name">MapLogin</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="facebook_application_id" translatable="false">573979743309376</string>
-    <string name="title_activity_navigation_drawer">NavigationDrawer</string>
+    <string name="title_activity_navigation_drawer">Map</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>

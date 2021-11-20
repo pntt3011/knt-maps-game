@@ -28,6 +28,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView mNavigationView;
     private View mHeaderView;
 
+    // Just to change title
+    private Toolbar mToolbar;
+
     // Supporting modules
     private DatabaseAdapter mDatabase;
 
@@ -63,11 +66,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setupNavigationToggle(ActivityNavigationDrawerBinding binding) {
-        Toolbar toolbar = binding.appBarNavigationDrawer.toolbar;
-        setSupportActionBar(toolbar);
+        mToolbar = binding.appBarNavigationDrawer.toolbar;
+        setSupportActionBar(mToolbar);
         DrawerLayout drawer = binding.drawerLayout;
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar,
+                this, drawer, mToolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
@@ -142,12 +145,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new MapFragment()).commit();
         mNavigationView.setCheckedItem(R.id.nav_map);
+        changeTitle("Map");
     }
 
     private void switchToUser() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new UserFragment()).commit();
         mNavigationView.setCheckedItem(R.id.nav_user);
+        changeTitle("User info");
+    }
+
+    private void changeTitle(String s) {
+        if (mToolbar != null) {
+            mToolbar.setTitle(s);
+        }
     }
 
     private void linkAccount() {
