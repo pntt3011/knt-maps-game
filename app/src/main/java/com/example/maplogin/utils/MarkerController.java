@@ -94,7 +94,7 @@ public class MarkerController {
         };
     }
 
-    private Marker findMarkerById(String id) {
+    public Marker findMarkerById(String id) {
         return mMarkerMap.getOrDefault(id, null);
     }
 

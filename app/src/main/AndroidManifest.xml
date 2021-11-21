@@ -56,7 +56,17 @@
         <provider
             android:name="com.facebook.FacebookContentProvider"
             android:authorities="com.facebook.app.FacebookContentProvider573979743309376"
-            android:exported="false" />
+            android:exported="true" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.maplogin.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

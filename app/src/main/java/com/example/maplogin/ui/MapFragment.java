@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -23,10 +22,9 @@ import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
+import com.example.maplogin.utils.BottomSheetController;
 import com.example.maplogin.R;
 import com.example.maplogin.databinding.FragmentMapBinding;
-import com.example.maplogin.struct.InfoType;
-import com.example.maplogin.struct.LocationInfo;
 import com.example.maplogin.utils.DatabaseAdapter;
 import com.example.maplogin.utils.MarkerController;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -44,19 +42,20 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
-import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, RoutingListener {
+    public static final double VALID_RANGE = 0.5;
+
     // Fragment information
     private FragmentMapBinding binding;
     private Activity mActivity;
 
     // Database information
     private DatabaseAdapter mDatabase;
+    private BottomSheetController mBottomSheet;
 
     // Map information
     public static final int DEFAULT_UPDATE_INTERVAL = 1000;
@@ -231,6 +230,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
         }
     }
 
+    public boolean isNearUser(LatLng dst) {
+        LatLng current = getUserLatLng();
+        Double distance = distanceInKm(current, dst);
+        if (distance == null)
+            return false;
+        return distance <= VALID_RANGE;
+    }
+
     /***** start of routing call back functions *****/
     @Override
     public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
@@ -279,16 +286,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     /***** end of routing call back functions *****/
 
     private void setupBottomSheet() {
-        View bottomSheet = mActivity.findViewById(R.id.bottom_sheet);
-        BottomSheetBehaviorGoogleMapsLike<View> behavior =
-                BottomSheetBehaviorGoogleMapsLike.from(bottomSheet);
-
-        behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED);
-        createEmptyBottomSheet();
-    }
-
-    private void createEmptyBottomSheet() {
-        // TODO
+        mBottomSheet = new BottomSheetController(mActivity,
+                (dst, mode) -> findRoutes(getUserLatLng(), dst, mode),
+                this::isNearUser);
     }
 
     private void setupMarkerController() {
@@ -300,43 +300,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     }
 
     private void setupMarkerListener() {
-        mMap.setOnMarkerClickListener(this::updateBottomSheet);
+        mMap.setOnMarkerClickListener(mBottomSheet::update);
     }
 
-    private boolean updateBottomSheet(Marker marker) {
-        MarkerController.Tag t = (MarkerController.Tag) marker.getTag();
-        if (t != null) {
-            mDatabase.queryInfo(t.id, InfoType.LOCATION, info -> {
-                setupDirectionButton(marker.getPosition());
-            });
-            return true;
-        }
-        return false;
-    }
-
-    private void setupDirectionButton(LatLng position) {
-        ImageButton directionButton = mActivity.findViewById(R.id.bs_direct_button);
-        directionButton.setOnClickListener(v ->
-                findRoutes(getUserLatLng(), position, AbstractRouting.TravelMode.DRIVING));
-    }
-
-    private void setupCheckInButton(String id, LocationInfo info) {
+    private Double distanceInKm(LatLng p1, LatLng p2) {
         // TODO
-    }
-
-    private void setupShareButton(String id, LocationInfo info) {
-        ImageButton shareButton = mActivity.findViewById(R.id.bs_share_button);
-        shareButton.setOnClickListener(v -> {
-            if (isCaptured(id)) {
-                // TODO
-            } else {
-                Toast.makeText(mActivity, "Please check-in first." ,Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private boolean isCaptured(String id) {
-        Map<String, Long> captured = mDatabase.getCapturedLocations();
-        return captured.containsKey(id);
+        return 1.;
     }
 }
