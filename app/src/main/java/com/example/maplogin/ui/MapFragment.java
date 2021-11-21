@@ -2,13 +2,23 @@ package com.example.maplogin.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -17,16 +27,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.directions.route.AbstractRouting;
 import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
+import com.example.maplogin.utils.BottomSheetController;
 import com.example.maplogin.R;
 import com.example.maplogin.databinding.FragmentMapBinding;
 import com.example.maplogin.struct.InfoType;
 import com.example.maplogin.struct.LocationInfo;
+import com.example.maplogin.struct.LocationMarker;
 import com.example.maplogin.utils.DatabaseAdapter;
 import com.example.maplogin.utils.MarkerController;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -44,19 +57,23 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
-import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, RoutingListener {
+
+    public static final int MIN_ZOOM = 13;
+    public static final int MAX_ZOOM = 17;
+    public static final double VALID_RANGE = 500;
     // Fragment information
     private FragmentMapBinding binding;
     private Activity mActivity;
 
     // Database information
     private DatabaseAdapter mDatabase;
+    private BottomSheetController mBottomSheet;
 
     // Map information
     public static final int DEFAULT_UPDATE_INTERVAL = 1000;
@@ -76,6 +93,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     private boolean locationPermissionGranted;
 
     private Location lastKnownLocation;
+    private View mapView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -128,6 +146,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
         SupportMapFragment mapFragment = (SupportMapFragment)
                 getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
+            mapView = mapFragment.getView();
             mapFragment.getMapAsync(this);
         }
     }
@@ -141,15 +160,70 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-//        mMap.setMinZoomPreference(13);
-//        mMap.setMaxZoomPreference(17);
+        // mMap.setMinZoomPreference(MIN_ZOOM);
+        // mMap.setMaxZoomPreference(MAX_ZOOM);
+
         updateLocationUI();
+        addStarButtonToMapView();
 
         setupBottomSheet();
         setupMarkerController();
         setupMarkerListener();
 
         mDatabase.startSync();
+    }
+
+    private void addStarButtonToMapView() {
+        View location_button = mapView.findViewWithTag("GoogleMapMyLocationButton");
+        RelativeLayout mapRelativeLayout = (RelativeLayout) location_button.getParent();
+
+        Button button = createStartButton(location_button);
+        mapRelativeLayout.addView(button);
+    }
+
+    private Button createStartButton(View location_button) {
+        Button button = new Button(mActivity);
+
+        RelativeLayout.LayoutParams params =
+                new RelativeLayout.LayoutParams(80, 80);
+        params.addRule(RelativeLayout.BELOW, location_button.getId());
+        params.addRule(RelativeLayout.ALIGN_PARENT_END, 1);
+        params.setMargins(0, 20, 20, 0);
+        button.setLayoutParams(params);
+        Drawable star_icon = ContextCompat.getDrawable(mActivity, R.drawable.ic_star_icon);
+        button.setBackground(star_icon);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(mActivity, "Star button!", Toast.LENGTH_SHORT).show();
+//                HashMap<String, LocationMarker> locations =
+//                        (HashMap<String, LocationMarker>) mDatabase.getAllLocations();
+//                PopupWindow popupWindow = createLocationListPopup(locations);
+//                // show the popup window
+//                // which view you pass in doesn't matter, it is only used for the window token
+//                popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+            }
+        });
+        return button;
+    }
+
+    private PopupWindow createLocationListPopup(HashMap<String, LocationMarker> locations) {
+        // inflate the layout of the popup window
+        LayoutInflater inflater = (LayoutInflater)
+                mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout popupView = (LinearLayout) inflater.inflate(R.layout.popup_location_list_window, null);
+
+//        RecyclerView recyclerView = popupView.findViewById(R.id.recycler_view);
+//        LocationRecyclerAdapter adapter =
+//        recyclerView.
+
+        // create the popup window
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        return popupWindow;
     }
 
 
@@ -231,6 +305,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
         }
     }
 
+
+    public boolean isNearUser(LatLng destLatLng) {
+        Location dest = new Location(LocationManager.GPS_PROVIDER);
+        dest.setLatitude(destLatLng.latitude);
+        dest.setLongitude(destLatLng.longitude);
+        double distance = lastKnownLocation.distanceTo(dest);
+        return distance <= VALID_RANGE;
+    }
+
     /***** start of routing call back functions *****/
     @Override
     public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
@@ -279,16 +362,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     /***** end of routing call back functions *****/
 
     private void setupBottomSheet() {
-        View bottomSheet = mActivity.findViewById(R.id.bottom_sheet);
-        BottomSheetBehaviorGoogleMapsLike<View> behavior =
-                BottomSheetBehaviorGoogleMapsLike.from(bottomSheet);
-
-        behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED);
-        createEmptyBottomSheet();
-    }
-
-    private void createEmptyBottomSheet() {
-        // TODO
+        mBottomSheet = new BottomSheetController(mActivity,
+                (dst, mode) -> findRoutes(getUserLatLng(), dst, mode),
+                this::isNearUser);
     }
 
     private void setupMarkerController() {
@@ -300,43 +376,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     }
 
     private void setupMarkerListener() {
-        mMap.setOnMarkerClickListener(this::updateBottomSheet);
+        mMap.setOnMarkerClickListener(mBottomSheet::update);
     }
 
-    private boolean updateBottomSheet(Marker marker) {
-        MarkerController.Tag t = (MarkerController.Tag) marker.getTag();
-        if (t != null) {
-            mDatabase.queryInfo(t.id, InfoType.LOCATION, info -> {
-                setupDirectionButton(marker.getPosition());
-            });
-            return true;
-        }
-        return false;
-    }
-
-    private void setupDirectionButton(LatLng position) {
-        ImageButton directionButton = mActivity.findViewById(R.id.bs_direct_button);
-        directionButton.setOnClickListener(v ->
-                findRoutes(getUserLatLng(), position, AbstractRouting.TravelMode.DRIVING));
-    }
-
-    private void setupCheckInButton(String id, LocationInfo info) {
-        // TODO
-    }
-
-    private void setupShareButton(String id, LocationInfo info) {
-        ImageButton shareButton = mActivity.findViewById(R.id.bs_share_button);
-        shareButton.setOnClickListener(v -> {
-            if (isCaptured(id)) {
-                // TODO
-            } else {
-                Toast.makeText(mActivity, "Please check-in first." ,Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private boolean isCaptured(String id) {
-        Map<String, Long> captured = mDatabase.getCapturedLocations();
-        return captured.containsKey(id);
-    }
 }

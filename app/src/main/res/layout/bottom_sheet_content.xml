@@ -32,6 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/iconMarker"
+            android:layout_toLeftOf="@+id/point"
             android:fontFamily="@font/raleway_bold"
             android:paddingRight="20dp"
             android:text="Đại học Khoa học Tự nhiên, d d d d ĐHQG-HCM"
@@ -47,10 +48,10 @@
             android:layout_marginTop="2dp"
             android:layout_marginEnd="2dp"
             android:layout_marginBottom="2dp"
-            android:background="@drawable/ic_point"
+            android:background="@drawable/ic_point_green"
             android:fontFamily="@font/open_sans_semibold"
-            android:paddingRight="7dp"
             android:paddingTop="2dp"
+            android:paddingRight="7dp"
             android:text="50pt"
             android:textAlignment="viewEnd"
             android:textColor="@color/white"
@@ -93,6 +94,7 @@
                 android:scrollbars="none">
 
                 <TextView
+                    android:id="@+id/location_address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/open_sans_semibold"
@@ -261,40 +263,11 @@
         android:background="@drawable/background_bottom_card"
         android:scrollbars="none">
         <LinearLayout
+            android:id="@+id/location_images"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <ImageView
-                android:id="@+id/imageview1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:src="@drawable/background" />
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/imageview2"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_address" />
-
-            <ImageView
-                android:id="@+id/imageview3"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_address" />
-            <ImageView
-                android:id="@+id/imageview4"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:src="@drawable/background" />
-            <ImageView
-                android:id="@+id/imageview5"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:src="@drawable/background" />
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -316,6 +289,7 @@
     </FrameLayout>
 
     <TextView
+        android:id="@+id/description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
