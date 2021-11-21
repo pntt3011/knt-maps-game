@@ -31,11 +31,11 @@
             android:id="@+id/bottom_sheet_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/iconMarker"
             android:layout_toLeftOf="@+id/point"
+            android:layout_toRightOf="@id/iconMarker"
             android:fontFamily="@font/raleway_bold"
             android:paddingRight="20dp"
-            android:text="Đại học Khoa học Tự nhiên, d d d d ĐHQG-HCM"
+            android:text="Đại học Khoa học Tự nhiên, ĐHQG-HCM"
             android:textColor="@android:color/black"
             android:textSize="@dimen/sizeHeader" />
 
@@ -203,7 +203,7 @@
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:paddingBottom="12dp"
-        android:layout_margin="10dp"
+        android:layout_marginTop="15dp"
         android:layout_below="@id/Address_Point">
 
         <RelativeLayout
@@ -216,18 +216,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_button_direct" />
         </RelativeLayout>
 
 
-        <LinearLayout
-            android:id="@+id/layout_button"
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginEnd="20dp"
-            android:layout_marginStart="20dp"
+            android:layout_height="match_parent"
             android:layout_weight="1">
 
             <ImageButton
@@ -235,11 +232,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_margin="5dp"
-                android:src="@drawable/ic_button_share"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
+                android:layout_centerHorizontal="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_button_share" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -250,7 +247,7 @@
                 android:id="@+id/bs_check_in_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+                android:layout_centerInParent="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_button_checkin" />
         </RelativeLayout>
