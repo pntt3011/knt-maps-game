@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "572601590938",
+    "firebase_url": "https://api-3011-ad499.asia-southeast1.firebasedatabase.app",
     "project_id": "youtube-api-3011",
     "storage_bucket": "youtube-api-3011.appspot.com"
   },
@@ -19,6 +20,14 @@
           "android_info": {
             "package_name": "com.example.maplogin",
             "certificate_hash": "d9376ecb0e427aaea76537306525706d42420432"
+          }
+        },
+        {
+          "client_id": "572601590938-o6n2ag9e9nfh0mjm2mi4m4re075s04ci.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.maplogin",
+            "certificate_hash": "1790a974bc39a275ab4dd34cb7b56761f944e05e"
           }
         },
         {
