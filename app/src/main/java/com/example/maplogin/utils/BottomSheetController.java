@@ -91,9 +91,7 @@ public class BottomSheetController {
             } else {
                 Toast.makeText(
                     mActivity,
-                    "You must be within a radius of " +
-                        (int) (VALID_RANGE * 1000) +
-                        "m from the location.",
+                    "You must be within a radius of " + (int) (VALID_RANGE) + "m from the location.",
                     Toast.LENGTH_SHORT).show();
             }
         });

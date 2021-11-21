@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -65,7 +66,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
 
     public static final int MIN_ZOOM = 13;
     public static final int MAX_ZOOM = 17;
-    public static final double VALID_RANGE = 0.5;
+    public static final double VALID_RANGE = 500;
     // Fragment information
     private FragmentMapBinding binding;
     private Activity mActivity;
@@ -195,12 +196,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
             @Override
             public void onClick(View view) {
                 Toast.makeText(mActivity, "Star button!", Toast.LENGTH_SHORT).show();
-                HashMap<String, LocationMarker> locations =
-                        (HashMap<String, LocationMarker>) mDatabase.getAllLocations();
-                PopupWindow popupWindow = createLocationListPopup(locations);
-                // show the popup window
-                // which view you pass in doesn't matter, it is only used for the window token
-                popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+//                HashMap<String, LocationMarker> locations =
+//                        (HashMap<String, LocationMarker>) mDatabase.getAllLocations();
+//                PopupWindow popupWindow = createLocationListPopup(locations);
+//                // show the popup window
+//                // which view you pass in doesn't matter, it is only used for the window token
+//                popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
             }
         });
         return button;
@@ -305,11 +306,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     }
 
 
-    public boolean isNearUser(LatLng dst) {
-        LatLng current = getUserLatLng();
-        Double distance = distanceInKm(current, dst);
-        if (distance == null)
-            return false;
+    public boolean isNearUser(LatLng destLatLng) {
+        Location dest = new Location(LocationManager.GPS_PROVIDER);
+        dest.setLatitude(destLatLng.latitude);
+        dest.setLongitude(destLatLng.longitude);
+        double distance = lastKnownLocation.distanceTo(dest);
         return distance <= VALID_RANGE;
     }
 
@@ -378,8 +379,4 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
         mMap.setOnMarkerClickListener(mBottomSheet::update);
     }
 
-    private Double distanceInKm(LatLng p1, LatLng p2) {
-        // TODO
-        return 1.;
-    }
 }
