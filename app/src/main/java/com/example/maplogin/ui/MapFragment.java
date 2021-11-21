@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,8 @@ import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.example.maplogin.R;
 import com.example.maplogin.databinding.FragmentMapBinding;
+import com.example.maplogin.struct.InfoType;
+import com.example.maplogin.struct.LocationInfo;
 import com.example.maplogin.utils.DatabaseAdapter;
 import com.example.maplogin.utils.MarkerController;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -42,8 +45,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike;
-import com.mahc.custombottomsheetbehavior.MergedAppBarLayout;
-import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -147,6 +148,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
 
         setupBottomSheet();
         setupMarkerController();
+        setupMarkerListener();
+
         mDatabase.startSync();
     }
 
@@ -203,13 +206,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
             locationResult.addOnSuccessListener(mActivity, location -> {
                 // Set the map's camera position to the current location of the device.
                 lastKnownLocation = location;
-                LatLng latlng = new LatLng(lastKnownLocation.getLatitude(),
-                        lastKnownLocation.getLongitude());
+                LatLng latlng = getUserPosition();
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, DEFAULT_ZOOM));
-                LatLng end = new LatLng(10.7546664,106.415032);
-                findRoutes(latlng, end, AbstractRouting.TravelMode.DRIVING);
             });
         }
+    }
+
+    private LatLng getUserPosition() {
+        return new LatLng(lastKnownLocation.getLatitude(),
+                lastKnownLocation.getLongitude());
     }
 
     // Updates the map's UI settings based on whether the user has granted location permission.
@@ -223,6 +228,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
         }
+
         else {
             mMap.setMyLocationEnabled(false);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -238,6 +244,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     {
         if(startLatLng==null || endLatLng==null)
             Toast.makeText(mActivity,"Unable to get location",Toast.LENGTH_LONG).show();
+
         else {
             Routing routing = new Routing.Builder()
                     .travelMode(travelMode)
@@ -260,9 +267,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
         int color;
         for (int i = 0; i < route.size(); i++) {
             if (i == shortestRouteIndex)
-                color = ContextCompat.getColor(mActivity, R.color.purple_500);
+                color = ContextCompat.getColor(mActivity, R.color.red);
             else
-                color = ContextCompat.getColor(mActivity, R.color.purple_transparent);
+                color = ContextCompat.getColor(mActivity, R.color.red_transparent);
             addRouteToMap(route.get(i).getPoints(), color);
         }
     }
@@ -286,6 +293,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
 
     @Override
     public void onRoutingFailure(RouteException e) {
+        Toast.makeText(mActivity,e.getMessage(),Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -302,14 +310,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
         CoordinatorLayout coordinatorLayout = mActivity.findViewById(R.id.coordinatorlayout);
         View bottomSheet = coordinatorLayout.findViewById(R.id.bottom_sheet);
         BottomSheetBehaviorGoogleMapsLike<View> behavior = BottomSheetBehaviorGoogleMapsLike.from(bottomSheet);
-
-        MergedAppBarLayout mergedAppBarLayout = mActivity.findViewById(R.id.mergedappbarlayout);
-        MergedAppBarLayoutBehavior mergedAppBarLayoutBehavior = MergedAppBarLayoutBehavior.from(mergedAppBarLayout);
-        mergedAppBarLayoutBehavior.setToolbarTitle("Title Dummy");
-        mergedAppBarLayoutBehavior.setNavigationOnClickListener(v ->
-                behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT));
-
-        behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT);
+        behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED);
     }
 
     private void setupMarkerController() {
@@ -318,5 +319,40 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
                 markerController.getLocationListener());
         mDatabase.setModifyCaptureListener(
                 markerController.getCaptureListener());
+    }
+
+    private void setupMarkerListener() {
+        mMap.setOnMarkerClickListener(marker -> {
+            if (isNearMarker(marker))
+                return changeBottomSheet(marker);
+            return false;
+        });
+    }
+
+    private boolean isNearMarker(Marker marker) {
+        return true;
+    }
+
+    private boolean changeBottomSheet(Marker marker) {
+        MarkerController.Tag t = (MarkerController.Tag) marker.getTag();
+        if (t != null) {
+            mDatabase.queryInfo(t.id, InfoType.LOCATION, info ->
+                    setupDirectionButton(marker.getPosition()));
+            return true;
+        }
+        return false;
+    }
+
+    private void setupDirectionButton(LatLng position) {
+        ImageButton directionButton = mActivity.findViewById(R.id.location_direction_button);
+        directionButton.setOnClickListener(v -> {
+            findRoutes(getUserPosition(), position, AbstractRouting.TravelMode.DRIVING);
+        });
+    }
+
+    private void setupCheckInButton(String id, LocationInfo info) {
+    }
+
+    private void setupShareButton(String id, LocationInfo info) {
     }
 }
