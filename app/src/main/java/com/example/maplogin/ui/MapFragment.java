@@ -27,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.directions.route.AbstractRouting;
@@ -40,11 +41,13 @@ import com.example.maplogin.databinding.FragmentMapBinding;
 import com.example.maplogin.struct.LocationInfo;
 import com.example.maplogin.utils.DatabaseAdapter;
 import com.example.maplogin.utils.MarkerController;
+import com.example.maplogin.utils.NearestRecyclerAdapter;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -56,7 +59,9 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -195,25 +200,33 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
             @Override
             public void onClick(View view) {
                 Toast.makeText(mActivity, "Star button!", Toast.LENGTH_SHORT).show();
-                HashMap<String, LocationInfo> locations =
+
+                // Creating an ArrayList of location info
+                HashMap<String, LocationInfo> locationInfoHashMap =
                         (HashMap<String, LocationInfo>) mDatabase.getAllLocations();
+                Collection<LocationInfo> values = locationInfoHashMap.values();
+                ArrayList<LocationInfo> locations = new ArrayList<>(values);
+
+                // create and show the popup window
                 PopupWindow popupWindow = createLocationListPopup(locations);
-                // show the popup window
                 popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
             }
         });
         return button;
     }
 
-    private PopupWindow createLocationListPopup(HashMap<String, LocationInfo> locations) {
+    private PopupWindow createLocationListPopup(ArrayList<LocationInfo> locations) {
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
                 mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout popupView = (LinearLayout) inflater.inflate(R.layout.popup_location_list_window, null);
 
-//        RecyclerView recyclerView = popupView.findViewById(R.id.recycler_view);
-//        LocationRecyclerAdapter adapter =
-//        recyclerView.
+        RecyclerView recyclerView = popupView.findViewById(R.id.recycler_view);
+
+
+        NearestRecyclerAdapter adapter = new NearestRecyclerAdapter(mActivity, locations);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
 
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -287,9 +300,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     // find routes from startLatLng to endLatLng with specific travelMode.
     public void findRoutes(LatLng startLatLng, LatLng endLatLng, AbstractRouting.TravelMode travelMode)
     {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(startLatLng, DEFAULT_ZOOM));
         if(startLatLng==null || endLatLng==null)
             Toast.makeText(mActivity,"Unable to get location",Toast.LENGTH_LONG).show();
-
         else {
             Routing routing = new Routing.Builder()
                     .travelMode(travelMode)
