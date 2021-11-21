@@ -12,7 +12,6 @@ import com.example.maplogin.FirebaseLogin;
 import com.example.maplogin.struct.Info;
 import com.example.maplogin.struct.InfoType;
 import com.example.maplogin.struct.LocationInfo;
-import com.example.maplogin.struct.LocationMarker;
 import com.example.maplogin.struct.QuestionInfo;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,17 +31,16 @@ public class DatabaseAdapter {
     private static DatabaseAdapter instance = null;
 
     private static final String DATABASE_URI = "https://api-3011-ad499.asia-southeast1.firebasedatabase.app/";
-    private static final String USER_ROOT = "users";
-    private static final String LOCATION_MARKER_ROOT = "markers";
+    private static final String USER_INFO_ROOT = "users";
     private static final String QUESTION_INFO_ROOT = "questions";
-    private static final String LOCATION_INFO_ROOT = "infos";
+    private static final String LOCATION_INFO_ROOT = "locations";
 
     // Database info
     private FirebaseDatabase mDatabase;
     private String mUid;
 
     // Data syncs
-    private HashMap<String, LocationMarker> mAllLocations;
+    private HashMap<String, LocationInfo> mAllLocations;
     private HashMap<String, Long> mFailedLocations;
     private HashMap<String, Long> mCapturedLocations;
 
@@ -52,8 +50,8 @@ public class DatabaseAdapter {
 
     // --------------------------Interface-------------------------------------
     public interface OnModifyLocationListener {
-        void add(String id, LocationMarker marker);
-        void change(String id, LocationMarker marker);
+        void add(String id, LocationInfo marker);
+        void change(String id, LocationInfo marker);
         void remove(String id);
     }
 
@@ -101,7 +99,7 @@ public class DatabaseAdapter {
         setupFailListener();
     }
 
-    public Map<String, LocationMarker> getAllLocations() {
+    public Map<String, LocationInfo> getAllLocations() {
         return new HashMap<>(mAllLocations);
     }
 
@@ -185,12 +183,12 @@ public class DatabaseAdapter {
     }
 
     private void setupLocationMarkersListener() {
-        DatabaseReference locationMarkersRef = getPathReference(LOCATION_MARKER_ROOT, new String[]{});
+        DatabaseReference locationMarkersRef = getPathReference(LOCATION_INFO_ROOT, new String[]{});
 
         ChildEventListener childListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                LocationMarker m = snapshot.getValue(LocationMarker.class);
+                LocationInfo m = snapshot.getValue(LocationInfo.class);
                 String key = snapshot.getKey();
                 mAllLocations.put(key, m);
                 for (OnModifyLocationListener listener: mLocationListeners) {
@@ -200,7 +198,7 @@ public class DatabaseAdapter {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                LocationMarker m = snapshot.getValue(LocationMarker.class);
+                LocationInfo m = snapshot.getValue(LocationInfo.class);
                 String key = snapshot.getKey();
                 mAllLocations.put(key, m);
                 for (OnModifyLocationListener listener: mLocationListeners) {
@@ -316,11 +314,11 @@ public class DatabaseAdapter {
     }
 
     private DatabaseReference getCapturedMarkerReference() {
-        return getPathReference(USER_ROOT, new String[]{mUid, "captured"});
+        return getPathReference(USER_INFO_ROOT, new String[]{mUid, "captured"});
     }
 
     private DatabaseReference getFailedMarkerReference() {
-        return getPathReference(USER_ROOT, new String[]{mUid, "failed"});
+        return getPathReference(USER_INFO_ROOT, new String[]{mUid, "failed"});
     }
 
     private void signOutNormalUser(Context context) {
@@ -347,7 +345,7 @@ public class DatabaseAdapter {
     }
 
     private void deleteAnonymousUser(Context context) {
-        mDatabase.getReference(USER_ROOT)
+        mDatabase.getReference(USER_INFO_ROOT)
                 .child(mUid)
                 .removeValue();
 
