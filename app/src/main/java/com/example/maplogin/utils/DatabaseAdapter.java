@@ -109,9 +109,14 @@ public class DatabaseAdapter {
         return new HashMap<>(mCapturedLocations);
     }
 
-    public void addCapturedLocation(String id) {
+    public void addCapturedLocation(String id, Long point) {
         DatabaseReference capturedMarkersRef = getCapturedMarkerReference();
-        capturedMarkersRef.child(id).setValue(true);
+        capturedMarkersRef.child(id).setValue(point);
+    }
+
+    public void addFailedLocation(String id, Long point) {
+        DatabaseReference failedMarkersRef = getFailedMarkerReference();
+        failedMarkersRef.child(id).setValue(point);
     }
 
     // Get location or question info

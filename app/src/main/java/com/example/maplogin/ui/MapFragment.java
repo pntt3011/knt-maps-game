@@ -37,9 +37,7 @@ import com.directions.route.RoutingListener;
 import com.example.maplogin.utils.BottomSheetController;
 import com.example.maplogin.R;
 import com.example.maplogin.databinding.FragmentMapBinding;
-import com.example.maplogin.struct.InfoType;
 import com.example.maplogin.struct.LocationInfo;
-import com.example.maplogin.struct.LocationMarker;
 import com.example.maplogin.utils.DatabaseAdapter;
 import com.example.maplogin.utils.MarkerController;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -84,6 +82,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
 
     private ArrayList<Polyline> polylines;
     private ArrayList<Marker> markers;
+//    private ArrayList<LocationInfo>
 
     private FusedLocationProviderClient fusedLocationProviderClient = null;
     private LocationRequest locationRequest = null;
@@ -196,18 +195,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
             @Override
             public void onClick(View view) {
                 Toast.makeText(mActivity, "Star button!", Toast.LENGTH_SHORT).show();
-//                HashMap<String, LocationMarker> locations =
-//                        (HashMap<String, LocationMarker>) mDatabase.getAllLocations();
-//                PopupWindow popupWindow = createLocationListPopup(locations);
-//                // show the popup window
-//                // which view you pass in doesn't matter, it is only used for the window token
-//                popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+                HashMap<String, LocationInfo> locations =
+                        (HashMap<String, LocationInfo>) mDatabase.getAllLocations();
+                PopupWindow popupWindow = createLocationListPopup(locations);
+                // show the popup window
+                popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
             }
         });
         return button;
     }
 
-    private PopupWindow createLocationListPopup(HashMap<String, LocationMarker> locations) {
+    private PopupWindow createLocationListPopup(HashMap<String, LocationInfo> locations) {
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
                 mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -220,8 +218,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
 
         return popupWindow;
     }
