@@ -35,7 +35,7 @@
             android:layout_toLeftOf="@+id/point"
             android:fontFamily="@font/raleway_bold"
             android:paddingRight="20dp"
-            android:text="Đại học Khoa học Tự nhiên, ĐHQG-HCM"
+            android:text="Đại học Khoa học Tự nhiên, d d d d ĐHQG-HCM"
             android:textColor="@android:color/black"
             android:textSize="@dimen/sizeHeader" />
 
@@ -80,10 +80,7 @@
                 android:id="@+id/imgAddress"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_margin="5dp"
                 android:src="@drawable/ic_address" />
 
             <HorizontalScrollView
@@ -211,7 +208,8 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
             <ImageButton
                 android:id="@+id/bs_direct_button"
@@ -229,7 +227,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginEnd="20dp"
-            android:layout_marginStart="20dp">
+            android:layout_marginStart="20dp"
+            android:layout_weight="1">
 
             <ImageButton
                 android:id="@+id/bs_share_button"
@@ -244,7 +243,8 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
             <ImageButton
                 android:id="@+id/bs_check_in_button"
