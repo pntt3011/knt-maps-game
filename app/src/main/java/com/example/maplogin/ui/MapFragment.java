@@ -15,7 +15,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -49,6 +48,7 @@ import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, RoutingListener {
     // Fragment information
@@ -141,8 +141,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMinZoomPreference(13);
-        mMap.setMaxZoomPreference(17);
+//        mMap.setMinZoomPreference(13);
+//        mMap.setMaxZoomPreference(17);
         updateLocationUI();
 
         setupBottomSheet();
@@ -223,15 +223,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
             Routing routing = new Routing.Builder()
                     .travelMode(travelMode)
                     .withListener(this)
-                    .alternativeRoutes(true)
+//                    .alternativeRoutes(true)
                     .waypoints(startLatLng, endLatLng)
-                    .alternativeRoutes(true)
                     .key("AIzaSyCQjSbW4ANku5u4VMlkIWtpp4m6yTi4EPA")
                     .build();
             routing.execute();
         }
     }
-
 
     /***** start of routing call back functions *****/
     @Override
@@ -281,15 +279,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     /***** end of routing call back functions *****/
 
     private void setupBottomSheet() {
-        View view = getView();
-        if (view == null)
-            return;
-
-        CoordinatorLayout coordinatorLayout = view.findViewById(R.id.coordinatorlayout);
-        View bottomSheet = coordinatorLayout.findViewById(R.id.bottom_sheet);
-        BottomSheetBehaviorGoogleMapsLike<View> behavior = BottomSheetBehaviorGoogleMapsLike.from(bottomSheet);
+        View bottomSheet = mActivity.findViewById(R.id.bottom_sheet);
+        BottomSheetBehaviorGoogleMapsLike<View> behavior =
+                BottomSheetBehaviorGoogleMapsLike.from(bottomSheet);
 
         behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED);
+        createEmptyBottomSheet();
+    }
+
+    private void createEmptyBottomSheet() {
+        // TODO
     }
 
     private void setupMarkerController() {
@@ -301,29 +300,43 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     }
 
     private void setupMarkerListener() {
-        mMap.setOnMarkerClickListener(this::changeBottomSheet);
+        mMap.setOnMarkerClickListener(this::updateBottomSheet);
     }
 
-    private boolean changeBottomSheet(Marker marker) {
+    private boolean updateBottomSheet(Marker marker) {
         MarkerController.Tag t = (MarkerController.Tag) marker.getTag();
         if (t != null) {
-            mDatabase.queryInfo(t.id, InfoType.LOCATION, info ->
-                    setupDirectionButton(marker.getPosition()));
+            mDatabase.queryInfo(t.id, InfoType.LOCATION, info -> {
+                setupDirectionButton(marker.getPosition());
+            });
             return true;
         }
         return false;
     }
 
     private void setupDirectionButton(LatLng position) {
-        ImageButton directionButton = mActivity.findViewById(R.id.location_direction_button);
-        directionButton.setOnClickListener(v -> {
-            findRoutes(getUserLatLng(), position, AbstractRouting.TravelMode.DRIVING);
-        });
+        ImageButton directionButton = mActivity.findViewById(R.id.bs_direct_button);
+        directionButton.setOnClickListener(v ->
+                findRoutes(getUserLatLng(), position, AbstractRouting.TravelMode.DRIVING));
     }
 
     private void setupCheckInButton(String id, LocationInfo info) {
+        // TODO
     }
 
     private void setupShareButton(String id, LocationInfo info) {
+        ImageButton shareButton = mActivity.findViewById(R.id.bs_share_button);
+        shareButton.setOnClickListener(v -> {
+            if (isCaptured(id)) {
+                // TODO
+            } else {
+                Toast.makeText(mActivity, "Please check-in first." ,Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private boolean isCaptured(String id) {
+        Map<String, Long> captured = mDatabase.getCapturedLocations();
+        return captured.containsKey(id);
     }
 }
