@@ -16,7 +16,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -74,7 +73,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     private LocationCallback locationCallback = null;
 
     private static final int DEFAULT_ZOOM = 15;
-    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean locationPermissionGranted;
 
     private Location lastKnownLocation;
@@ -97,7 +95,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         if (mActivity != null) {
             startSyncMap();
         }
@@ -144,6 +141,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setMinZoomPreference(13);
+        mMap.setMaxZoomPreference(17);
         updateLocationUI();
 
         setupBottomSheet();
@@ -165,7 +164,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     }
 
     @SuppressLint("MissingPermission")
-    private void getDeviceLocation() {
+    private void updateUserLocation() {
         /*
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.
@@ -175,16 +174,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
             locationResult.addOnSuccessListener(mActivity, location -> {
                 // Set the map's camera position to the current location of the device.
                 lastKnownLocation = location;
-                LatLng latlng = getUserPosition();
+                LatLng latlng = getUserLatLng();
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, DEFAULT_ZOOM));
             });
         }
     }
 
-    private LatLng getUserPosition() {
+    private LatLng getUserLatLng() {
         return new LatLng(lastKnownLocation.getLatitude(),
                 lastKnownLocation.getLongitude());
-    // Prompts the user for permission to use the device location.
+        // Prompts the user for permission to use the device location.
+    }
+
     private void getLocationPermission() {
         if (ContextCompat.checkSelfPermission(mActivity,
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -208,7 +209,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
             mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(mActivity, R.raw.map_style));
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
-            getDeviceLocation();
+            updateUserLocation();
         }
     }
 
@@ -300,15 +301,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     }
 
     private void setupMarkerListener() {
-        mMap.setOnMarkerClickListener(marker -> {
-            if (isNearMarker(marker))
-                return changeBottomSheet(marker);
-            return false;
-        });
-    }
-
-    private boolean isNearMarker(Marker marker) {
-        return true;
+        mMap.setOnMarkerClickListener(this::changeBottomSheet);
     }
 
     private boolean changeBottomSheet(Marker marker) {
@@ -324,7 +317,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     private void setupDirectionButton(LatLng position) {
         ImageButton directionButton = mActivity.findViewById(R.id.location_direction_button);
         directionButton.setOnClickListener(v -> {
-            findRoutes(getUserPosition(), position, AbstractRouting.TravelMode.DRIVING);
+            findRoutes(getUserLatLng(), position, AbstractRouting.TravelMode.DRIVING);
         });
     }
 
