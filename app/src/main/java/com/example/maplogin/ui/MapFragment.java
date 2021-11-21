@@ -39,7 +39,6 @@ import com.example.maplogin.R;
 import com.example.maplogin.databinding.FragmentMapBinding;
 import com.example.maplogin.struct.InfoType;
 import com.example.maplogin.struct.LocationInfo;
-import com.example.maplogin.struct.LocationMarker;
 import com.example.maplogin.utils.DatabaseAdapter;
 import com.example.maplogin.utils.MarkerController;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -197,8 +196,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
             @Override
             public void onClick(View view) {
                 Toast.makeText(mActivity, "Star button!", Toast.LENGTH_SHORT).show();
-                HashMap<String, LocationMarker> locations =
-                        (HashMap<String, LocationMarker>) mDatabase.getAllLocations();
+                HashMap<String, LocationInfo> locations =
+                        (HashMap<String, LocationInfo>) mDatabase.getAllLocations();
                 PopupWindow popupWindow = createLocationListPopup(locations);
                 // show the popup window
                 popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
@@ -207,7 +206,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
         return button;
     }
 
-    private PopupWindow createLocationListPopup(HashMap<String, LocationMarker> locations) {
+    private PopupWindow createLocationListPopup(HashMap<String, LocationInfo> locations) {
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
                 mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
