@@ -1,6 +1,6 @@
 package com.example.maplogin.utils;
 
-import com.example.maplogin.struct.LocationMarker;
+import com.example.maplogin.struct.LocationInfo;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -44,23 +44,22 @@ public class MarkerController {
     public DatabaseAdapter.OnModifyLocationListener getLocationListener() {
         return new DatabaseAdapter.OnModifyLocationListener() {
             @Override
-            public void add(String id, LocationMarker locationMarker) {
+            public void add(String id, LocationInfo locationInfo) {
                 if (mMarkerMap.containsKey(id)) {
-                    addMarker(id, locationMarker.latitude,
-                            locationMarker.longitude,
-                            locationMarker.iconUrl,
+                    addMarker(id, locationInfo.latitude,
+                            locationInfo.longitude,
+                            locationInfo.iconUrl,
                             CAPTURE_OPACITY);
                 } else {
-                    addMarker(id, locationMarker.latitude,
-                            locationMarker.longitude,
-                            locationMarker.iconUrl,
+                    addMarker(id, locationInfo.latitude,
+                            locationInfo.longitude,
+                            locationInfo.iconUrl,
                             NULL_OPACITY);
                 }
             }
 
             @Override
-            public void change(String id, LocationMarker marker) {
-            }
+            public void change(String id, LocationInfo marker) { }
 
             @Override
             public void remove(String id) {
