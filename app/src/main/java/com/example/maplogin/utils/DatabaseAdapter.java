@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import com.example.maplogin.FirebaseLogin;
 import com.example.maplogin.struct.Info;
 import com.example.maplogin.struct.InfoType;
+import com.example.maplogin.struct.LocationInfo;
 import com.example.maplogin.struct.LocationMarker;
 import com.example.maplogin.struct.QuestionInfo;
 import com.firebase.ui.auth.AuthUI;
@@ -42,6 +43,7 @@ public class DatabaseAdapter {
 
     // Data syncs
     private HashMap<String, LocationMarker> mAllLocations;
+    private HashMap<String, Long> mFailedLocations;
     private HashMap<String, Long> mCapturedLocations;
 
     // Listeners
@@ -96,11 +98,14 @@ public class DatabaseAdapter {
     public void startSync() {
         setupLocationMarkersListener();
         setupCaptureListener();
+        setupFailListener();
     }
 
     public Map<String, LocationMarker> getAllLocations() {
         return new HashMap<>(mAllLocations);
     }
+
+    public Map<String, Long> getFailedLocations() {return new HashMap<>(mFailedLocations);}
 
     public Map<String, Long> getCapturedLocations() {
         return new HashMap<>(mCapturedLocations);
@@ -117,8 +122,8 @@ public class DatabaseAdapter {
         DatabaseReference ref = getPathReference(root, new String[]{ID});
         ValueEventListener listener = new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                QuestionInfo info = dataSnapshot.getValue(QuestionInfo.class);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Info info = parseInfo(dataSnapshot, type);
                 callback.process(info);
             }
 
@@ -165,6 +170,7 @@ public class DatabaseAdapter {
         mDatabase = FirebaseDatabase.getInstance(DATABASE_URI);
 
         mAllLocations = new HashMap<>();
+        mFailedLocations = new HashMap<>();
         mCapturedLocations = new HashMap<>();
 
         mCaptureListeners = new ArrayList<>();
@@ -239,6 +245,9 @@ public class DatabaseAdapter {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Long num = snapshot.getValue(Long.class);
+                String key = snapshot.getKey();
+                mCapturedLocations.put(key, num);
             }
 
             @Override
@@ -262,6 +271,42 @@ public class DatabaseAdapter {
         capturedMarkersRef.addChildEventListener(childListener);
     }
 
+    private void setupFailListener() {
+        DatabaseReference failedMarkersRef = getFailedMarkerReference();
+
+        ChildEventListener childListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Long num = snapshot.getValue(Long.class);
+                String key = snapshot.getKey();
+                mFailedLocations.put(key, num);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Long num = snapshot.getValue(Long.class);
+                String key = snapshot.getKey();
+                mFailedLocations.put(key, num);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                String key = snapshot.getKey();
+                mFailedLocations.remove(key);
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) { }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Failed Locations", "Failed to load failed locations.");
+            }
+        };
+
+        failedMarkersRef.addChildEventListener(childListener);
+    }
+
     private DatabaseReference getPathReference(String root, String[] path) {
         StringBuilder pathString = new StringBuilder(root);
         for (String s: path) {
@@ -274,6 +319,10 @@ public class DatabaseAdapter {
         return getPathReference(USER_ROOT, new String[]{mUid, "captured"});
     }
 
+    private DatabaseReference getFailedMarkerReference() {
+        return getPathReference(USER_ROOT, new String[]{mUid, "failed"});
+    }
+
     private void signOutNormalUser(Context context) {
         AuthUI.getInstance()
                 .signOut(context)
@@ -284,14 +333,17 @@ public class DatabaseAdapter {
     }
 
     private String getRoot(InfoType type) {
-        if (type == InfoType.LOCATION) {
+        if (type == InfoType.LOCATION)
             return LOCATION_INFO_ROOT;
-
-        } else if (type == InfoType.QUESTION) {
+        else
             return QUESTION_INFO_ROOT;
-        }
+    }
 
-        return "";
+    private Info parseInfo(DataSnapshot dataSnapshot, InfoType type) {
+        if (type == InfoType.QUESTION)
+            return dataSnapshot.getValue(QuestionInfo.class);
+        else
+            return dataSnapshot.getValue(LocationInfo.class);
     }
 
     private void deleteAnonymousUser(Context context) {

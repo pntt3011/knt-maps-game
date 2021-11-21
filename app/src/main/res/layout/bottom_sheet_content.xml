@@ -6,60 +6,196 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingBottom="16dp"
-    android:background="@android:color/white">
+    android:background="@drawable/background_bottom">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_sheet_peek_height"
-        android:background="@color/colorPrimary"
-        android:paddingTop="8dp"
+        android:background="@drawable/background_bottom"
         android:paddingStart="16dp"
+        android:paddingTop="8dp"
         android:paddingEnd="16dp"
         android:paddingBottom="8dp">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/bottom_sheet_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Title dummy"
-                android:textColor="@android:color/white"
-                android:textSize="19sp"/>
-
-            <TextView
-                android:id="@+id/text_dummy1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Text dummy 1234 1234"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                android:layout_marginTop="5dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Text dummy qwer asdf zxcv"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                android:layout_marginTop="5dp"/>
-
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/iconMarker"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginBottom="3dp"
+            android:src="@drawable/background" />
 
         <TextView
+            android:id="@+id/bottom_sheet_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5 min"
-            android:textColor="@android:color/white"
-            android:textSize="14sp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:paddingTop="8dp"/>
+            android:layout_toRightOf="@id/iconMarker"
+            android:layout_toLeftOf="@+id/point"
+            android:fontFamily="@font/raleway_bold"
+            android:paddingRight="20dp"
+            android:text="Đại học Khoa học Tự nhiên, ĐHQG-HCM"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/sizeHeader" />
+
+        <TextView
+            android:id="@+id/point"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/ic_point_green"
+            android:fontFamily="@font/open_sans_semibold"
+            android:paddingTop="2dp"
+            android:paddingRight="7dp"
+            android:text="50pt"
+            android:textAlignment="viewEnd"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sizePhoneText" />
 
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/Address_Point"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="7dp"
+        android:layout_below="@id/bottom_sheet_title"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/addressCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="2dp"
+            android:background="@drawable/background_bottom_card"
+            android:padding="3dp">
+
+            <ImageView
+                android:id="@+id/imgAddress"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/ic_address" />
+
+            <HorizontalScrollView
+                android:id="@+id/address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/imgAddress"
+                android:layout_marginLeft="3dp"
+                android:layout_marginTop="0dp"
+                android:layout_toRightOf="@id/imgAddress"
+                android:scrollbars="none">
+
+                <TextView
+                    android:id="@+id/location_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:text="Binh Phuoc, Viet Nam, số 22, 44 đường tân hòa diwx an fdfdfdfdfdf"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sizePhoneText" />
+            </HorizontalScrollView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/address"
+                android:layout_toRightOf="@id/imgAddress"
+                android:fontFamily="@font/open_sans"
+                android:text="Address"
+                android:textColor="@color/gray_bold"
+                android:textSize="@dimen/sizeNote" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/phoneCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="2dp"
+            android:background="@drawable/background_bottom_card"
+            android:padding="3dp">
+
+            <ImageView
+                android:id="@+id/imgPhone"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_margin="5dp"
+                android:src="@drawable/ic_phone" />
+
+            <TextView
+                android:id="@+id/phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/imgPhone"
+                android:layout_toRightOf="@id/imgPhone"
+                android:fontFamily="@font/open_sans_semibold"
+                android:text="0911615149"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sizePhoneText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/phone"
+                android:layout_toRightOf="@id/imgPhone"
+                android:fontFamily="@font/open_sans"
+                android:text="Phone number"
+                android:textColor="@color/gray_bold"
+                android:textSize="@dimen/sizeNote" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/mailCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="2dp"
+            android:background="@drawable/background_bottom_card"
+            android:padding="3dp">
+
+            <ImageView
+                android:id="@+id/imgMail"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_margin="5dp"
+                android:src="@drawable/ic_mail" />
+
+            <TextView
+                android:id="@+id/mail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/imgMail"
+                android:layout_toRightOf="@id/imgMail"
+                android:fontFamily="@font/open_sans_semibold"
+                android:text="nnkhoinguyen9@gmail.com"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sizePhoneText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/mail"
+                android:layout_toRightOf="@id/imgMail"
+                android:fontFamily="@font/open_sans"
+                android:text="Mail"
+                android:textColor="@color/gray_bold"
+                android:textSize="@dimen/sizeNote" />
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
 
 
     <LinearLayout
@@ -67,29 +203,23 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_horizontal"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
         android:paddingBottom="12dp"
-        android:background="@drawable/border_bottom">
+        android:layout_margin="10dp"
+        android:layout_below="@id/Address_Point">
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
             <ImageButton
-                android:id="@+id/location_direction_button"
-                android:layout_width="70dp"
-                android:layout_height="60dp"
-                android:src="@android:drawable/ic_dialog_map"
-                android:layout_centerHorizontal="true"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
-
-            <TextView
+                android:id="@+id/bs_direct_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="DIRECTION"
-                android:textColor="@android:color/black"
-                android:layout_alignParentBottom="true"/>
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_button_direct" />
         </RelativeLayout>
 
 
@@ -102,18 +232,14 @@
             android:layout_marginStart="20dp">
 
             <ImageButton
-                android:id="@+id/location_check_in_button"
-                android:layout_width="70dp"
-                android:layout_height="60dp"
-                android:src="@android:drawable/ic_dialog_info"
-                android:layout_centerHorizontal="true"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
-
-            <TextView
+                android:id="@+id/bs_share_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="CHECK IN"
-                android:textColor="@android:color/black"/>
+                android:layout_centerVertical="true"
+                android:layout_margin="5dp"
+                android:src="@drawable/ic_button_share"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
+
         </LinearLayout>
 
         <RelativeLayout
@@ -121,137 +247,54 @@
             android:layout_height="match_parent">
 
             <ImageButton
-                android:id="@+id/logout_button"
-                android:layout_width="70dp"
-                android:layout_height="60dp"
-                android:src="@android:drawable/ic_menu_share"
-                android:layout_centerHorizontal="true"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
-
-            <TextView
+                android:id="@+id/bs_check_in_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="LOGOUT"
-                android:textColor="@android:color/black"
-                android:layout_alignParentBottom="true"/>
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_button_checkin" />
         </RelativeLayout>
     </LinearLayout>
 
-
-    <RelativeLayout
+    <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border_bottom">
-
-        <ImageView
-            android:id="@+id/establecimiento_icon_sucursales"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_secure"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginStart="16dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"/>
-
-
+        android:layout_height="150dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/background_bottom_card"
+        android:scrollbars="none">
         <LinearLayout
+            android:id="@+id/location_images"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toEndOf="@id/establecimiento_icon_sucursales"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="48dp">
-
-                <Button
-                    android:id="@+id/establecimiento_sucursal_row_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Text dummy 1"
-                    android:layout_gravity="center_vertical"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:textAllCaps="false"
-                    android:textColor="@android:color/black"/>
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="48dp">
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Text dummy 2"
-                    android:layout_gravity="center_vertical"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:textAllCaps="false"
-                    android:textColor="@android:color/black"/>
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="48dp">
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Text dummy 3"
-                    android:layout_gravity="center_vertical"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:textAllCaps="false"
-                    android:textColor="@android:color/black"/>
-            </FrameLayout>
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
         </LinearLayout>
-
-    </RelativeLayout>
+    </HorizontalScrollView>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="APACHE LICENSE"
+            android:text="Description"
             android:layout_gravity="center_vertical"
-            android:textSize="18sp"
-            android:textColor="@android:color/darker_gray"/>
+            android:textSize="15sp"
+            android:fontFamily="@font/raleway_bold"
+            android:textColor="@android:color/black"/>
     </FrameLayout>
 
     <TextView
+        android:id="@+id/description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-
+        android:layout_margin="10dp"
         android:text="@string/dummy_text"
-        android:textSize="12sp"
-        android:textColor="@android:color/black"/>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="620dp"
-        android:background="@color/colorAccent"
-        android:layout_marginTop="40dp">
-
-        <ImageView
-            android:id="@+id/imageview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-        />
-<!--        <TextView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:text="Your remaining content here"-->
-<!--            android:textColor="@android:color/white" />-->
-
-    </FrameLayout>
+        android:textColor="@android:color/black"
+        android:fontFamily="@font/open_sans"
+        android:textSize="@dimen/sizePhoneText" />
 </LinearLayout>

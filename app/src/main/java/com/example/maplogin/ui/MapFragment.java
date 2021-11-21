@@ -11,18 +11,19 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +33,7 @@ import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
+import com.example.maplogin.utils.BottomSheetController;
 import com.example.maplogin.R;
 import com.example.maplogin.databinding.FragmentMapBinding;
 import com.example.maplogin.struct.InfoType;
@@ -54,21 +56,23 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
-import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, RoutingListener {
+
     public static final int MIN_ZOOM = 13;
     public static final int MAX_ZOOM = 17;
+    public static final double VALID_RANGE = 0.5;
     // Fragment information
     private FragmentMapBinding binding;
     private Activity mActivity;
 
     // Database information
     private DatabaseAdapter mDatabase;
+    private BottomSheetController mBottomSheet;
 
     // Map information
     public static final int DEFAULT_UPDATE_INTERVAL = 1000;
@@ -155,8 +159,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMinZoomPreference(MIN_ZOOM);
-        mMap.setMaxZoomPreference(MAX_ZOOM);
+        // mMap.setMinZoomPreference(MIN_ZOOM);
+        // mMap.setMaxZoomPreference(MAX_ZOOM);
 
         updateLocationUI();
         addStarButtonToMapView();
@@ -292,13 +296,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
             Routing routing = new Routing.Builder()
                     .travelMode(travelMode)
                     .withListener(this)
-                    .alternativeRoutes(true)
+//                    .alternativeRoutes(true)
                     .waypoints(startLatLng, endLatLng)
-                    .alternativeRoutes(true)
                     .key("AIzaSyCQjSbW4ANku5u4VMlkIWtpp4m6yTi4EPA")
                     .build();
             routing.execute();
         }
+    }
+
+
+    public boolean isNearUser(LatLng dst) {
+        LatLng current = getUserLatLng();
+        Double distance = distanceInKm(current, dst);
+        if (distance == null)
+            return false;
+        return distance <= VALID_RANGE;
     }
 
     /***** start of routing call back functions *****/
@@ -349,15 +361,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     /***** end of routing call back functions *****/
 
     private void setupBottomSheet() {
-        View view = getView();
-        if (view == null)
-            return;
-
-        CoordinatorLayout coordinatorLayout = view.findViewById(R.id.coordinatorlayout);
-        View bottomSheet = coordinatorLayout.findViewById(R.id.bottom_sheet);
-        BottomSheetBehaviorGoogleMapsLike<View> behavior = BottomSheetBehaviorGoogleMapsLike.from(bottomSheet);
-
-        behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED);
+        mBottomSheet = new BottomSheetController(mActivity,
+                (dst, mode) -> findRoutes(getUserLatLng(), dst, mode),
+                this::isNearUser);
     }
 
     private void setupMarkerController() {
@@ -369,29 +375,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     }
 
     private void setupMarkerListener() {
-        mMap.setOnMarkerClickListener(this::changeBottomSheet);
+        mMap.setOnMarkerClickListener(mBottomSheet::update);
     }
 
-    private boolean changeBottomSheet(Marker marker) {
-        MarkerController.Tag t = (MarkerController.Tag) marker.getTag();
-        if (t != null) {
-            mDatabase.queryInfo(t.id, InfoType.LOCATION, info ->
-                    setupDirectionButton(marker.getPosition()));
-            return true;
-        }
-        return false;
-    }
-
-    private void setupDirectionButton(LatLng position) {
-        ImageButton directionButton = mActivity.findViewById(R.id.location_direction_button);
-        directionButton.setOnClickListener(v -> {
-            findRoutes(getUserLatLng(), position, AbstractRouting.TravelMode.DRIVING);
-        });
-    }
-
-    private void setupCheckInButton(String id, LocationInfo info) {
-    }
-
-    private void setupShareButton(String id, LocationInfo info) {
+    private Double distanceInKm(LatLng p1, LatLng p2) {
+        // TODO
+        return 1.;
     }
 }

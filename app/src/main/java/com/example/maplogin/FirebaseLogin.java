@@ -154,7 +154,6 @@ public class FirebaseLogin extends AppCompatActivity {
                 startMainActivity();
 
             } else {
-                Log.e("hehe", response.getError().getMessage());
                 Toast.makeText(
                         FirebaseLogin.this,
                         "Login error",
