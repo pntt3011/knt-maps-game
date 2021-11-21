@@ -33,9 +33,9 @@ public class DatabaseAdapter {
 
     private static final String DATABASE_URI = "https://api-3011-ad499.asia-southeast1.firebasedatabase.app/";
     private static final String USER_ROOT = "users";
-    private static final String LOCATION_MARKER_ROOT = "markers";
+    private static final String LOCATION_MARKER_ROOT = "locations";
     private static final String QUESTION_INFO_ROOT = "questions";
-    private static final String LOCATION_INFO_ROOT = "infos";
+    private static final String LOCATION_INFO_ROOT = "locations";
 
     // Database info
     private FirebaseDatabase mDatabase;

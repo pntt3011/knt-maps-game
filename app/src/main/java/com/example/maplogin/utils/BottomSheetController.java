@@ -14,6 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
+
 import com.directions.route.AbstractRouting;
 import com.example.maplogin.R;
 import com.example.maplogin.struct.InfoType;
@@ -87,7 +90,7 @@ public class BottomSheetController {
         ImageButton checkInButton = mActivity.findViewById(R.id.bs_check_in_button);
         checkInButton.setOnClickListener(v -> {
             if (mCheckInListener.canCheckIn(position)) {
-                // TODO
+
             } else {
                 Toast.makeText(
                     mActivity,
@@ -184,21 +187,32 @@ public class BottomSheetController {
     private void changeLocationImages(ArrayList<String> imageUrls) {
         LinearLayout layout = mBottomSheet.findViewById(R.id.location_images);
         layout.removeAllViews();
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                200,
+        AppCompatImageView imageView =  new AppCompatImageView(mBottomSheet.getContext());
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
-        params.gravity= Gravity.CENTER_HORIZONTAL;
+        layoutParams.gravity = Gravity.CENTER;
+        layoutParams.weight = 1;
 
-        Picasso.get().setLoggingEnabled(true);
-        for (String url: imageUrls) {
-            ImageView imageView =  new ImageView(mActivity);
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            imageView.setLayoutParams(params);
+        imageView.setLayoutParams(layoutParams);
+        imageView.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.background));
+        layout.addView(imageView);
 
-            addImage(imageView, url);
-            layout.addView(imageView);
-        }
+
+//        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+//                200,
+//                LinearLayout.LayoutParams.MATCH_PARENT);
+//        params.gravity= Gravity.CENTER_HORIZONTAL;
+//
+//        Picasso.get().setLoggingEnabled(true);
+//        for (String url: imageUrls) {
+//            ImageView imageView =  new ImageView(mActivity);
+//            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+//            imageView.setLayoutParams(params);
+//
+//            addImage(imageView, url);
+//            layout.addView(imageView);
+//        }
     }
 
     private void addImage(final ImageView imageView, final String imgURL) {
