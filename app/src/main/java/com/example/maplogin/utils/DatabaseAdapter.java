@@ -130,11 +130,30 @@ public class DatabaseAdapter {
     }
 
     public void addCapturedLocation(String id, Long point) {
+        if (mCapturedLocations.containsKey(id))
+            if (mCapturedLocations.get(id) >= point)
+                return;
+
+        if (mFailedLocations.containsKey(id))
+            removeFailedLocation(id);
+
         DatabaseReference capturedMarkersRef = getCapturedMarkerReference();
         capturedMarkersRef.child(id).setValue(point);
     }
 
+    private void removeFailedLocation(String id) {
+        DatabaseReference failedMarkersRef = getFailedMarkerReference();
+        failedMarkersRef.child(id).removeValue();
+    }
+
     public void addFailedLocation(String id, Long point) {
+        if (mFailedLocations.containsKey(id))
+            if (mFailedLocations.get(id) >= point)
+                return;
+
+        if (mCapturedLocations.containsKey(id))
+            return;
+
         DatabaseReference failedMarkersRef = getFailedMarkerReference();
         failedMarkersRef.child(id).setValue(point);
     }

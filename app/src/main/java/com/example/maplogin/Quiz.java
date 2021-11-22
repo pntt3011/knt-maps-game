@@ -6,12 +6,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.maplogin.struct.LocationInfo;
 import com.example.maplogin.struct.QuestionInfo;
@@ -49,14 +51,11 @@ public class Quiz extends AppCompatActivity {
         Intent intent = getIntent();
         String id = intent.getStringExtra(Constants.LOCATION_ID);
 
-        TextView tvTitle = findViewById(R.id.textView26);
         LocationInfo info = DatabaseAdapter.getInstance().getAllLocations().getOrDefault(id, null);
         mQuestionMap = DatabaseAdapter.getInstance().getAllQuestions();
 
         if (info != null) {
-            tvTitle.setText(info.name);
             questions = new ArrayList<>(info.questions);
-
         } else {
             finish();
         }
@@ -77,10 +76,10 @@ public class Quiz extends AppCompatActivity {
         findViewById(R.id.btnNextQuestionLiteratureAndGeography)
             .setOnClickListener(view -> {
                 countDownTimer.cancel();
+
                 int radioButtonID = radioGroup.getCheckedRadioButtonId();
                 View radioButton = radioGroup.findViewById(radioButtonID);
                 int userAnswer = radioGroup.indexOfChild(radioButton);
-
                 Long correctAnswer = Objects.requireNonNull(
                         mQuestionMap.get(questions.get(currentQuestionIndex))).answer;
 
@@ -92,11 +91,12 @@ public class Quiz extends AppCompatActivity {
 
                 currentQuestionIndex++;
 
-                if (btnNext.getText().equals("Next")){
-                    displayNextQuestions(getQuestionInfo(currentQuestionIndex));
+                if (btnNext.getText().toString().equals("NEXT")) {
+                    QuestionInfo questionInfo = getQuestionInfo(currentQuestionIndex);
+                    displayNextQuestions(questionInfo);
 
-                } else{
-                    Intent intentResult = new Intent(Quiz.this,FinalResultActivity.class);
+                } else {
+                    Intent intentResult = new Intent(Quiz.this, FinalResultActivity.class);
                     intentResult.putExtra(Constants.LOCATION_ID, id);
                     intentResult.putExtra(Constants.SUBJECT, info.name);
                     intentResult.putExtra(Constants.CORRECT,correctQuestion);
@@ -119,16 +119,16 @@ public class Quiz extends AppCompatActivity {
 
     private void displayNextQuestions(QuestionInfo info) {
         setAnswersToRadioButton(info);
-        tvQuestion.setText(questions.get(currentQuestionIndex));
+        tvQuestion.setText(info.content);
         tvQuestionNumber.setText("Current Question: " + (currentQuestionIndex + 1));
 
         if (currentQuestionIndex == questions.size() - 1){
-            btnNext.setText("Finish");
+            btnNext.setText("FINISH");
         }
     }
 
     private void displayData(QuestionInfo info) {
-        tvQuestion.setText(questions.get(currentQuestionIndex));
+        tvQuestion.setText(info.content);
         tvQuestionNumber.setText("Current Question: " + (currentQuestionIndex + 1));
         setAnswersToRadioButton(info);
     }

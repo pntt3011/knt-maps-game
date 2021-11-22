@@ -7,7 +7,6 @@
     android:background="@color/teal_200"
     tools:context=".QuizActivity">
 
-
     <ImageView
         android:id="@+id/imageViewBack"
         android:layout_width="40dp"
@@ -37,13 +36,14 @@
         android:id="@+id/tvUsernameHome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="50dp"
         android:layout_marginTop="8dp"
-        android:textColor="@color/white"
-        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/textView2"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
-        tools:text="Trường đại học khoa học tự nhiên, DHQG TPHCM" />
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:text="Trường đại học khoa học tự nhiên, DHQG TPHCM" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
