@@ -11,6 +11,8 @@ import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.example.maplogin.R;
+import com.example.maplogin.ui.MapFragment;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
@@ -36,6 +38,7 @@ public class RoutingController implements RoutingListener {
     // find routes from startLatLng to endLatLng with specific travelMode.
     public void findRoutes(LatLng startLatLng, LatLng endLatLng, AbstractRouting.TravelMode travelMode)
     {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(startLatLng, MapFragment.DEFAULT_ZOOM));
         if(startLatLng==null || endLatLng==null)
             Toast.makeText(mActivity,"Unable to get location",Toast.LENGTH_LONG).show();
 

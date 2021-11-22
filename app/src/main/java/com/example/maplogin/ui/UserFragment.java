@@ -1,5 +1,6 @@
 package com.example.maplogin.ui;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,11 +45,6 @@ public class UserFragment extends Fragment {
         bindText2TextView(view, R.id.name, user.getDisplayName());
         bindText2TextView(view, R.id.numCheckin, textNumCheckin);
         bindText2TextView(view, R.id.numBadges, "0");
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
     }
 
     private void bindText2TextView(View view, int id, String text) {
