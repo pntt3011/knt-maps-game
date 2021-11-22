@@ -1,6 +1,7 @@
 package com.example.maplogin.utils;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.example.maplogin.struct.LocationInfo;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,6 +36,9 @@ public class MarkerController {
         public Tag(String id, String url) {
             this.id = id;
             this.url = url;
+        }
+        public String toString() {
+            return "ID: " + id + " URL: " + url;
         }
     }
 
@@ -120,6 +124,7 @@ public class MarkerController {
 
         if (marker != null) {
             marker.setTag(new Tag(id, iconUrl));
+            Log.e("hehe", marker.getTag().toString());
             PicassoMarker picassoMarker = new PicassoMarker(
                     marker,
                     mMarkerIconMap,
