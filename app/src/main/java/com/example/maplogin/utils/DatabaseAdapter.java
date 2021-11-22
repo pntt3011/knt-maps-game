@@ -231,7 +231,6 @@ public class DatabaseAdapter {
             drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
             drawable.draw(canvas);
             mUserIcon = bmp;
-            String a = "";
         }
     }
 

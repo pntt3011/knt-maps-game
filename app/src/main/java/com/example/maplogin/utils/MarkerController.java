@@ -161,6 +161,7 @@ public class MarkerController {
             marker.setTag(new Tag(id, iconUrl));
             Log.e("hehe", marker.getTag().toString());
             PicassoMarker picassoMarker = new PicassoMarker(
+                    mActivity,
                     marker,
                     mMarkerMap,
                     mMarkerIconMap,
