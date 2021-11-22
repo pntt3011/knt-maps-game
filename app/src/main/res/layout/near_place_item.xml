@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="card"
+    android:paddingStart="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp">
+
+    <ImageView
+        android:id="@+id/iconMarker"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="3dp"
+        android:layout_marginBottom="3dp"
+        android:src="@drawable/background" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/bs_direct_button"
+        android:layout_toRightOf="@id/iconMarker"
+        android:fontFamily="@font/raleway_bold"
+        android:paddingRight="20dp"
+        android:text="Đại học Khoa học Tự nhiên, ĐHQG-HCM"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/sizeHeader" />
+
+
+    <ImageButton
+        android:id="@+id/bs_direct_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleX="0.7"
+        android:scaleY="0.7"
+        android:src="@drawable/ic_button_direct" />
+
+</RelativeLayout>
