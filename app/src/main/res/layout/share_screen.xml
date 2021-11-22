@@ -18,7 +18,7 @@
         android:padding="10dp">
 
         <ImageView
-            android:id="@+id/avatar"
+            android:id="@+id/dialog_avatar"
             android:layout_width="96dp"
             android:layout_height="96dp"
             android:layout_centerHorizontal="true"
@@ -26,7 +26,7 @@
 
 
         <TextView
-            android:id="@+id/name"
+            android:id="@+id/dialog_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -61,7 +61,7 @@
             android:textSize="@dimen/sizePhoneText" />
 
         <TextView
-            android:id="@+id/location"
+            android:id="@+id/dialog_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/open_sans_semibold"
@@ -80,7 +80,7 @@
             android:textSize="@dimen/sizePhoneText" />
 
         <TextView
-            android:id="@+id/point"
+            android:id="@+id/dialog_point"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/open_sans_semibold"
@@ -93,7 +93,7 @@
             android:background="@drawable/ic_point_green" />
 
         <ImageButton
-            android:id="@+id/bs_share_button"
+            android:id="@+id/dialog_share_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

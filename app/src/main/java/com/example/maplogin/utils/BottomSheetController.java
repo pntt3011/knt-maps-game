@@ -109,35 +109,11 @@ public class BottomSheetController {
         });
     }
 
-    private void openDialogShare() {
-        final Dialog shareDialog = new Dialog(mActivity);
-        shareDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        shareDialog.setContentView(R.layout.share_screen);
-
-        Window window = shareDialog.getWindow();
-        if(window == null){
-            return;
-        }
-
-        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        shareDialog.setCancelable(true);
-
-        TextView shareLocation = shareDialog.findViewById(R.id.location);
-        TextView sharePoint = shareDialog.findViewById(R.id.point);
-        TextView location = (TextView)mActivity.findViewById(R.id.bottom_sheet_title);
-        TextView point = (TextView)mActivity.findViewById(R.id.point);
-
-        shareLocation.setText(location.getText());
-        sharePoint.setText(point.getText() + "pt");
-        shareDialog.show();
-    }
-
     private void setupShareButton(String id) {
         ImageButton shareButton = mActivity.findViewById(R.id.bs_share_button);
         shareButton.setOnClickListener(v -> {
             if (isCaptured(id)) {
-                ShareHelper.shareScreenshot(mActivity);
+                ShareHelper.openShareDialog(mActivity);
             } else {
                 Toast.makeText(mActivity, "You must pass the check-in quiz first." ,
                         Toast.LENGTH_SHORT).show();
