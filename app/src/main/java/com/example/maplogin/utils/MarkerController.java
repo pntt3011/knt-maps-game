@@ -1,11 +1,17 @@
 package com.example.maplogin.utils;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
+
+import androidx.core.content.ContextCompat;
 
 import com.example.maplogin.R;
 import com.example.maplogin.struct.LocationInfo;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -16,7 +22,7 @@ import java.util.HashSet;
 
 public class MarkerController {
     // Convert color
-    private static final float NULL_OPACITY = 0.5f;
+    private static final float NULL_OPACITY = 1.0f;
     private static final float CAPTURE_OPACITY = 1.0f;
 
     // Store all markers for future use
@@ -28,6 +34,8 @@ public class MarkerController {
 
     // Save a map reference to draw to it on callback
     private final GoogleMap mMap;
+
+    private final Activity mActivity;
 
     // Marker tag
     public static class Tag {
@@ -51,48 +59,30 @@ public class MarkerController {
         return mMarkerIconMap;
     }
 
-    public MarkerController(GoogleMap map) {
+    public MarkerController(Activity activity, GoogleMap map) {
         mMarkerMap = new HashMap<>();
         mPicassoMarkerSet = new HashSet<>();
         mMap = map;
         mMarkerIconMap = new HashMap<>();
+        mActivity = activity;
     }
 
     public DatabaseAdapter.OnModifyLocationListener getLocationListener() {
         return new DatabaseAdapter.OnModifyLocationListener() {
             @Override
             public void add(String id, LocationInfo locationInfo) {
-                if (mMarkerMap.containsKey(id)) {
-                    addMarker(id, locationInfo.latitude,
-                            locationInfo.longitude,
-                            locationInfo.iconUrl,
-                            CAPTURE_OPACITY);
-                } else {
-                    addMarker(id, locationInfo.latitude,
-                            locationInfo.longitude,
-                            locationInfo.iconUrl,
-                            NULL_OPACITY);
-                }
+                addMarker(id, locationInfo.latitude,
+                        locationInfo.longitude,
+                        locationInfo.iconUrl,
+                        NULL_OPACITY);
             }
 
             @Override
             public void change(String id, LocationInfo locationInfo) {
-                if (DatabaseAdapter
-                        .getInstance()
-                        .getCapturedLocations()
-                        .containsKey(id)) {
-
-                    addMarker(id, locationInfo.latitude,
-                            locationInfo.longitude,
-                            locationInfo.iconUrl,
-                            CAPTURE_OPACITY);
-
-                } else {
-                    addMarker(id, locationInfo.latitude,
-                            locationInfo.longitude,
-                            locationInfo.iconUrl,
-                            NULL_OPACITY);
-                }
+                addMarker(id, locationInfo.latitude,
+                        locationInfo.longitude,
+                        locationInfo.iconUrl,
+                        NULL_OPACITY);
             }
 
             @Override
@@ -108,27 +98,38 @@ public class MarkerController {
     public DatabaseAdapter.OnModifyCaptureListener getCaptureListener() {
         return new DatabaseAdapter.OnModifyCaptureListener() {
             @Override
-            public void add(String id) {
-                if (mMarkerMap.containsKey(id)) {
-                    Marker marker = findMarkerById(id);
-                    switchMarkerType(id, marker, CAPTURE_OPACITY);
-                } else {
-                    mMarkerMap.put(id, null);
-                }
-            }
+            public void add(String id) { }
 
             @Override
-            public void remove(String id) {
-                Marker marker = findMarkerById(id);
-                if (marker != null) {
-                    switchMarkerType(id, marker, NULL_OPACITY);
-                }
-            }
+            public void remove(String id) { }
         };
     }
 
     public Marker findMarkerById(String id) {
         return mMarkerMap.getOrDefault(id, null);
+    }
+
+    public void updateAllIcons(HashMap<String, Boolean> isNearMap) {
+        for (HashMap.Entry<String, Marker> entry : mMarkerMap.entrySet()) {
+            String key = entry.getKey();
+            Marker marker = entry.getValue();
+
+            updateMarkerIcon(marker, mMarkerIconMap.get(key), isNearMap.get(key));
+        }
+    }
+
+    private void updateMarkerIcon(Marker marker, Bitmap bitmap, Boolean isNear) {
+        Bitmap bitmap_temp = bitmap.copy(bitmap.getConfig(), true);
+        Canvas canvas = new Canvas(bitmap_temp);
+        if (isNear) {
+            // get exclamation drawable and draw to bitmap
+            Drawable exclamationDrawable = ContextCompat.getDrawable(mActivity, R.drawable.ic_exclamation);
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
+            exclamationDrawable.setBounds(width / 3, height / 4, width, height * 7 / 8);
+            exclamationDrawable.draw(canvas);
+        }
+        marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap_temp));
     }
 
     private void addMarker(String id, Double lat, Double lng, String iconUrl, float opacity) {

@@ -59,6 +59,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
     public static final int MIN_ZOOM = 13;
@@ -137,32 +138,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                 // get list of marker
                 HashMap<String, Marker> markerHashMap = mMarkerController.getMarkerMap();
-                HashMap<String, Bitmap> markerIconHashMap = mMarkerController.getMarkerIconMap();
-
+                HashMap<String, Boolean> isNearMap = new HashMap<>();
                 for (HashMap.Entry<String, Marker> entry : markerHashMap.entrySet()) {
                     String key = entry.getKey();
                     Marker marker = entry.getValue();
-
-                    updateMarkerIcon(marker, markerIconHashMap.get(key));
+                    isNearMap.put(key, isNearUser(marker.getPosition()));
                 }
+
+                mMarkerController.updateAllIcons(isNearMap);
             }
         };
-    }
-
-    private void updateMarkerIcon(Marker marker, Bitmap bitmap) {
-        Bitmap bitmap_temp = bitmap.copy(bitmap.getConfig(), true);
-        Canvas canvas = new Canvas(bitmap_temp);
-
-        if (isNearUser(marker.getPosition())) {
-            // get exclamation drawable and draw to bitmap
-            Drawable exclamationDrawable = ContextCompat.getDrawable(mActivity, R.drawable.ic_exclamation);
-            int width = bitmap.getWidth();
-            int height = bitmap.getHeight();
-            exclamationDrawable.setBounds(width / 3, height / 4, width, height * 7 / 8);
-            exclamationDrawable.draw(canvas);
-        }
-
-        marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap_temp));
     }
 
     private void startSyncMap() {
@@ -334,7 +319,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void setupMarkerController() {
-        mMarkerController = new MarkerController(mMap);
+        mMarkerController = new MarkerController(mActivity, mMap);
         mDatabase.setModifyLocationListener(
                 mMarkerController.getLocationListener());
         mDatabase.setModifyCaptureListener(
