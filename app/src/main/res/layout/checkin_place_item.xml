@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/background_bottom_card"
     android:paddingStart="16dp"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
@@ -26,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginTop="3dp"
-        android:layout_toLeftOf="@+id/go_button"
+        android:layout_toLeftOf="@+id/textViewPoint"
         android:layout_toRightOf="@id/iconLocation"
         android:fontFamily="@font/raleway_bold"
         android:text="Đại học Khoa học Tự nhiên, ĐHQG-HCM"
@@ -34,15 +35,22 @@
         android:textSize="@dimen/sizeHeader" />
 
 
-    <ImageButton
-        android:id="@+id/go_button"
+    <TextView
+        android:id="@+id/textViewPoint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:minHeight="48dp"
-        android:scaleX="0.7"
-        android:scaleY="0.7"
-        android:src="@drawable/ic_button_go" />
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/ic_point_green"
+        android:fontFamily="@font/open_sans_semibold"
+        android:paddingTop="2dp"
+        android:paddingRight="7dp"
+        android:text="50pt"
+        android:textAlignment="viewEnd"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sizePhoneText" />
 
 </RelativeLayout>

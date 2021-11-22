@@ -237,7 +237,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
 
-        RecyclerView recyclerView = popupView.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = popupView.findViewById(R.id.recycler_view_near_place);
 
         NearestRecyclerAdapter adapter = new NearestRecyclerAdapter(mActivity, locationEntries,
                 locationKey -> {
