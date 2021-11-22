@@ -3,11 +3,16 @@ package com.example.maplogin.utils;
 import static com.example.maplogin.ui.MapFragment.VALID_RANGE;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -102,6 +107,30 @@ public class BottomSheetController {
                     Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void openDialogShare() {
+        final Dialog shareDialog = new Dialog(mActivity);
+        shareDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        shareDialog.setContentView(R.layout.share_screen);
+
+        Window window = shareDialog.getWindow();
+        if(window == null){
+            return;
+        }
+
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        shareDialog.setCancelable(true);
+
+        TextView shareLocation = shareDialog.findViewById(R.id.location);
+        TextView sharePoint = shareDialog.findViewById(R.id.point);
+        TextView location = (TextView)mActivity.findViewById(R.id.bottom_sheet_title);
+        TextView point = (TextView)mActivity.findViewById(R.id.point);
+
+        shareLocation.setText(location.getText());
+        sharePoint.setText(point.getText() + "pt");
+        shareDialog.show();
     }
 
     private void setupShareButton(String id) {
