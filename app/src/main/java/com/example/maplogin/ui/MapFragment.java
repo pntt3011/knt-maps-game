@@ -1,5 +1,7 @@
 package com.example.maplogin.ui;
 
+import static java.lang.Math.min;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -59,6 +61,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -68,6 +71,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public static final int MAX_ZOOM = 17;
     public static final int DEFAULT_ZOOM = 15;
     public static final double VALID_RANGE = 500;
+    public static final int NUM_NEAR_PLACE = 5;
 
     // Fragment information
     private FragmentMapBinding binding;
@@ -214,9 +218,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                 Set<Map.Entry<String, LocationInfo>> entrySet = locationInfoHashMap.entrySet();
 
-                // Creating an ArrayList of Entry objects
-                ArrayList<Map.Entry<String, LocationInfo>> locationEntries
-                        = new ArrayList<Map.Entry<String, LocationInfo>>(entrySet);
+                // get top NUM_NEAR_PLACE nearest location from list of entries
+                ArrayList<Map.Entry<String, LocationInfo>> locationEntries = new ArrayList<>(entrySet);
+
+                locationEntries.sort((a, b) -> {
+                    LocationInfo location1 = a.getValue();
+                    LatLng latLng1 = new LatLng(location1.latitude, location1.longitude);
+                    double dist1 = getDistanceToUser(latLng1);
+                    LocationInfo location2 = b.getValue();
+                    LatLng latLng2 = new LatLng(location2.latitude, location2.longitude);
+                    double dist2 = getDistanceToUser(latLng2);
+                    return (dist1 > dist2) ? 1 : (dist1 < dist2) ? -1 : 0;
+                });
+
+                int nTop = min(locationEntries.size(),NUM_NEAR_PLACE);
+                locationEntries = new ArrayList<>(locationEntries.subList(0, nTop));
 
                 // create and show the popup window
                 PopupWindow popupWindow = createLocationListPopup(locationEntries);
@@ -316,11 +332,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public boolean isNearUser(LatLng destLatLng) {
+        return getDistanceToUser(destLatLng) <= VALID_RANGE;
+    }
+
+    private double getDistanceToUser(LatLng destLatLng) {
         Location dest = new Location(LocationManager.GPS_PROVIDER);
         dest.setLatitude(destLatLng.latitude);
         dest.setLongitude(destLatLng.longitude);
-        double distance = lastKnownLocation.distanceTo(dest);
-        return distance <= VALID_RANGE;
+        return lastKnownLocation.distanceTo(dest);
     }
 
     private void setupBottomSheet() {
