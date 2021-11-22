@@ -2,6 +2,9 @@ package com.example.maplogin.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -9,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.maplogin.FirebaseLogin;
+import com.example.maplogin.R;
 import com.example.maplogin.struct.Info;
 import com.example.maplogin.struct.InfoType;
 import com.example.maplogin.struct.LocationInfo;
@@ -22,6 +26,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,12 +43,16 @@ public class DatabaseAdapter {
 
     // Database info
     private FirebaseDatabase mDatabase;
+
+    // User info
     private String mUid;
+    private Bitmap mUserIcon;
 
     // Data syncs
     private HashMap<String, LocationInfo> mAllLocations;
     private HashMap<String, Long> mFailedLocations;
     private HashMap<String, Long> mCapturedLocations;
+    private HashMap<String, QuestionInfo> mAllQuestions;
 
     // Listeners
     private ArrayList<OnModifyCaptureListener> mCaptureListeners;
@@ -97,6 +107,7 @@ public class DatabaseAdapter {
         setupLocationMarkersListener();
         setupCaptureListener();
         setupFailListener();
+        setupQuestionListener();
     }
 
     public Map<String, LocationInfo> getAllLocations() {
@@ -107,6 +118,12 @@ public class DatabaseAdapter {
 
     public Map<String, Long> getCapturedLocations() {
         return new HashMap<>(mCapturedLocations);
+    }
+
+    public Map<String, QuestionInfo> getAllQuestions() {return new HashMap<>(mAllQuestions);}
+
+    public Bitmap getUserIcon() {
+        return mUserIcon;
     }
 
     public void addCapturedLocation(String id, Long point) {
@@ -169,15 +186,34 @@ public class DatabaseAdapter {
     private DatabaseAdapter() { }
 
     private void updateInfo() {
-        mUid = getCurrentUserId();
         mDatabase = FirebaseDatabase.getInstance(DATABASE_URI);
+        mUid = getCurrentUserId();
+        mUserIcon = BitmapFactory.decodeResource(null, R.mipmap.ic_launcher_round);
+        loadUserIcon();
 
         mAllLocations = new HashMap<>();
         mFailedLocations = new HashMap<>();
         mCapturedLocations = new HashMap<>();
+        mAllQuestions = new HashMap<>();
 
         mCaptureListeners = new ArrayList<>();
         mLocationListeners = new ArrayList<>();
+    }
+
+    private void loadUserIcon() {
+        Picasso.get()
+                .load(getCurrentUser().getPhotoUrl())
+                .resize(64, 64)
+                .into(new Target() {
+                    @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        mUserIcon = bitmap;
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Exception e, Drawable errorDrawable) { }
+
+                    @Override public void onPrepareLoad(Drawable placeHolderDrawable) { }
+                });
     }
 
     private String getCurrentUserId() {
@@ -309,6 +345,43 @@ public class DatabaseAdapter {
 
         failedMarkersRef.addChildEventListener(childListener);
     }
+
+    private void setupQuestionListener() {
+        DatabaseReference failedMarkersRef = getPathReference(QUESTION_INFO_ROOT, new String[]{});
+
+        ChildEventListener childListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                QuestionInfo num = snapshot.getValue(QuestionInfo.class);
+                String key = snapshot.getKey();
+                mAllQuestions.put(key, num);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                QuestionInfo num = snapshot.getValue(QuestionInfo.class);
+                String key = snapshot.getKey();
+                mAllQuestions.put(key, num);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                String key = snapshot.getKey();
+                mAllQuestions.remove(key);
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) { }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Failed Questions", "Failed to load questions.");
+            }
+        };
+
+        failedMarkersRef.addChildEventListener(childListener);
+    }
+
 
     private DatabaseReference getPathReference(String root, String[] path) {
         StringBuilder pathString = new StringBuilder(root);

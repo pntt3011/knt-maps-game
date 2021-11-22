@@ -20,12 +20,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MapLogin">
         <activity
+            android:name=".FinalResultActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Quiz"
+            android:exported="true" />
+        <activity
+            android:name=".RuleActivity"
+            android:exported="true" />
+        <activity
+            android:name=".QuizActivity"
+            android:exported="true" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/title_activity_navigation_drawer"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MapLogin.NoActionBar"
-            tools:ignore="LockedOrientationActivity"></activity>
+            tools:ignore="LockedOrientationActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -36,7 +48,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_api_key" />
+            android:value="@string/google_maps_key" />
 
         <activity
             android:name=".FirebaseLogin"
@@ -55,12 +67,11 @@
             android:name="com.facebook.FacebookContentProvider"
             android:authorities="com.facebook.app.FacebookContentProvider573979743309376"
             android:exported="true" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.maplogin.fileprovider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />

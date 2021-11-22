@@ -1,5 +1,7 @@
 package com.example.maplogin.utils;
 
+import android.graphics.Bitmap;
+
 import com.example.maplogin.struct.LocationInfo;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -17,6 +19,7 @@ public class MarkerController {
 
     // Store all markers for future use
     private final HashMap<String, Marker> mMarkerMap;
+    private final HashMap<String, Bitmap> mMarkerIconMap;
 
     // PicassoMarkers need to be alive until bitmap icon is loaded
     private final HashSet<PicassoMarker> mPicassoMarkerSet;
@@ -35,10 +38,19 @@ public class MarkerController {
         }
     }
 
+    public HashMap<String, Marker> getMarkerMap() {
+        return mMarkerMap;
+    }
+
+    public HashMap<String, Bitmap> getMarkerIconMap() {
+        return mMarkerIconMap;
+    }
+
     public MarkerController(GoogleMap map) {
         mMarkerMap = new HashMap<>();
         mPicassoMarkerSet = new HashSet<>();
         mMap = map;
+        mMarkerIconMap = new HashMap<>();
     }
 
     public DatabaseAdapter.OnModifyLocationListener getLocationListener() {
@@ -108,9 +120,11 @@ public class MarkerController {
 
         if (marker != null) {
             marker.setTag(new Tag(id, iconUrl));
-            PicassoMarker picassoMarker = new PicassoMarker(marker, mPicassoMarkerSet);
+            PicassoMarker picassoMarker = new PicassoMarker(
+                    marker,
+                    mMarkerIconMap,
+                    mPicassoMarkerSet);
             mMarkerMap.put(id, marker);
-            mPicassoMarkerSet.add(picassoMarker);
 
             // Load icon async and show it
             Picasso.get().load(iconUrl).resize(64,64).into(picassoMarker);

@@ -10,6 +10,19 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
+    <string name="rules1_description">
+        The Quiz will contain at least 5 questions about the chosen place.
+    </string>
+    <string name="rules2_description">
+        Every correct answer scores you 1 points.
+    </string>
+    <string name="rules3_description">
+        Every wrong answer does not deduct you.
+    </string>
+    <string name="rules4_description">
+        You have to correctly answer more than 80% to pass the quiz.
+    </string>
+
     <string name="menu_map">Map</string>
     <string name="menu_user">User info</string>
     <string name="menu_link">Link account</string>

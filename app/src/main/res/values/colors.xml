@@ -14,4 +14,9 @@
     <color name="gray_light">#F2F2F2</color>
     <color name="gray_bold">#6C6C6C</color>
     <color name="yellow_104">#F2A104</color>
+    <color name="peach">#FF6F5E</color>
+    <color name="gray">#A0A3B1</color>
+    <color name="edit_text_bg">#F2F3F7</color>
+    <color name="blue_med">#03A9F4</color>
+    <color name="light_blue_med">#89C4DA</color>
 </resources>

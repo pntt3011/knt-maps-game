@@ -3,6 +3,7 @@ package com.example.maplogin.utils;
 import static com.example.maplogin.ui.MapFragment.VALID_RANGE;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
@@ -18,6 +19,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 
 import com.directions.route.AbstractRouting;
+import com.example.maplogin.QuizActivity;
 import com.example.maplogin.R;
 import com.example.maplogin.struct.InfoType;
 import com.example.maplogin.struct.LocationInfo;
@@ -66,7 +68,7 @@ public class BottomSheetController {
                 LocationInfo locInfo = (LocationInfo) info;
 
                 setupDirectionButton(marker.getPosition());
-                setupCheckInButton(marker.getPosition(),locInfo.questions);
+                setupCheckInButton(t.id, marker.getPosition(),locInfo.questions);
                 setupShareButton(t.id);
 
                 updateInfo(t, locInfo);
@@ -86,10 +88,14 @@ public class BottomSheetController {
                 mFindDirectionListener.find(position, AbstractRouting.TravelMode.DRIVING));
     }
 
-    private void setupCheckInButton(LatLng position, ArrayList<String> questionId) {
+    private void setupCheckInButton(String id, LatLng position, ArrayList<String> questionId) {
         ImageButton checkInButton = mActivity.findViewById(R.id.bs_check_in_button);
         checkInButton.setOnClickListener(v -> {
             if (mCheckInListener.canCheckIn(position)) {
+                Intent i = new Intent(mActivity, QuizActivity.class);
+                i.putStringArrayListExtra("QUESTION_IDS", questionId);
+                i.putExtra("LOCATION_ID", id);
+                mActivity.startActivity(i);
 
             } else {
                 Toast.makeText(
