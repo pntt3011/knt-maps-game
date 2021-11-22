@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -27,19 +26,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.directions.route.AbstractRouting;
-import com.directions.route.Route;
-import com.directions.route.RouteException;
-import com.directions.route.Routing;
-import com.directions.route.RoutingListener;
 import com.example.maplogin.utils.BottomSheetController;
 import com.example.maplogin.R;
 import com.example.maplogin.databinding.FragmentMapBinding;
 import com.example.maplogin.struct.LocationInfo;
 import com.example.maplogin.utils.DatabaseAdapter;
 import com.example.maplogin.utils.MarkerController;
+import com.example.maplogin.utils.RoutingController;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -51,20 +45,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, RoutingListener {
-
+public class MapFragment extends Fragment implements OnMapReadyCallback {
     public static final int MIN_ZOOM = 13;
     public static final int MAX_ZOOM = 17;
     public static final double VALID_RANGE = 500;
+
     // Fragment information
     private FragmentMapBinding binding;
     private Activity mActivity;
@@ -73,16 +62,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
     private DatabaseAdapter mDatabase;
     private BottomSheetController mBottomSheet;
 
+    // Routing controller
+    private RoutingController mRoutingController;
+
     // Map information
     public static final int DEFAULT_UPDATE_INTERVAL = 1000;
     public static final int FASTEST_UPDATE_INTERVAL = 500;
-    public static final int POLYLINE_WIDTH = 7;
 
     private GoogleMap mMap;
-
-    private ArrayList<Polyline> polylines;
-    private ArrayList<Marker> markers;
-//    private ArrayList<LocationInfo>
 
     private FusedLocationProviderClient fusedLocationProviderClient = null;
     private LocationRequest locationRequest = null;
@@ -169,6 +156,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
         setupMarkerController();
         setupMarkerListener();
 
+        mRoutingController = new RoutingController(mActivity, mMap);
         mDatabase.startSync();
     }
 
@@ -284,25 +272,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
         }
     }
 
-    // find routes from startLatLng to endLatLng with specific travelMode.
-    public void findRoutes(LatLng startLatLng, LatLng endLatLng, AbstractRouting.TravelMode travelMode)
-    {
-        if(startLatLng==null || endLatLng==null)
-            Toast.makeText(mActivity,"Unable to get location",Toast.LENGTH_LONG).show();
-
-        else {
-            Routing routing = new Routing.Builder()
-                    .travelMode(travelMode)
-                    .withListener(this)
-//                    .alternativeRoutes(true)
-                    .waypoints(startLatLng, endLatLng)
-                    .key("AIzaSyCQjSbW4ANku5u4VMlkIWtpp4m6yTi4EPA")
-                    .build();
-            routing.execute();
-        }
-    }
-
-
     public boolean isNearUser(LatLng destLatLng) {
         Location dest = new Location(LocationManager.GPS_PROVIDER);
         dest.setLatitude(destLatLng.latitude);
@@ -311,56 +280,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Routing
         return distance <= VALID_RANGE;
     }
 
-    /***** start of routing call back functions *****/
-    @Override
-    public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
-        clearRoutesUI();
-
-        polylines = new ArrayList<>();
-
-        // add route(s) to the map using polyline
-        int color;
-        for (int i = 0; i < route.size(); i++) {
-            if (i == shortestRouteIndex)
-                color = ContextCompat.getColor(mActivity, R.color.red);
-            else
-                color = ContextCompat.getColor(mActivity, R.color.red_transparent);
-            addRouteToMap(route.get(i).getPoints(), color);
-        }
-    }
-
-    private void addRouteToMap(List<LatLng> points, int color) {
-        PolylineOptions polyOptions = new PolylineOptions();
-        polyOptions.color(color);
-        polyOptions.width(POLYLINE_WIDTH);
-        polyOptions.addAll(points);
-        Polyline polyline = mMap.addPolyline(polyOptions);
-        polylines.add(polyline);
-    }
-
-    private void clearRoutesUI() {
-        if (polylines != null) {
-            for (int i = 0; i < polylines.size(); ++i)
-                polylines.get(i).remove();
-            polylines.clear();
-        }
-    }
-
-    @Override
-    public void onRoutingFailure(RouteException e) {
-        Toast.makeText(mActivity,e.getMessage(),Toast.LENGTH_LONG).show();
-    }
-    @Override
-    public void onRoutingStart() {
-    }
-    @Override
-    public void onRoutingCancelled() {
-    }
-    /***** end of routing call back functions *****/
-
     private void setupBottomSheet() {
         mBottomSheet = new BottomSheetController(mActivity,
-                (dst, mode) -> findRoutes(getUserLatLng(), dst, mode),
+                (dst, mode) -> mRoutingController.findRoutes(getUserLatLng(), dst, mode),
                 this::isNearUser);
     }
 
