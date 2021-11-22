@@ -3,6 +3,7 @@ package com.example.maplogin.utils;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
@@ -22,8 +23,7 @@ import java.util.HashSet;
 
 public class MarkerController {
     // Convert color
-    private static final float NULL_OPACITY = 1.0f;
-    private static final float CAPTURE_OPACITY = 1.0f;
+    private static final float NULL_OPACITY = 0.5f;
 
     // Store all markers for future use
     private final HashMap<String, Marker> mMarkerMap;
@@ -110,17 +110,32 @@ public class MarkerController {
     }
 
     public void updateAllIcons(HashMap<String, Boolean> isNearMap) {
+        HashMap<String, Long> capturedLocations =
+                (HashMap<String, Long>) DatabaseAdapter.getInstance().getCapturedLocations();
+
         for (HashMap.Entry<String, Marker> entry : mMarkerMap.entrySet()) {
             String key = entry.getKey();
             Marker marker = entry.getValue();
-
-            updateMarkerIcon(marker, mMarkerIconMap.get(key), isNearMap.get(key));
+            Bitmap bitmap = mMarkerIconMap.get(key);
+            Boolean isNear = isNearMap.get(key);
+            Boolean isCaptured = capturedLocations.containsKey(key);
+            updateMarkerIcon(marker, bitmap, isNear, isCaptured);
         }
     }
 
-    private void updateMarkerIcon(Marker marker, Bitmap bitmap, Boolean isNear) {
-        Bitmap bitmap_temp = bitmap.copy(bitmap.getConfig(), true);
-        Canvas canvas = new Canvas(bitmap_temp);
+    private void updateMarkerIcon(Marker marker, Bitmap bitmap, Boolean isNear, Boolean isCaptured) {
+        Bitmap newBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(newBitmap);
+
+        // draw original image to canvas
+        Paint paint = new Paint();
+        if (isCaptured)
+            paint.setAlpha(0xFF);
+        else
+            paint.setAlpha(0x00);
+        canvas.drawBitmap(bitmap, 0, 0, paint);
+
         if (isNear) {
             // get exclamation drawable and draw to bitmap
             Drawable exclamationDrawable = ContextCompat.getDrawable(mActivity, R.drawable.ic_exclamation);
@@ -129,7 +144,7 @@ public class MarkerController {
             exclamationDrawable.setBounds(width / 3, height / 4, width, height * 7 / 8);
             exclamationDrawable.draw(canvas);
         }
-        marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap_temp));
+        marker.setIcon(BitmapDescriptorFactory.fromBitmap(newBitmap));
     }
 
     private void addMarker(String id, Double lat, Double lng, String iconUrl, float opacity) {
