@@ -185,7 +185,7 @@
                 android:layout_below="@id/mail"
                 android:layout_toRightOf="@id/imgMail"
                 android:fontFamily="@font/open_sans"
-                android:text="Mail"
+                android:text="Home page"
                 android:textColor="@color/gray_bold"
                 android:textSize="@dimen/sizeNote" />
         </RelativeLayout>

@@ -308,6 +308,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         dest.setLatitude(destLatLng.latitude);
         dest.setLongitude(destLatLng.longitude);
         double distance = lastKnownLocation.distanceTo(dest);
+
         return distance <= VALID_RANGE;
     }
 
