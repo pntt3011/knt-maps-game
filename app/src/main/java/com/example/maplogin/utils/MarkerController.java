@@ -145,9 +145,10 @@ public class MarkerController {
             Log.e("hehe", marker.getTag().toString());
             PicassoMarker picassoMarker = new PicassoMarker(
                     marker,
+                    mMarkerMap,
                     mMarkerIconMap,
                     mPicassoMarkerSet);
-            mMarkerMap.put(id, marker);
+            mPicassoMarkerSet.add(picassoMarker);
 
             // Load icon async and show it
             Picasso.get().load(iconUrl)

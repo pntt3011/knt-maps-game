@@ -16,14 +16,17 @@ public class PicassoMarker implements Target {
     private final Marker mMarker;
     private final HashSet<PicassoMarker> mPicassoMarkerSet;
     private final HashMap<String, Bitmap> mMarkerIconMap;
+    private final HashMap<String, Marker> mMarkerMap;
 
     public PicassoMarker(Marker marker,
+                         HashMap<String, Marker> markerMap,
                          HashMap<String, Bitmap> markerIconMap,
                          HashSet<PicassoMarker> set) {
         mMarker = marker;
         Log.e("PicassoMarker", marker.getTag().toString());
         mPicassoMarkerSet = set;
         mMarkerIconMap = markerIconMap;
+        mMarkerMap = markerMap;
     }
 
     @Override
@@ -46,8 +49,8 @@ public class PicassoMarker implements Target {
         mMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
         Log.e("onBitmapLoaded", mMarker.getTag().toString());
         MarkerController.Tag t = (MarkerController.Tag) mMarker.getTag();
-        assert t != null;
         mMarkerIconMap.put(t.id, bitmap);
+        mMarkerMap.put(t.id, mMarker);
         cleanUpResource();
     }
 
@@ -57,9 +60,7 @@ public class PicassoMarker implements Target {
     }
 
     @Override
-    public void onPrepareLoad(Drawable placeHolderDrawable) {
-        mPicassoMarkerSet.add(this);
-    }
+    public void onPrepareLoad(Drawable placeHolderDrawable) { }
 
     private void cleanUpResource() {
         mMarker.setVisible(true);
