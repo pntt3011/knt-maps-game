@@ -57,9 +57,11 @@ import com.google.android.gms.tasks.Task;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
     public static final int MIN_ZOOM = 13;
@@ -209,18 +211,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 // Creating an ArrayList of location info
                 HashMap<String, LocationInfo> locationInfoHashMap =
                         (HashMap<String, LocationInfo>) mDatabase.getAllLocations();
-                Collection<LocationInfo> values =  locationInfoHashMap.values();
-                ArrayList<LocationInfo> locations = new ArrayList<>(values);
+
+                Set<Map.Entry<String, LocationInfo>> entrySet = locationInfoHashMap.entrySet();
+
+                // Creating an ArrayList of Entry objects
+                ArrayList<Map.Entry<String, LocationInfo>> locationEntries
+                        = new ArrayList<Map.Entry<String, LocationInfo>>(entrySet);
 
                 // create and show the popup window
-                PopupWindow popupWindow = createLocationListPopup(locations);
+                PopupWindow popupWindow = createLocationListPopup(locationEntries);
                 popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
             }
         });
         return button;
     }
 
-    private PopupWindow createLocationListPopup(ArrayList<LocationInfo> locations) {
+    private PopupWindow createLocationListPopup(ArrayList<Map.Entry<String, LocationInfo>> locationEntries) {
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
                 mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -233,10 +239,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         RecyclerView recyclerView = popupView.findViewById(R.id.recycler_view);
 
-        NearestRecyclerAdapter adapter = new NearestRecyclerAdapter(mActivity, locations,
-                dest -> {
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dest, MAX_ZOOM));
+        NearestRecyclerAdapter adapter = new NearestRecyclerAdapter(mActivity, locationEntries,
+                locationKey -> {
+                    HashMap<String, Marker> markerHashMap = mMarkerController.getMarkerMap();
                     popupWindow.dismiss();
+                    Marker marker = markerHashMap.get(locationKey);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), MAX_ZOOM));
+                    mBottomSheet.update(marker);
                 });
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
