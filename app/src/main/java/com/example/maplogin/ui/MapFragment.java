@@ -138,6 +138,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 // get list of marker
                 HashMap<String, Marker> markerHashMap = mMarkerController.getMarkerMap();
                 HashMap<String, Bitmap> markerIconHashMap = mMarkerController.getMarkerIconMap();
+
                 for (HashMap.Entry<String, Marker> entry : markerHashMap.entrySet()) {
                     String key = entry.getKey();
                     Marker marker = entry.getValue();
