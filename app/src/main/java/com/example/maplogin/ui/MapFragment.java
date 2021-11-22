@@ -226,18 +226,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout popupView = (LinearLayout) inflater.inflate(R.layout.popup_location_list_window, null);
 
-        RecyclerView recyclerView = popupView.findViewById(R.id.recycler_view);
-
-
-        NearestRecyclerAdapter adapter = new NearestRecyclerAdapter(mActivity, locations,
-                dest -> mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dest, MAX_ZOOM)));
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
-
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
+
+        RecyclerView recyclerView = popupView.findViewById(R.id.recycler_view);
+
+        NearestRecyclerAdapter adapter = new NearestRecyclerAdapter(mActivity, locations,
+                dest -> {
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dest, MAX_ZOOM));
+                    popupWindow.dismiss();
+                });
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
 
         return popupWindow;
     }
