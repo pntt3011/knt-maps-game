@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setupDatabase() {
-        DatabaseAdapter.updateUserInfo();
+        DatabaseAdapter.updateUserInfo(this);
         mDatabase = DatabaseAdapter.getInstance();
     }
 
@@ -87,9 +87,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ImageView photoView = mHeaderView.findViewById(R.id.nav_header_photo);
         if (!mDatabase.isAnonymousUser()) {
             Picasso.get().load(mDatabase.getCurrentUser().getPhotoUrl())
-                    .fit().into(photoView);
+                    .resize(64, 64).into(photoView);
         } else {
-             photoView.setImageResource(R.mipmap.ic_launcher_round);
+             photoView.setImageResource(R.mipmap.ic_launcher);
         }
     }
 
