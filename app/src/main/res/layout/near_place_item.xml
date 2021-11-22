@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginTop="3dp"
-        android:layout_toLeftOf="@+id/direct_button"
+        android:layout_toLeftOf="@+id/go_button"
         android:layout_toRightOf="@id/iconLocation"
         android:fontFamily="@font/raleway_bold"
         android:text="Đại học Khoa học Tự nhiên, ĐHQG-HCM"
@@ -34,7 +34,7 @@
 
 
     <ImageButton
-        android:id="@+id/direct_button"
+        android:id="@+id/go_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"

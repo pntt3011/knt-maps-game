@@ -206,12 +206,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(mActivity, "Star button!", Toast.LENGTH_SHORT).show();
-
                 // Creating an ArrayList of location info
                 HashMap<String, LocationInfo> locationInfoHashMap =
                         (HashMap<String, LocationInfo>) mDatabase.getAllLocations();
-                Collection<LocationInfo> values = locationInfoHashMap.values();
+                Collection<LocationInfo> values =  locationInfoHashMap.values();
                 ArrayList<LocationInfo> locations = new ArrayList<>(values);
 
                 // create and show the popup window
@@ -231,7 +229,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         RecyclerView recyclerView = popupView.findViewById(R.id.recycler_view);
 
 
-        NearestRecyclerAdapter adapter = new NearestRecyclerAdapter(mActivity, locations);
+        NearestRecyclerAdapter adapter = new NearestRecyclerAdapter(mActivity, locations,
+                dest -> mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dest, MAX_ZOOM)));
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
 

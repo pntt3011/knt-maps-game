@@ -11,10 +11,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.maplogin.R;
 import com.example.maplogin.struct.LocationInfo;
+import com.google.android.gms.maps.model.LatLng;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -22,8 +24,14 @@ import java.util.ArrayList;
 public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecyclerAdapter.LocationViewHolder> {
     private LayoutInflater layoutInflater;
     private ArrayList<LocationInfo> items;
+    public onButtonGoListener goListener;
 
-    public NearestRecyclerAdapter(Context context, ArrayList<LocationInfo> locations) {
+    public interface onButtonGoListener {
+        void onButtonGoListener(LatLng dest);
+    }
+
+    public NearestRecyclerAdapter(Context context, ArrayList<LocationInfo> locations, onButtonGoListener goListener) {
+        this.goListener = goListener;
         layoutInflater = LayoutInflater.from(context);
         items = locations;
     }
@@ -40,6 +48,10 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
         LocationInfo currentLocation = items.get(position);
         holder.setIcon(currentLocation.iconUrl);
         holder.setName(currentLocation.name);
+        holder.setButtonGoListener(view -> {
+            LatLng latLng = new LatLng(currentLocation.latitude, currentLocation.longitude);
+            goListener.onButtonGoListener(latLng);
+        });
     }
 
     @Override
@@ -50,19 +62,16 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
     public class LocationViewHolder extends RecyclerView.ViewHolder{
         private ImageView iconView = null;
         private TextView nameView = null;
+        private AppCompatImageButton buttonGo = null;
         private NearestRecyclerAdapter adapter;
 
-        public LocationViewHolder(View itemView, NearestRecyclerAdapter songAdapter) {
+        public LocationViewHolder(View itemView, NearestRecyclerAdapter locationAdapter) {
             super(itemView);
-            adapter = songAdapter;
+            adapter = locationAdapter;
             iconView = itemView.findViewById(R.id.iconLocation);
             nameView = itemView.findViewById(R.id.titleLocation);
 
-//            btnPlay = itemView.findViewById(R.id.btnPlay);
-//            btnPlay.setOnClickListener(this);
-//            edtTitle = itemView.findViewById(R.id.edtTitle);
-//            edtTitle.setKeyListener(null);
-//            edtTitle.setTextColor(Color.RED);
+            buttonGo = itemView.findViewById(R.id.go_button);
         }
 
         public void setName(String name) {
@@ -76,6 +85,10 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
             else {
                 Picasso.get().load(url).fit().into(iconView);
             }
+        }
+
+        public void setButtonGoListener(View.OnClickListener listener) {
+            buttonGo.setOnClickListener(listener);
         }
     }
 }

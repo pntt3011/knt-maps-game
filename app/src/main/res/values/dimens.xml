@@ -29,5 +29,6 @@
     <dimen name="icon_image_view_size">25dp</dimen>
 
     <dimen name="start_quiz_image_view_size">80dp</dimen>
+    <dimen name="popupNearPlaceHeight">370dp</dimen>
 
 </resources>

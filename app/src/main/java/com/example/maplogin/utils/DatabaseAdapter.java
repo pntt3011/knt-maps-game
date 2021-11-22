@@ -49,7 +49,6 @@ public class DatabaseAdapter {
 
     // User info
     private String mUid;
-    private Bitmap mUserIcon;
 
     // Data syncs
     private HashMap<String, LocationInfo> mAllLocations;
@@ -94,11 +93,6 @@ public class DatabaseAdapter {
         instance.updateInfo(activity);
     }
 
-    public void setUserIconBitmap(Bitmap bitmap) {
-        mUserIcon = bitmap;
-
-    }
-
     // Should be used before startSync
     public void setModifyCaptureListener(OnModifyCaptureListener listener) {
         mCaptureListeners.add(listener);
@@ -118,7 +112,7 @@ public class DatabaseAdapter {
     }
 
     public Map<String, LocationInfo> getAllLocations() {
-        return new HashMap<>(mAllLocations);
+        return mAllLocations;
     }
 
     public Map<String, Long> getFailedLocations() {return new HashMap<>(mFailedLocations);}
@@ -128,10 +122,6 @@ public class DatabaseAdapter {
     }
 
     public Map<String, QuestionInfo> getAllQuestions() {return new HashMap<>(mAllQuestions);}
-
-    public Bitmap getUserIcon() {
-        return mUserIcon;
-    }
 
     public void addCapturedLocation(String id, Long point) {
         if (mCapturedLocations.containsKey(id))
@@ -214,7 +204,6 @@ public class DatabaseAdapter {
     private void updateInfo(Activity activity) {
         mDatabase = FirebaseDatabase.getInstance(DATABASE_URI);
         mUid = getCurrentUserId();
-        mUserIcon = null;
 
         mAllLocations = new HashMap<>();
         mFailedLocations = new HashMap<>();

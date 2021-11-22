@@ -91,34 +91,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void setupNavigationPhoto() {
         ImageView photoView = mHeaderView.findViewById(R.id.nav_header_photo);
         if (!mDatabase.isAnonymousUser()) {
-            Picasso.get()
-                    .load(mDatabase.getCurrentUser().getPhotoUrl())
-                    .resize(64, 64)
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            mDatabase.setUserIconBitmap(bitmap);
-                            photoView.setImageBitmap(bitmap);
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                        }
-                    });
-
+            Picasso.get().load(mDatabase.getCurrentUser().getPhotoUrl())
+                    .fit().into(photoView);
         } else {
-            Bitmap bmp = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bmp);
-
-            Drawable drawable = ContextCompat.getDrawable(this, R.mipmap.ic_launcher);
-            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawable.draw(canvas);
-            mDatabase.setUserIconBitmap(bmp);
-            photoView.setImageBitmap(bmp);
+            photoView.setImageResource(R.mipmap.ic_launcher);
         }
     }
 
