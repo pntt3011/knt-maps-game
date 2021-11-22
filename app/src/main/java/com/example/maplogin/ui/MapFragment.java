@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -26,11 +28,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-<<<<<<< HEAD
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-=======
->>>>>>> origin/tung
 
 import com.example.maplogin.utils.BottomSheetController;
 import com.example.maplogin.R;
@@ -38,11 +37,8 @@ import com.example.maplogin.databinding.FragmentMapBinding;
 import com.example.maplogin.struct.LocationInfo;
 import com.example.maplogin.utils.DatabaseAdapter;
 import com.example.maplogin.utils.MarkerController;
-<<<<<<< HEAD
 import com.example.maplogin.utils.NearestRecyclerAdapter;
-=======
 import com.example.maplogin.utils.RoutingController;
->>>>>>> origin/tung
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -53,16 +49,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.Task;
 
-<<<<<<< HEAD
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
-=======
->>>>>>> origin/tung
 import java.util.HashMap;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
@@ -86,6 +81,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public static final int FASTEST_UPDATE_INTERVAL = 500;
 
     private GoogleMap mMap;
+
+    MarkerController mMarkerController;
 
     private FusedLocationProviderClient fusedLocationProviderClient = null;
     private LocationRequest locationRequest = null;
@@ -137,11 +134,34 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 super.onLocationResult(locationResult);
                 // save the location
                 lastKnownLocation = locationResult.getLastLocation();
-                LatLng latlng = new LatLng(lastKnownLocation.getLatitude(),
-                        lastKnownLocation.getLongitude());
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(latlng));
+
+                // get list of marker
+                HashMap<String, Marker> markerHashMap = mMarkerController.getMarkerMap();
+                HashMap<String, Bitmap> markerIconHashMap = mMarkerController.getMarkerIconMap();
+                for (HashMap.Entry<String, Marker> entry : markerHashMap.entrySet()) {
+                    String key = entry.getKey();
+                    Marker marker = entry.getValue();
+
+                    updateMarkerIcon(marker, markerIconHashMap.get(key));
+                }
             }
         };
+    }
+
+    private void updateMarkerIcon(Marker marker, Bitmap bitmap) {
+        Bitmap bitmap_temp = bitmap.copy(bitmap.getConfig(), true);
+        Canvas canvas = new Canvas(bitmap_temp);
+
+        if (isNearUser(marker.getPosition())) {
+            // get exclamation drawable and draw to bitmap
+            Drawable exclamationDrawable = ContextCompat.getDrawable(mActivity, R.drawable.ic_exclamation);
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
+            exclamationDrawable.setBounds(width / 3, height / 4, width, height * 7 / 8);
+            exclamationDrawable.draw(canvas);
+        }
+
+        marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap_temp));
     }
 
     private void startSyncMap() {
@@ -171,6 +191,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         setupBottomSheet();
         setupMarkerController();
         setupMarkerListener();
+
+        startLocationUpdates();
 
         mRoutingController = new RoutingController(mActivity, mMap);
         mDatabase.startSync();
@@ -296,28 +318,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-<<<<<<< HEAD
-    // find routes from startLatLng to endLatLng with specific travelMode.
-    public void findRoutes(LatLng startLatLng, LatLng endLatLng, AbstractRouting.TravelMode travelMode)
-    {
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(startLatLng, DEFAULT_ZOOM));
-        if(startLatLng==null || endLatLng==null)
-            Toast.makeText(mActivity,"Unable to get location",Toast.LENGTH_LONG).show();
-        else {
-            Routing routing = new Routing.Builder()
-                    .travelMode(travelMode)
-                    .withListener(this)
-//                    .alternativeRoutes(true)
-                    .waypoints(startLatLng, endLatLng)
-                    .key("AIzaSyCQjSbW4ANku5u4VMlkIWtpp4m6yTi4EPA")
-                    .build();
-            routing.execute();
-        }
-    }
-
-
-=======
->>>>>>> origin/tung
     public boolean isNearUser(LatLng destLatLng) {
         Location dest = new Location(LocationManager.GPS_PROVIDER);
         dest.setLatitude(destLatLng.latitude);
@@ -333,11 +333,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void setupMarkerController() {
-        MarkerController markerController = new MarkerController(mMap);
+        mMarkerController = new MarkerController(mMap);
         mDatabase.setModifyLocationListener(
-                markerController.getLocationListener());
+                mMarkerController.getLocationListener());
         mDatabase.setModifyCaptureListener(
-                markerController.getCaptureListener());
+                mMarkerController.getCaptureListener());
     }
 
     private void setupMarkerListener() {

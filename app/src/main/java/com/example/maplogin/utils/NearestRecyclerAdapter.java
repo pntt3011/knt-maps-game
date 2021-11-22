@@ -31,7 +31,7 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
     @NonNull
     @Override
     public LocationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = layoutInflater.inflate(R.layout.nearest_location_item, parent, false);
+        View itemView = layoutInflater.inflate(R.layout.near_place_item, parent, false);
         return new LocationViewHolder(itemView, this);
     }
 
@@ -65,7 +65,7 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
 //            edtTitle.setTextColor(Color.RED);
         }
 
-        private void setName(String name) {
+        public void setName(String name) {
             nameView.setText(name);
         }
 

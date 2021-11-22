@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:text="@string/final_result"
+        android:text="Result"
         style="@style/titleTextStyle"
         app:layout_constraintBottom_toBottomOf="@+id/imageViewFinalResultQuiz"
         app:layout_constraintStart_toEndOf="@+id/imageViewFinalResultQuiz"
@@ -38,7 +38,7 @@
         android:textColor="@color/black"
         android:textStyle="bold"
         android:textSize="18sp"
-        tools:text="Well Done, kevin0078"
+        tools:text="Well done. Here is your result:"
         app:layout_constraintStart_toStartOf="@+id/imageViewFinalResultQuiz"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -48,7 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
-        android:text="@string/subject"
+        android:text="Location:"
         app:layout_constraintStart_toStartOf="@+id/tvWellDone"
         app:layout_constraintTop_toBottomOf="@+id/tvWellDone" />
 
@@ -57,7 +57,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/correct"
+        android:text="Correct:"
         style="@style/text_heading"
         app:layout_constraintStart_toStartOf="@+id/textView10"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
@@ -67,7 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/incorrect"
+        android:text="Incorrect:"
         style="@style/text_heading"
         app:layout_constraintStart_toStartOf="@+id/textView11"
         app:layout_constraintTop_toBottomOf="@+id/textView11" />
@@ -77,7 +77,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/earned"
+        android:text="Percentage:"
         style="@style/text_heading"
         app:layout_constraintStart_toStartOf="@+id/textView12"
         app:layout_constraintTop_toBottomOf="@+id/textView12" />
@@ -87,7 +87,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/overall_points"
+        android:text="Result:"
         style="@style/text_heading"
         app:layout_constraintStart_toStartOf="@+id/textView13"
         app:layout_constraintTop_toBottomOf="@+id/textView13" />
@@ -97,7 +97,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/date"
+        android:text="Date:"
         style="@style/text_heading"
         app:layout_constraintStart_toStartOf="@+id/textView14"
         app:layout_constraintTop_toBottomOf="@+id/textView14" />
@@ -110,7 +110,7 @@
         tools:text="Math"
         style="@style/text_value_heading"
         app:layout_constraintBottom_toBottomOf="@+id/textView10"
-        app:layout_constraintStart_toEndOf="@+id/textView14"
+        app:layout_constraintStart_toEndOf="@+id/textView13"
         app:layout_constraintTop_toTopOf="@+id/textView10" />
 
     <com.google.android.material.button.MaterialButton
@@ -122,7 +122,7 @@
         android:layout_marginBottom="40dp"
         android:imeOptions="actionDone"
         android:singleLine="true"
-        android:text="@string/start_again"
+        android:text="BACK"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
