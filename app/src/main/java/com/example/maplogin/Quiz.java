@@ -21,6 +21,7 @@ import com.example.maplogin.utils.DatabaseAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -32,8 +33,8 @@ public class Quiz extends AppCompatActivity {
     private Button btnNext;
     private RadioGroup radioGroup;
     private RadioButton radioButton1, radioButton2, radioButton3, radioButton4;
-    private Map<String, QuestionInfo> mQuestionMap;
-    private List<String> questions;
+    private HashMap<String, QuestionInfo> mQuestionMap;
+    private ArrayList<String> questions;
     private int correctQuestion = 0;
     private ImageView img;
 
@@ -42,22 +43,20 @@ public class Quiz extends AppCompatActivity {
     private  long timeLeftInMillis;
     private TextView textViewCountDown;
 
+    private String id;
+    private LocationInfo info;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
 
         Intent intent = getIntent();
-        String id = intent.getStringExtra(Constants.LOCATION_ID);
-
-        LocationInfo info = DatabaseAdapter.getInstance().getAllLocations().getOrDefault(id, null);
-        mQuestionMap = DatabaseAdapter.getInstance().getAllQuestions();
-
-        if (info != null) {
-            questions = new ArrayList<>(info.questions);
-        } else {
-            finish();
-        }
+        id = intent.getStringExtra(Constants.LOCATION_ID);
+        info = DatabaseAdapter.getInstance().getAllLocations().getOrDefault(id, null);
+        mQuestionMap = (HashMap<String, QuestionInfo>)
+                DatabaseAdapter.getInstance().getAllQuestions();
+        questions = new ArrayList<>(info.questions);
 
         tvQuestion = findViewById(R.id.textView78);
         tvQuestionNumber = findViewById(R.id.textView18);
@@ -76,47 +75,56 @@ public class Quiz extends AppCompatActivity {
                 view -> finish());
 
         findViewById(R.id.btnNextQuestionLiteratureAndGeography)
-            .setOnClickListener(view -> {
-                countDownTimer.cancel();
+            .setOnClickListener(view -> loadNext());
 
-                int radioButtonID = radioGroup.getCheckedRadioButtonId();
-                View radioButton = radioGroup.findViewById(radioButtonID);
-                int userAnswer = radioGroup.indexOfChild(radioButton);
-                Long correctAnswer = Objects.requireNonNull(
-                        mQuestionMap.get(questions.get(currentQuestionIndex))).answer;
-                boolean answer = (userAnswer == (correctAnswer - 1));
+        displayData();
+    }
 
-                if (answer) {
-                    correctQuestion++;
-                }
-                currentQuestionIndex++;
+    private void loadNext() {
+        countDownTimer.cancel();
 
-                if (btnNext.getText().toString().equals("NEXT")) {
-                    int i = 0;
-                    QuestionInfo questionInfo = getCurrentQuestionInfo();
-                    displayNextQuestions(questionInfo);
+        if (isCorrectAnswer()) {
+            correctQuestion++;
+        }
 
-                } else {
-                    Log.e("QUIZ", "FINISH");
-                    Intent intentResult = new Intent(Quiz.this, FinalResultActivity.class);
-                    intentResult.putExtra(Constants.LOCATION_ID, id);
-                    intentResult.putExtra(Constants.SUBJECT, info.name);
-                    intentResult.putExtra(Constants.CORRECT,correctQuestion);
-                    intentResult.putExtra(Constants.INCORRECT,info.questions.size() - correctQuestion);
-                    intentResult.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intentResult);
-                    finish();
-                }
-        });
+        currentQuestionIndex++;
 
-        displayData(getCurrentQuestionInfo());
+        if (btnNext.getText().equals("NEXT")) {
+            displayNextQuestions();
+
+        } else {
+            loadResult();
+        }
+    }
+
+    private boolean isCorrectAnswer() {
+        int radioButtonID = radioGroup.getCheckedRadioButtonId();
+        View radioButton = radioGroup.findViewById(radioButtonID);
+        int userAnswer = radioGroup.indexOfChild(radioButton);
+        Long correctAnswer = Objects.requireNonNull(
+                mQuestionMap.get(questions.get(currentQuestionIndex))).answer;
+        return (userAnswer == (correctAnswer - 1));
+    }
+
+    private void loadResult() {
+        Log.e("QUIZ", "FINISH");
+        Intent intentResult = new Intent(Quiz.this, FinalResultActivity.class);
+        intentResult.putExtra(Constants.LOCATION_ID, id);
+        intentResult.putExtra(Constants.SUBJECT, info.name);
+        intentResult.putExtra(Constants.CORRECT,correctQuestion);
+        intentResult.putExtra(Constants.INCORRECT,info.questions.size() - correctQuestion);
+        intentResult.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intentResult);
+        finish();
     }
 
     private QuestionInfo getCurrentQuestionInfo() {
-        return mQuestionMap.get(questions.get(currentQuestionIndex));
+        String questionId = questions.get(currentQuestionIndex);
+        return mQuestionMap.get(questionId);
     }
 
-    private void displayNextQuestions(QuestionInfo info) {
+    private void displayNextQuestions() {
+        QuestionInfo info = getCurrentQuestionInfo();
         setAnswersToRadioButton(info);
         tvQuestion.setText(info.content);
         tvQuestionNumber.setText("Current Question: " + (currentQuestionIndex + 1));
@@ -126,7 +134,8 @@ public class Quiz extends AppCompatActivity {
         }
     }
 
-    private void displayData(QuestionInfo info) {
+    private void displayData() {
+        QuestionInfo info = getCurrentQuestionInfo();
         tvQuestion.setText(info.content);
         tvQuestionNumber.setText("Current Question: " + (currentQuestionIndex + 1));
         setAnswersToRadioButton(info);

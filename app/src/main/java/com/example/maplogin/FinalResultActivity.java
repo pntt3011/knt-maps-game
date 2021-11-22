@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.example.maplogin.utils.Constants;
+import com.example.maplogin.utils.DatabaseAdapter;
 
 public class FinalResultActivity extends AppCompatActivity {
 
@@ -19,6 +20,7 @@ public class FinalResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_final_result);
 
         Intent intent = getIntent();
+        String id = intent.getStringExtra(Constants.LOCATION_ID);
         int correctAnswer = intent.getIntExtra(Constants.CORRECT, 0);
         int incorrectAnswer = intent.getIntExtra(Constants.INCORRECT, 0);
         String locationName = intent.getStringExtra(Constants.SUBJECT);
@@ -42,16 +44,22 @@ public class FinalResultActivity extends AppCompatActivity {
             finish();
         });
 
-        displayData(correctAnswer, incorrectAnswer, locationName);
+        displayData(id, correctAnswer, incorrectAnswer, locationName);
     }
 
-    private void displayData(int correctAnswer, int incorrectAnswer, String locationName) {
+    private void displayData(String id, int correctAnswer, int incorrectAnswer, String locationName) {
         int percentage = 100 * correctAnswer / (correctAnswer + incorrectAnswer);
         boolean isPassed = percentage >= 80;
         String result =  isPassed ? "Passed" : "Failed";
         String description = isPassed ? "Excellent. Now you can share the result to your friends.":
                 "Discover the location and try again next time.";
         int color = isPassed ? Color.GREEN : Color.RED;
+
+        if (isPassed) {
+            DatabaseAdapter.getInstance().addCapturedLocation(id, (long) correctAnswer);
+        } else {
+            DatabaseAdapter.getInstance().addFailedLocation(id, (long) correctAnswer);
+        }
 
         tvWellDone.setText(description);
         tvSubject.setText(locationName);
