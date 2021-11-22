@@ -2,6 +2,7 @@ package com.example.maplogin.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
@@ -20,6 +21,7 @@ public class PicassoMarker implements Target {
                          HashMap<String, Bitmap> markerIconMap,
                          HashSet<PicassoMarker> set) {
         mMarker = marker;
+        Log.e("PicassoMarker", marker.getTag().toString());
         mPicassoMarkerSet = set;
         mMarkerIconMap = markerIconMap;
     }
@@ -42,6 +44,7 @@ public class PicassoMarker implements Target {
     @Override
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
         mMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+        Log.e("onBitmapLoaded", mMarker.getTag().toString());
         MarkerController.Tag t = (MarkerController.Tag) mMarker.getTag();
         assert t != null;
         mMarkerIconMap.put(t.id, bitmap);
