@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/bottom_sheet_peek_height"
+    android:background="@drawable/background_user_info"
     android:paddingStart="16dp"
     android:paddingTop="8dp"
     android:paddingEnd="16dp"
@@ -11,7 +12,7 @@
     android:layout_marginRight="10dp">
 
     <ImageView
-        android:id="@+id/iconMarker"
+        android:id="@+id/iconLocation"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginStart="3dp"
@@ -21,7 +22,7 @@
         android:src="@drawable/background" />
 
     <TextView
-        android:id="@+id/bottom_sheet_title"
+        android:id="@+id/titleLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/point"
@@ -41,7 +42,7 @@
         android:layout_marginTop="2dp"
         android:layout_marginEnd="2dp"
         android:layout_marginBottom="2dp"
-        android:background="@drawable/ic_point_red"
+        android:background="@drawable/ic_point_green"
         android:fontFamily="@font/open_sans_semibold"
         android:paddingRight="7dp"
         android:paddingTop="2dp"
