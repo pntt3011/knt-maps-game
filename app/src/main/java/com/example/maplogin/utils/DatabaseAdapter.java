@@ -1,15 +1,19 @@
 package com.example.maplogin.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.example.maplogin.FirebaseLogin;
 import com.example.maplogin.R;
@@ -79,17 +83,16 @@ public class DatabaseAdapter {
     public static DatabaseAdapter getInstance() {
         if (instance == null) {
             instance = new DatabaseAdapter();
-            instance.updateInfo();
         }
         return instance;
     }
 
     // Use when change account
-    public static void updateUserInfo() {
+    public static void updateUserInfo(Activity activity) {
         if (instance == null) {
             instance = new DatabaseAdapter();
         }
-        instance.updateInfo();
+        instance.updateInfo(activity);
     }
 
     // Should be used before startSync
@@ -185,11 +188,11 @@ public class DatabaseAdapter {
     // -----------------------Private methods---------------------------------
     private DatabaseAdapter() { }
 
-    private void updateInfo() {
+    private void updateInfo(Activity activity) {
         mDatabase = FirebaseDatabase.getInstance(DATABASE_URI);
         mUid = getCurrentUserId();
-        mUserIcon = BitmapFactory.decodeResource(null, R.mipmap.ic_launcher_round);
-        loadUserIcon();
+        mUserIcon = null;
+        loadUserIcon(activity);
 
         mAllLocations = new HashMap<>();
         mFailedLocations = new HashMap<>();
@@ -200,20 +203,36 @@ public class DatabaseAdapter {
         mLocationListeners = new ArrayList<>();
     }
 
-    private void loadUserIcon() {
-        Picasso.get()
-                .load(getCurrentUser().getPhotoUrl())
-                .resize(64, 64)
-                .into(new Target() {
-                    @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        mUserIcon = bitmap;
-                    }
+    private void loadUserIcon(Activity activity) {
+        if (getCurrentUser().getPhotoUrl() != null) {
+            Picasso.get()
+                    .load(getCurrentUser().getPhotoUrl())
+                    .resize(64, 64)
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            mUserIcon = bitmap;
+                        }
 
-                    @Override
-                    public void onBitmapFailed(Exception e, Drawable errorDrawable) { }
+                        @Override
+                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                        }
 
-                    @Override public void onPrepareLoad(Drawable placeHolderDrawable) { }
-                });
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        }
+                    });
+
+        } else {
+            Bitmap bmp = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bmp);
+
+            Drawable drawable = ContextCompat.getDrawable(activity, R.mipmap.ic_launcher);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            mUserIcon = bmp;
+            String a = "";
+        }
     }
 
     private String getCurrentUserId() {

@@ -97,9 +97,10 @@ public class Quiz extends AppCompatActivity {
 
                 } else{
                     Intent intentResult = new Intent(Quiz.this,FinalResultActivity.class);
+                    intentResult.putExtra(Constants.LOCATION_ID, id);
                     intentResult.putExtra(Constants.SUBJECT, info.name);
                     intentResult.putExtra(Constants.CORRECT,correctQuestion);
-                    intentResult.putExtra(Constants.INCORRECT,Constants.QUESTION_SHOWING - correctQuestion);
+                    intentResult.putExtra(Constants.INCORRECT,info.questions.size() - correctQuestion);
                     intentResult.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intentResult);
                     finish();
@@ -170,7 +171,6 @@ public class Quiz extends AppCompatActivity {
         radioButton4.setText(info.choice4);
 
         Picasso.get().load(info.imageUrl).fit()
-                .placeholder(R.mipmap.ic_launcher_round)
                 .into((ImageView) findViewById(R.id.imageQuiz));
 
         timeLeftInMillis = COUNTDOWN_IN_MILLIS;

@@ -169,7 +169,6 @@ public class MarkerController {
 
             // Load icon async and show it
             Picasso.get().load(iconUrl)
-                    .placeholder(R.mipmap.ic_launcher_round)
                     .resize(64,64)
                     .into(picassoMarker);
         }
