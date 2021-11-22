@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -49,14 +50,11 @@ public class Quiz extends AppCompatActivity {
         Intent intent = getIntent();
         String id = intent.getStringExtra(Constants.LOCATION_ID);
 
-        TextView tvTitle = findViewById(R.id.textView26);
         LocationInfo info = DatabaseAdapter.getInstance().getAllLocations().getOrDefault(id, null);
         mQuestionMap = DatabaseAdapter.getInstance().getAllQuestions();
 
         if (info != null) {
-            tvTitle.setText(info.name);
             questions = new ArrayList<>(info.questions);
-
         } else {
             finish();
         }
@@ -74,29 +72,33 @@ public class Quiz extends AppCompatActivity {
         img = findViewById((R.id.imageQuiz));
         textViewCountDown = findViewById(R.id.textViewCountDown);
 
+        findViewById(R.id.imageViewStartQuizGeographyOrLiterature).setOnClickListener(
+                view -> finish());
+
         findViewById(R.id.btnNextQuestionLiteratureAndGeography)
             .setOnClickListener(view -> {
                 countDownTimer.cancel();
+
                 int radioButtonID = radioGroup.getCheckedRadioButtonId();
                 View radioButton = radioGroup.findViewById(radioButtonID);
                 int userAnswer = radioGroup.indexOfChild(radioButton);
-
                 Long correctAnswer = Objects.requireNonNull(
                         mQuestionMap.get(questions.get(currentQuestionIndex))).answer;
-
                 boolean answer = (userAnswer == (correctAnswer - 1));
 
                 if (answer) {
                     correctQuestion++;
                 }
-
                 currentQuestionIndex++;
 
-                if (btnNext.getText().equals("Next")){
-                    displayNextQuestions(getQuestionInfo(currentQuestionIndex));
+                if (btnNext.getText().toString().equals("NEXT")) {
+                    int i = 0;
+                    QuestionInfo questionInfo = getCurrentQuestionInfo();
+                    displayNextQuestions(questionInfo);
 
-                } else{
-                    Intent intentResult = new Intent(Quiz.this,FinalResultActivity.class);
+                } else {
+                    Log.e("QUIZ", "FINISH");
+                    Intent intentResult = new Intent(Quiz.this, FinalResultActivity.class);
                     intentResult.putExtra(Constants.LOCATION_ID, id);
                     intentResult.putExtra(Constants.SUBJECT, info.name);
                     intentResult.putExtra(Constants.CORRECT,correctQuestion);
@@ -107,28 +109,25 @@ public class Quiz extends AppCompatActivity {
                 }
         });
 
-        findViewById(R.id.imageViewStartQuizGeographyOrLiterature).setOnClickListener(
-                view -> finish());
-
-        displayData(getQuestionInfo(currentQuestionIndex));
+        displayData(getCurrentQuestionInfo());
     }
 
-    private QuestionInfo getQuestionInfo(int idx) {
-        return mQuestionMap.get(questions.get(idx));
+    private QuestionInfo getCurrentQuestionInfo() {
+        return mQuestionMap.get(questions.get(currentQuestionIndex));
     }
 
     private void displayNextQuestions(QuestionInfo info) {
         setAnswersToRadioButton(info);
-        tvQuestion.setText(questions.get(currentQuestionIndex));
+        tvQuestion.setText(info.content);
         tvQuestionNumber.setText("Current Question: " + (currentQuestionIndex + 1));
 
         if (currentQuestionIndex == questions.size() - 1){
-            btnNext.setText("Finish");
+            btnNext.setText("FINISH");
         }
     }
 
     private void displayData(QuestionInfo info) {
-        tvQuestion.setText(questions.get(currentQuestionIndex));
+        tvQuestion.setText(info.content);
         tvQuestionNumber.setText("Current Question: " + (currentQuestionIndex + 1));
         setAnswersToRadioButton(info);
     }

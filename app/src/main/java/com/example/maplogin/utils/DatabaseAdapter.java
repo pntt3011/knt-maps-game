@@ -4,11 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -95,6 +94,39 @@ public class DatabaseAdapter {
         instance.updateInfo(activity);
     }
 
+    public void loadUserIcon(Activity activity, ImageView iv) {
+        if (getCurrentUser().getPhotoUrl() != null) {
+            Picasso.get()
+                    .load(getCurrentUser().getPhotoUrl())
+                    .resize(64, 64)
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            mUserIcon = bitmap;
+                            iv.setImageBitmap(mUserIcon);
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        }
+                    });
+
+        } else {
+            Bitmap bmp = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bmp);
+
+            Drawable drawable = ContextCompat.getDrawable(activity, R.mipmap.ic_launcher);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            mUserIcon = bmp;
+            iv.setImageBitmap(mUserIcon);
+        }
+    }
+
     // Should be used before startSync
     public void setModifyCaptureListener(OnModifyCaptureListener listener) {
         mCaptureListeners.add(listener);
@@ -130,11 +162,30 @@ public class DatabaseAdapter {
     }
 
     public void addCapturedLocation(String id, Long point) {
+        if (mCapturedLocations.containsKey(id))
+            if (mCapturedLocations.get(id) >= point)
+                return;
+
+        if (mFailedLocations.containsKey(id))
+            removeFailedLocation(id);
+
         DatabaseReference capturedMarkersRef = getCapturedMarkerReference();
         capturedMarkersRef.child(id).setValue(point);
     }
 
+    private void removeFailedLocation(String id) {
+        DatabaseReference failedMarkersRef = getFailedMarkerReference();
+        failedMarkersRef.child(id).removeValue();
+    }
+
     public void addFailedLocation(String id, Long point) {
+        if (mFailedLocations.containsKey(id))
+            if (mFailedLocations.get(id) >= point)
+                return;
+
+        if (mCapturedLocations.containsKey(id))
+            return;
+
         DatabaseReference failedMarkersRef = getFailedMarkerReference();
         failedMarkersRef.child(id).setValue(point);
     }
@@ -192,7 +243,6 @@ public class DatabaseAdapter {
         mDatabase = FirebaseDatabase.getInstance(DATABASE_URI);
         mUid = getCurrentUserId();
         mUserIcon = null;
-        loadUserIcon(activity);
 
         mAllLocations = new HashMap<>();
         mFailedLocations = new HashMap<>();
@@ -201,38 +251,6 @@ public class DatabaseAdapter {
 
         mCaptureListeners = new ArrayList<>();
         mLocationListeners = new ArrayList<>();
-    }
-
-    private void loadUserIcon(Activity activity) {
-        if (getCurrentUser().getPhotoUrl() != null) {
-            Picasso.get()
-                    .load(getCurrentUser().getPhotoUrl())
-                    .resize(64, 64)
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            mUserIcon = bitmap;
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                        }
-                    });
-
-        } else {
-            Bitmap bmp = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bmp);
-
-            Drawable drawable = ContextCompat.getDrawable(activity, R.mipmap.ic_launcher);
-            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawable.draw(canvas);
-            mUserIcon = bmp;
-            String a = "";
-        }
     }
 
     private String getCurrentUserId() {

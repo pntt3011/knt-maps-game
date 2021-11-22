@@ -64,6 +64,7 @@ import java.util.Map;
 public class MapFragment extends Fragment implements OnMapReadyCallback {
     public static final int MIN_ZOOM = 13;
     public static final int MAX_ZOOM = 17;
+    public static final int DEFAULT_ZOOM = 15;
     public static final double VALID_RANGE = 500;
 
     // Fragment information
@@ -89,7 +90,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private LocationRequest locationRequest = null;
     private LocationCallback locationCallback = null;
 
-    private static final int DEFAULT_ZOOM = 15;
     private boolean locationPermissionGranted;
 
     private Location lastKnownLocation;
