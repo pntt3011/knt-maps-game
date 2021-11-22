@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_dialog_share"
+    tools:context=".ui.UserFragment"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/background_share_screen"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/test" />
+
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="@font/raleway_extrabold"
+            android:text="Khôi Nguyên Nguyễn Ngọc"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/sizeHeader" />
+
+        <ImageView
+            android:id="@+id/riibbon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/ribbon_success" />
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/mr_dafoe"
+            android:text="Congratulation"
+            android:textColor="@color/red_medium"
+            android:textSize="35sp" />
+
+        <TextView
+            android:id="@+id/text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/open_sans"
+            android:text="You have successfully discovered a new place:"
+            android:textColor="@color/gray_bold"
+            android:textSize="@dimen/sizePhoneText" />
+
+        <TextView
+            android:id="@+id/text3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/open_sans_semibold"
+            android:text="Trường Đại học KHTN, ĐHQG-HCM"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sizePhoneText" />
+
+        <TextView
+            android:id="@+id/text4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:fontFamily="@font/open_sans"
+            android:text="with"
+            android:textColor="@color/gray_bold"
+            android:textSize="@dimen/sizePhoneText" />
+
+        <TextView
+            android:id="@+id/point"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/open_sans_semibold"
+            android:textAlignment="viewEnd"
+            android:paddingTop="2dp"
+            android:paddingRight="7dp"
+            android:text="90pt"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sizePhoneText"
+            android:background="@drawable/ic_point_green" />
+
+        <ImageButton
+            android:id="@+id/bs_share_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="20dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_button_share_red" />
+
+    </LinearLayout>
+
+
+</LinearLayout>
