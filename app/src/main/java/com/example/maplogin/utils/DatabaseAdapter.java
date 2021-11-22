@@ -4,11 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -93,6 +92,39 @@ public class DatabaseAdapter {
             instance = new DatabaseAdapter();
         }
         instance.updateInfo(activity);
+    }
+
+    public void loadUserIcon(Activity activity, ImageView iv) {
+        if (getCurrentUser().getPhotoUrl() != null) {
+            Picasso.get()
+                    .load(getCurrentUser().getPhotoUrl())
+                    .resize(64, 64)
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            mUserIcon = bitmap;
+                            iv.setImageBitmap(mUserIcon);
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        }
+                    });
+
+        } else {
+            Bitmap bmp = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bmp);
+
+            Drawable drawable = ContextCompat.getDrawable(activity, R.mipmap.ic_launcher);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            mUserIcon = bmp;
+            iv.setImageBitmap(mUserIcon);
+        }
     }
 
     // Should be used before startSync
@@ -211,7 +243,6 @@ public class DatabaseAdapter {
         mDatabase = FirebaseDatabase.getInstance(DATABASE_URI);
         mUid = getCurrentUserId();
         mUserIcon = null;
-        loadUserIcon(activity);
 
         mAllLocations = new HashMap<>();
         mFailedLocations = new HashMap<>();
@@ -220,37 +251,6 @@ public class DatabaseAdapter {
 
         mCaptureListeners = new ArrayList<>();
         mLocationListeners = new ArrayList<>();
-    }
-
-    private void loadUserIcon(Activity activity) {
-        if (getCurrentUser().getPhotoUrl() != null) {
-            Picasso.get()
-                    .load(getCurrentUser().getPhotoUrl())
-                    .resize(64, 64)
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            mUserIcon = bitmap;
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                        }
-                    });
-
-        } else {
-            Bitmap bmp = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bmp);
-
-            Drawable drawable = ContextCompat.getDrawable(activity, R.mipmap.ic_launcher);
-            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawable.draw(canvas);
-            mUserIcon = bmp;
-        }
     }
 
     private String getCurrentUserId() {
