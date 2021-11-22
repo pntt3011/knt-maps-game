@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.maplogin.struct.LocationInfo;
 import com.example.maplogin.struct.QuestionInfo;
@@ -73,6 +72,9 @@ public class Quiz extends AppCompatActivity {
         img = findViewById((R.id.imageQuiz));
         textViewCountDown = findViewById(R.id.textViewCountDown);
 
+        findViewById(R.id.imageViewStartQuizGeographyOrLiterature).setOnClickListener(
+                view -> finish());
+
         findViewById(R.id.btnNextQuestionLiteratureAndGeography)
             .setOnClickListener(view -> {
                 countDownTimer.cancel();
@@ -82,20 +84,20 @@ public class Quiz extends AppCompatActivity {
                 int userAnswer = radioGroup.indexOfChild(radioButton);
                 Long correctAnswer = Objects.requireNonNull(
                         mQuestionMap.get(questions.get(currentQuestionIndex))).answer;
-
                 boolean answer = (userAnswer == (correctAnswer - 1));
 
                 if (answer) {
                     correctQuestion++;
                 }
-
                 currentQuestionIndex++;
 
                 if (btnNext.getText().toString().equals("NEXT")) {
-                    QuestionInfo questionInfo = getQuestionInfo(currentQuestionIndex);
+                    int i = 0;
+                    QuestionInfo questionInfo = getCurrentQuestionInfo();
                     displayNextQuestions(questionInfo);
 
                 } else {
+                    Log.e("QUIZ", "FINISH");
                     Intent intentResult = new Intent(Quiz.this, FinalResultActivity.class);
                     intentResult.putExtra(Constants.LOCATION_ID, id);
                     intentResult.putExtra(Constants.SUBJECT, info.name);
@@ -107,14 +109,11 @@ public class Quiz extends AppCompatActivity {
                 }
         });
 
-        findViewById(R.id.imageViewStartQuizGeographyOrLiterature).setOnClickListener(
-                view -> finish());
-
-        displayData(getQuestionInfo(currentQuestionIndex));
+        displayData(getCurrentQuestionInfo());
     }
 
-    private QuestionInfo getQuestionInfo(int idx) {
-        return mQuestionMap.get(questions.get(idx));
+    private QuestionInfo getCurrentQuestionInfo() {
+        return mQuestionMap.get(questions.get(currentQuestionIndex));
     }
 
     private void displayNextQuestions(QuestionInfo info) {

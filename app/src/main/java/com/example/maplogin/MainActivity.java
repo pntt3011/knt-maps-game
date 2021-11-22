@@ -85,12 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void setupNavigationPhoto() {
         ImageView photoView = mHeaderView.findViewById(R.id.nav_header_photo);
-        if (!mDatabase.isAnonymousUser()) {
-            Picasso.get().load(mDatabase.getCurrentUser().getPhotoUrl())
-                    .resize(64, 64).into(photoView);
-        } else {
-             photoView.setImageResource(R.mipmap.ic_launcher);
-        }
+        mDatabase.loadUserIcon(this, photoView);
     }
 
     private void setupNavigationName() {
