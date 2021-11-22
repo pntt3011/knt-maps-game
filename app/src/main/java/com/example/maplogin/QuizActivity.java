@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.example.maplogin.utils.Constants;
 import com.example.maplogin.utils.DatabaseAdapter;
 
 import java.util.ArrayList;
@@ -19,11 +20,10 @@ public class QuizActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz_main);
 
-        ArrayList<String> questionIds = getIntent().getStringArrayListExtra("QUESTION_IDS");
         TextView tvUsername = findViewById(R.id.tvUsernameHome);
         CardView cvStartQuiz = findViewById(R.id.cvStartQuiz);
         CardView cvRule = findViewById(R.id.cvRule);
-        String id = getIntent().getStringExtra("LOCATION_ID");
+        String id = getIntent().getStringExtra(Constants.LOCATION_ID);
         DatabaseAdapter db = DatabaseAdapter.getInstance();
         String locationName = Objects.requireNonNull(db.getAllLocations().get(id)).name;
 
@@ -33,8 +33,7 @@ public class QuizActivity extends AppCompatActivity {
 
         cvStartQuiz.setOnClickListener(view -> {
             Intent intent = new Intent(QuizActivity.this, Quiz.class);
-            intent.putStringArrayListExtra("QUESTION_IDS", questionIds);
-            intent.putExtra("LOCATION_ID", id);
+            intent.putExtra(Constants.LOCATION_ID, id);
             startActivity(intent);
         });
 

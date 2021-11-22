@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.maplogin.struct.LocationInfo;
 import com.example.maplogin.struct.QuestionInfo;
+import com.example.maplogin.utils.Constants;
 import com.example.maplogin.utils.DatabaseAdapter;
 import com.squareup.picasso.Picasso;
 
@@ -46,7 +47,7 @@ public class Quiz extends AppCompatActivity {
         setContentView(R.layout.activity_quiz);
 
         Intent intent = getIntent();
-        String id = intent.getStringExtra("LOCATION_ID");
+        String id = intent.getStringExtra(Constants.LOCATION_ID);
 
         TextView tvTitle = findViewById(R.id.textView26);
         LocationInfo info = DatabaseAdapter.getInstance().getAllLocations().getOrDefault(id, null);
@@ -96,6 +97,9 @@ public class Quiz extends AppCompatActivity {
 
                 } else{
                     Intent intentResult = new Intent(Quiz.this,FinalResultActivity.class);
+                    intentResult.putExtra(Constants.SUBJECT, info.name);
+                    intentResult.putExtra(Constants.CORRECT,correctQuestion);
+                    intentResult.putExtra(Constants.INCORRECT,Constants.QUESTION_SHOWING - correctQuestion);
                     intentResult.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intentResult);
                     finish();
@@ -125,7 +129,6 @@ public class Quiz extends AppCompatActivity {
     private void displayData(QuestionInfo info) {
         tvQuestion.setText(questions.get(currentQuestionIndex));
         tvQuestionNumber.setText("Current Question: " + (currentQuestionIndex + 1));
-        Picasso.get().load("https://res.cloudinary.com/locobee-cdn/image/upload/v1548641354/doraemon_ghaj08.jpg").resize(180,120).into(img);
         setAnswersToRadioButton(info);
     }
 
@@ -166,7 +169,9 @@ public class Quiz extends AppCompatActivity {
         radioButton3.setText(info.choice3);
         radioButton4.setText(info.choice4);
 
-        Picasso.get().load(info.imageUrl).fit().into((ImageView) findViewById(R.id.imageQuiz));
+        Picasso.get().load(info.imageUrl).fit()
+                .placeholder(R.mipmap.ic_launcher_round)
+                .into((ImageView) findViewById(R.id.imageQuiz));
 
         timeLeftInMillis = COUNTDOWN_IN_MILLIS;
         startCountDown();
