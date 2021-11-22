@@ -1,6 +1,9 @@
 package com.example.maplogin;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,12 +19,14 @@ import com.google.android.material.navigation.NavigationView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.maplogin.databinding.ActivityNavigationDrawerBinding;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Handle navigation drawer view
@@ -85,7 +90,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void setupNavigationPhoto() {
         ImageView photoView = mHeaderView.findViewById(R.id.nav_header_photo);
-        mDatabase.loadUserIcon(this, photoView);
+        if (!mDatabase.isAnonymousUser()) {
+            Picasso.get()
+                    .load(mDatabase.getCurrentUser().getPhotoUrl())
+                    .resize(64, 64)
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            mDatabase.setUserIconBitmap(bitmap);
+                            photoView.setImageBitmap(bitmap);
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        }
+                    });
+
+        } else {
+            Bitmap bmp = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bmp);
+
+            Drawable drawable = ContextCompat.getDrawable(this, R.mipmap.ic_launcher);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            mDatabase.setUserIconBitmap(bmp);
+            photoView.setImageBitmap(bmp);
+        }
     }
 
     private void setupNavigationName() {

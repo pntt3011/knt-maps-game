@@ -94,37 +94,9 @@ public class DatabaseAdapter {
         instance.updateInfo(activity);
     }
 
-    public void loadUserIcon(Activity activity, ImageView iv) {
-        if (getCurrentUser().getPhotoUrl() != null) {
-            Picasso.get()
-                    .load(getCurrentUser().getPhotoUrl())
-                    .resize(64, 64)
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            mUserIcon = bitmap;
-                            iv.setImageBitmap(mUserIcon);
-                        }
+    public void setUserIconBitmap(Bitmap bitmap) {
+        mUserIcon = bitmap;
 
-                        @Override
-                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                        }
-                    });
-
-        } else {
-            Bitmap bmp = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bmp);
-
-            Drawable drawable = ContextCompat.getDrawable(activity, R.mipmap.ic_launcher);
-            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawable.draw(canvas);
-            mUserIcon = bmp;
-            iv.setImageBitmap(mUserIcon);
-        }
     }
 
     // Should be used before startSync
