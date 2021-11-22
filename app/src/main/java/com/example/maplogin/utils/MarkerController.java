@@ -3,6 +3,7 @@ package com.example.maplogin.utils;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.example.maplogin.R;
 import com.example.maplogin.struct.LocationInfo;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -75,7 +76,24 @@ public class MarkerController {
             }
 
             @Override
-            public void change(String id, LocationInfo marker) { }
+            public void change(String id, LocationInfo locationInfo) {
+                if (DatabaseAdapter
+                        .getInstance()
+                        .getCapturedLocations()
+                        .containsKey(id)) {
+
+                    addMarker(id, locationInfo.latitude,
+                            locationInfo.longitude,
+                            locationInfo.iconUrl,
+                            CAPTURE_OPACITY);
+
+                } else {
+                    addMarker(id, locationInfo.latitude,
+                            locationInfo.longitude,
+                            locationInfo.iconUrl,
+                            NULL_OPACITY);
+                }
+            }
 
             @Override
             public void remove(String id) {
@@ -132,7 +150,10 @@ public class MarkerController {
             mMarkerMap.put(id, marker);
 
             // Load icon async and show it
-            Picasso.get().load(iconUrl).resize(64,64).into(picassoMarker);
+            Picasso.get().load(iconUrl)
+                    .placeholder(R.mipmap.ic_launcher_round)
+                    .resize(64,64)
+                    .into(picassoMarker);
         }
     }
 
