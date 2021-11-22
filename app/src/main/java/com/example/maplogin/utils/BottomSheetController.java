@@ -109,35 +109,11 @@ public class BottomSheetController {
         });
     }
 
-    private void openDialogShare() {
-        final Dialog shareDialog = new Dialog(mActivity);
-        shareDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        shareDialog.setContentView(R.layout.share_screen);
-
-        Window window = shareDialog.getWindow();
-        if(window == null){
-            return;
-        }
-
-        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        shareDialog.setCancelable(true);
-
-        TextView shareLocation = shareDialog.findViewById(R.id.location);
-        TextView sharePoint = shareDialog.findViewById(R.id.point);
-        TextView location = (TextView)mActivity.findViewById(R.id.bottom_sheet_title);
-        TextView point = (TextView)mActivity.findViewById(R.id.point);
-
-        shareLocation.setText(location.getText());
-        sharePoint.setText(point.getText() + "pt");
-        shareDialog.show();
-    }
-
     private void setupShareButton(String id) {
         ImageButton shareButton = mActivity.findViewById(R.id.bs_share_button);
         shareButton.setOnClickListener(v -> {
             if (isCaptured(id)) {
-                ShareHelper.shareScreenshot(mActivity);
+                ShareHelper.openShareDialog(mActivity);
             } else {
                 Toast.makeText(mActivity, "You must pass the check-in quiz first." ,
                         Toast.LENGTH_SHORT).show();
@@ -218,49 +194,13 @@ public class BottomSheetController {
     }
 
     private void changeLocationImages(ArrayList<String> imageUrls) {
-        LinearLayout layout = mBottomSheet.findViewById(R.id.location_images);
-        layout.removeAllViews();
-        AppCompatImageView imageView =  new AppCompatImageView(mBottomSheet.getContext());
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        layoutParams.gravity = Gravity.CENTER;
-        layoutParams.weight = 1;
+        int[] ids = new int[]{R.id.bs_image_1, R.id.bs_image_2, R.id.bs_image_3};
+        int size = Integer.min(imageUrls.size(), ids.length);
 
-        imageView.setLayoutParams(layoutParams);
-        imageView.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.background));
-        layout.addView(imageView);
-
-
-//        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-//                200,
-//                LinearLayout.LayoutParams.MATCH_PARENT);
-//        params.gravity= Gravity.CENTER_HORIZONTAL;
-//
-//        Picasso.get().setLoggingEnabled(true);
-//        for (String url: imageUrls) {
-//            ImageView imageView =  new ImageView(mActivity);
-//            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-//            imageView.setLayoutParams(params);
-//
-//            addImage(imageView, url);
-//            layout.addView(imageView);
-//        }
-    }
-
-    private void addImage(final ImageView imageView, final String imgURL) {
-        Picasso.get()
-                .load(imgURL)
-                .into(new Target() {
-                    @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        imageView.setImageBitmap(bitmap);
-                        imageView.invalidate();
-                    }
-
-                    @Override
-                    public void onBitmapFailed(Exception e, Drawable errorDrawable) { }
-
-                    @Override public void onPrepareLoad(Drawable placeHolderDrawable) { }
-                });
+        for (int i = 0; i < size; ++i) {
+            Picasso.get()
+                    .load(imageUrls.get(i))
+                    .fit().into((ImageView) mActivity.findViewById(ids[i]));
+        }
     }
 }

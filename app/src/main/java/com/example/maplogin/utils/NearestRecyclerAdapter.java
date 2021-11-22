@@ -1,6 +1,7 @@
 package com.example.maplogin.utils;
 
 import android.content.Context;
+import android.location.Location;
 import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,20 +21,22 @@ import com.google.android.gms.maps.model.LatLng;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecyclerAdapter.LocationViewHolder> {
     private LayoutInflater layoutInflater;
-    private ArrayList<LocationInfo> items;
+    private ArrayList<Map.Entry<String, LocationInfo>> items;
     public onButtonGoListener goListener;
 
     public interface onButtonGoListener {
-        void onButtonGoListener(LatLng dest);
+        void onButtonGoListener(String locationKey);
     }
 
-    public NearestRecyclerAdapter(Context context, ArrayList<LocationInfo> locations, onButtonGoListener goListener) {
+    public NearestRecyclerAdapter(Context context, ArrayList<Map.Entry<String, LocationInfo>> locationEntries,
+                                  onButtonGoListener goListener) {
         this.goListener = goListener;
         layoutInflater = LayoutInflater.from(context);
-        items = locations;
+        items = locationEntries;
     }
 
     @NonNull
@@ -45,12 +48,12 @@ public class NearestRecyclerAdapter extends RecyclerView.Adapter<NearestRecycler
 
     @Override
     public void onBindViewHolder(@NonNull LocationViewHolder holder, int position) {
-        LocationInfo currentLocation = items.get(position);
+        Map.Entry<String, LocationInfo> currentEntry = items.get(position);
+        LocationInfo currentLocation = currentEntry.getValue();
         holder.setIcon(currentLocation.iconUrl);
         holder.setName(currentLocation.name);
         holder.setButtonGoListener(view -> {
-            LatLng latLng = new LatLng(currentLocation.latitude, currentLocation.longitude);
-            goListener.onButtonGoListener(latLng);
+            goListener.onButtonGoListener(currentEntry.getKey());
         });
     }
 
