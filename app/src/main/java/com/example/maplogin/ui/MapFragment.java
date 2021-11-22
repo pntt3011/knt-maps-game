@@ -244,6 +244,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     HashMap<String, Marker> markerHashMap = mMarkerController.getMarkerMap();
                     popupWindow.dismiss();
                     Marker marker = markerHashMap.get(locationKey);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), MIN_ZOOM));
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), MAX_ZOOM));
                     mBottomSheet.update(marker);
                 });
