@@ -25,6 +25,7 @@ public class MarkerController {
     // Convert color
     private static final float NULL_OPACITY = 1.0f;
     private static final float CAPTURE_OPACITY = 1.0f;
+    public static final int NOT_CAPTURED_ALPHA = 0x85;
 
     // Store all markers for future use
     private final HashMap<String, Marker> mMarkerMap;
@@ -134,7 +135,7 @@ public class MarkerController {
         if (isCaptured)
             paint.setAlpha(0xFF);
         else
-            paint.setAlpha(0x85);
+            paint.setAlpha(NOT_CAPTURED_ALPHA);
         canvas.drawBitmap(bitmap, 0, 0, paint);
 
         if (isNear) {
@@ -159,7 +160,6 @@ public class MarkerController {
 
         if (marker != null) {
             marker.setTag(new Tag(id, iconUrl));
-            Log.e("hehe", marker.getTag().toString());
             PicassoMarker picassoMarker = new PicassoMarker(
                     mActivity,
                     marker,

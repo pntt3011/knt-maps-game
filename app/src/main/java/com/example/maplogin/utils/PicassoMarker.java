@@ -31,7 +31,6 @@ public class PicassoMarker implements Target {
                          HashSet<PicassoMarker> set) {
         mActivity = activity;
         mMarker = marker;
-        Log.e("PicassoMarker", marker.getTag().toString());
         mPicassoMarkerSet = set;
         mMarkerIconMap = markerIconMap;
         mMarkerMap = markerMap;
@@ -55,7 +54,6 @@ public class PicassoMarker implements Target {
     @Override
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
         mMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
-        Log.e("onBitmapLoaded", mMarker.getTag().toString());
         MarkerController.Tag t = (MarkerController.Tag) mMarker.getTag();
         mMarkerIconMap.put(t.id, bitmap);
         mMarkerMap.put(t.id, mMarker);
