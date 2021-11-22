@@ -23,7 +23,8 @@ import java.util.HashSet;
 
 public class MarkerController {
     // Convert color
-    private static final float NULL_OPACITY = 0.5f;
+    private static final float NULL_OPACITY = 1.0f;
+    private static final float CAPTURE_OPACITY = 1.0f;
 
     // Store all markers for future use
     private final HashMap<String, Marker> mMarkerMap;
@@ -133,7 +134,7 @@ public class MarkerController {
         if (isCaptured)
             paint.setAlpha(0xFF);
         else
-            paint.setAlpha(0x00);
+            paint.setAlpha(0x85);
         canvas.drawBitmap(bitmap, 0, 0, paint);
 
         if (isNear) {
@@ -141,7 +142,7 @@ public class MarkerController {
             Drawable exclamationDrawable = ContextCompat.getDrawable(mActivity, R.drawable.ic_exclamation);
             int width = bitmap.getWidth();
             int height = bitmap.getHeight();
-            exclamationDrawable.setBounds(width / 3, height / 4, width, height * 7 / 8);
+            exclamationDrawable.setBounds(width / 8, 0, width, height * 5 / 8);
             exclamationDrawable.draw(canvas);
         }
         marker.setIcon(BitmapDescriptorFactory.fromBitmap(newBitmap));
