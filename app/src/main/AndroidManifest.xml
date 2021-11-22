@@ -20,6 +20,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MapLogin">
         <activity
+            android:name=".FinalResultActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Quiz"
+            android:exported="true" />
+        <activity
             android:name=".RuleActivity"
             android:exported="true" />
         <activity

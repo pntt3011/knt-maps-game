@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -68,7 +67,7 @@ public class BottomSheetController {
                 LocationInfo locInfo = (LocationInfo) info;
 
                 setupDirectionButton(marker.getPosition());
-                setupCheckInButton(t.id, marker.getPosition(),locInfo.questions);
+                setupCheckInButton(t.id, marker.getPosition());
                 setupShareButton(t.id);
 
                 updateInfo(t, locInfo);
@@ -88,13 +87,12 @@ public class BottomSheetController {
                 mFindDirectionListener.find(position, AbstractRouting.TravelMode.DRIVING));
     }
 
-    private void setupCheckInButton(String id, LatLng position, ArrayList<String> questionId) {
+    private void setupCheckInButton(String id, LatLng position) {
         ImageButton checkInButton = mActivity.findViewById(R.id.bs_check_in_button);
         checkInButton.setOnClickListener(v -> {
             if (mCheckInListener.canCheckIn(position)) {
                 Intent i = new Intent(mActivity, QuizActivity.class);
-                i.putStringArrayListExtra("QUESTION_IDS", questionId);
-                i.putExtra("LOCATION_ID", id);
+                i.putExtra(Constants.LOCATION_ID, id);
                 mActivity.startActivity(i);
 
             } else {

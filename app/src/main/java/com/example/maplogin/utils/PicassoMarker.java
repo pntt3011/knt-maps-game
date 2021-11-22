@@ -2,21 +2,31 @@ package com.example.maplogin.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class PicassoMarker implements Target {
     private final Marker mMarker;
     private final HashSet<PicassoMarker> mPicassoMarkerSet;
+    private final HashMap<String, Bitmap> mMarkerIconMap;
+    private final HashMap<String, Marker> mMarkerMap;
 
-    public PicassoMarker(Marker marker, HashSet<PicassoMarker> set) {
+    public PicassoMarker(Marker marker,
+                         HashMap<String, Marker> markerMap,
+                         HashMap<String, Bitmap> markerIconMap,
+                         HashSet<PicassoMarker> set) {
         mMarker = marker;
+        Log.e("PicassoMarker", marker.getTag().toString());
         mPicassoMarkerSet = set;
+        mMarkerIconMap = markerIconMap;
+        mMarkerMap = markerMap;
     }
 
     @Override
@@ -37,6 +47,10 @@ public class PicassoMarker implements Target {
     @Override
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
         mMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+        Log.e("onBitmapLoaded", mMarker.getTag().toString());
+        MarkerController.Tag t = (MarkerController.Tag) mMarker.getTag();
+        mMarkerIconMap.put(t.id, bitmap);
+        mMarkerMap.put(t.id, mMarker);
         cleanUpResource();
     }
 
