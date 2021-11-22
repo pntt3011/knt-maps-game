@@ -161,6 +161,7 @@ public class MarkerController {
         if (marker != null) {
             marker.setTag(new Tag(id, iconUrl));
             PicassoMarker picassoMarker = new PicassoMarker(
+                    mActivity,
                     marker,
                     mMarkerMap,
                     mMarkerIconMap,
