@@ -185,17 +185,6 @@
             android:fontFamily="@font/open_sans_bold"
             android:layout_weight="1"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnShareResult"
-            style="@style/btnStyle"
-            android:layout_width="match_parent"
-            android:layout_marginStart="10dp"
-            android:backgroundTint="@color/blue_med"
-            android:imeOptions="actionDone"
-            android:singleLine="true"
-            android:text="Share Result"
-            android:fontFamily="@font/open_sans_bold"
-            android:layout_weight="1"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
