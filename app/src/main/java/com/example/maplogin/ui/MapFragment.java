@@ -261,7 +261,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     popupWindow.dismiss();
                     Marker marker = markerHashMap.get(locationKey);
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), MIN_ZOOM));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), MAX_ZOOM));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
                     mBottomSheet.update(marker);
                 });
         recyclerView.setAdapter(adapter);
