@@ -71,7 +71,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public static final int MIN_ZOOM = 13;
     public static final int MAX_ZOOM = 17;
     public static final int DEFAULT_ZOOM = 15;
-    public static final double VALID_RANGE = 500;
+    public static final double VALID_RANGE = 250;
     public static final int NUM_NEAR_PLACE = 5;
 
     // Fragment information
