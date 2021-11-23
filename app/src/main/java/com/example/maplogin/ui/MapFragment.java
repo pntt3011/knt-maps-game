@@ -30,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -202,10 +203,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         Button button = new Button(mActivity);
 
         RelativeLayout.LayoutParams params =
-                new RelativeLayout.LayoutParams(80, 80);
+                new RelativeLayout.LayoutParams(int2dp(40), int2dp(40));
         params.addRule(RelativeLayout.BELOW, location_button.getId());
         params.addRule(RelativeLayout.ALIGN_PARENT_END, 1);
-        params.setMargins(0, 20, 20, 0);
+        params.setMargins(0, int2dp(10), int2dp(10), 0);
         button.setLayoutParams(params);
         Drawable star_icon = ContextCompat.getDrawable(mActivity, R.drawable.ic_star_icon);
         button.setBackground(star_icon);
@@ -242,6 +243,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         return button;
     }
 
+    private int int2dp(int val) {
+        final float scale = getContext().getResources().getDisplayMetrics().density;
+        return (int) (val * scale + 0.5f);
+    }
+
     private PopupWindow createLocationListPopup(ArrayList<Map.Entry<String, LocationInfo>> locationEntries) {
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
@@ -266,6 +272,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 });
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+                DividerItemDecoration.VERTICAL));
 
         return popupWindow;
     }
