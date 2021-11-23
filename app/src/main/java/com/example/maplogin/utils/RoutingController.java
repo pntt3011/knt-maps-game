@@ -48,7 +48,7 @@ public class RoutingController implements RoutingListener {
                     .withListener(this)
 //                    .alternativeRoutes(true)
                     .waypoints(startLatLng, endLatLng)
-                    .key("AIzaSyCQjSbW4ANku5u4VMlkIWtpp4m6yTi4EPA")
+                    .key(String.valueOf(R.string.google_maps_key))
                     .build();
             routing.execute();
         }

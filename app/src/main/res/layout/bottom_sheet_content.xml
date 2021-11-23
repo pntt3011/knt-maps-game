@@ -27,17 +27,21 @@
             android:layout_marginBottom="3dp"
             android:src="@drawable/background" />
 
-        <TextView
-            android:id="@+id/bottom_sheet_title"
-            android:layout_width="wrap_content"
+        <ScrollView
+            android:id="@+id/bottom_sheet_title_scroll_view"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/point"
-            android:layout_toRightOf="@id/iconMarker"
-            android:fontFamily="@font/raleway_bold"
-            android:paddingRight="20dp"
-            android:text="Đại học Khoa học Tự nhiên, ĐHQG-HCM"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/sizeHeader" />
+            android:layout_toRightOf="@id/iconMarker">
+            <TextView
+                android:id="@+id/bottom_sheet_title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/raleway_bold"
+                android:text="Đại học Khoa học Tự nhiên, ĐHQG-HCM"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/sizeHeader" />
+        </ScrollView>
 
         <TextView
             android:id="@+id/point"
@@ -64,7 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="7dp"
-        android:layout_below="@id/bottom_sheet_title"
+        android:layout_below="@id/bottom_sheet_title_scroll_view"
         android:orientation="vertical">
 
         <RelativeLayout
