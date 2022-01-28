@@ -30,11 +30,6 @@ import java.util.Map;
 public class DatabaseAdapter {
     private static DatabaseAdapter instance = null;
 
-    private static final String DATABASE_URI = "https://api-3011-ad499.asia-southeast1.firebasedatabase.app/";
-    private static final String USER_INFO_ROOT = "users";
-    private static final String QUESTION_INFO_ROOT = "questions";
-    private static final String LOCATION_INFO_ROOT = "locations";
-
     // Database info
     private FirebaseDatabase mDatabase;
 
@@ -193,7 +188,7 @@ public class DatabaseAdapter {
     private DatabaseAdapter() { }
 
     private void updateInfo() {
-        mDatabase = FirebaseDatabase.getInstance(DATABASE_URI);
+        mDatabase = FirebaseDatabase.getInstance(Constants.DATABASE_URI);
         mUid = getCurrentUserId();
 
         mAllLocations = new HashMap<>();
@@ -206,7 +201,7 @@ public class DatabaseAdapter {
 
         if (!isAnonymousUser()) {
             assert getCurrentUser().getPhotoUrl() != null;
-            DatabaseReference userRef = getPathReference(USER_INFO_ROOT, new String[]{mUid});
+            DatabaseReference userRef = getPathReference(Constants.USER_INFO_ROOT, new String[]{mUid});
             userRef.child("name").setValue(getCurrentUser().getDisplayName());
             userRef.child("photo_url").setValue(getCurrentUser().getPhotoUrl().toString());
         }
@@ -220,7 +215,7 @@ public class DatabaseAdapter {
     }
 
     private void setupLocationMarkersListener() {
-        DatabaseReference locationMarkersRef = getPathReference(LOCATION_INFO_ROOT, new String[]{});
+        DatabaseReference locationMarkersRef = getPathReference(Constants.LOCATION_INFO_ROOT, new String[]{});
 
         ChildEventListener childListener = new ChildEventListener() {
             @Override
@@ -343,7 +338,7 @@ public class DatabaseAdapter {
     }
 
     private void setupQuestionListener() {
-        DatabaseReference failedMarkersRef = getPathReference(QUESTION_INFO_ROOT, new String[]{});
+        DatabaseReference failedMarkersRef = getPathReference(Constants.QUESTION_INFO_ROOT, new String[]{});
 
         ChildEventListener childListener = new ChildEventListener() {
             @Override
@@ -388,11 +383,11 @@ public class DatabaseAdapter {
     }
 
     private DatabaseReference getCapturedMarkerReference() {
-        return getPathReference(USER_INFO_ROOT, new String[]{mUid, "captured"});
+        return getPathReference(Constants.USER_INFO_ROOT, new String[]{mUid, "captured"});
     }
 
     private DatabaseReference getFailedMarkerReference() {
-        return getPathReference(USER_INFO_ROOT, new String[]{mUid, "failed"});
+        return getPathReference(Constants.USER_INFO_ROOT, new String[]{mUid, "failed"});
     }
 
     private void signOutNormalUser(Context context) {
@@ -406,9 +401,9 @@ public class DatabaseAdapter {
 
     private String getRoot(InfoType type) {
         if (type == InfoType.LOCATION)
-            return LOCATION_INFO_ROOT;
+            return Constants.LOCATION_INFO_ROOT;
         else
-            return QUESTION_INFO_ROOT;
+            return Constants.QUESTION_INFO_ROOT;
     }
 
     private Info parseInfo(DataSnapshot dataSnapshot, InfoType type) {
@@ -419,7 +414,7 @@ public class DatabaseAdapter {
     }
 
     private void deleteAnonymousUser(Context context) {
-        mDatabase.getReference(USER_INFO_ROOT)
+        mDatabase.getReference(Constants.USER_INFO_ROOT)
                 .child(mUid)
                 .removeValue();
 

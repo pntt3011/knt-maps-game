@@ -302,6 +302,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 lastKnownLocation = location;
                 LatLng latlng = getUserLatLng();
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, DEFAULT_ZOOM));
+
+                if (lastKnownLocation == null) {
+                    Toast.makeText(mActivity, "Cannot retrieve current location. Please try again.", Toast.LENGTH_SHORT).show();
+                    mActivity.finish();
+                }
             });
         }
     }
