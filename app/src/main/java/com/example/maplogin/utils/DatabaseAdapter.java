@@ -1,21 +1,14 @@
 package com.example.maplogin.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.example.maplogin.FirebaseLogin;
-import com.example.maplogin.R;
 import com.example.maplogin.struct.Info;
 import com.example.maplogin.struct.InfoType;
 import com.example.maplogin.struct.LocationInfo;
@@ -29,8 +22,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,11 +77,11 @@ public class DatabaseAdapter {
     }
 
     // Use when change account
-    public static void updateUserInfo(Activity activity) {
+    public static void updateUserInfo() {
         if (instance == null) {
             instance = new DatabaseAdapter();
         }
-        instance.updateInfo(activity);
+        instance.updateInfo();
     }
 
     // Should be used before startSync
@@ -201,7 +192,7 @@ public class DatabaseAdapter {
     // -----------------------Private methods---------------------------------
     private DatabaseAdapter() { }
 
-    private void updateInfo(Activity activity) {
+    private void updateInfo() {
         mDatabase = FirebaseDatabase.getInstance(DATABASE_URI);
         mUid = getCurrentUserId();
 
@@ -212,10 +203,14 @@ public class DatabaseAdapter {
 
         mCaptureListeners = new ArrayList<>();
         mLocationListeners = new ArrayList<>();
+
+        DatabaseReference userRef = getPathReference(USER_INFO_ROOT, new String[]{mUid});
+        userRef.child("name").setValue(getCurrentUser().getDisplayName());
+        userRef.child("photo_url").setValue(getCurrentUser().getPhotoUrl().toString());
     }
 
     private String getCurrentUserId() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = getCurrentUser();
         if (user != null)
             return user.getUid();
         return "UNKNOWN_USER";

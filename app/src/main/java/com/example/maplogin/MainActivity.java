@@ -1,9 +1,6 @@
 package com.example.maplogin;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -20,14 +17,12 @@ import com.google.android.material.navigation.NavigationView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.maplogin.databinding.ActivityNavigationDrawerBinding;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Handle navigation drawer view
@@ -57,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setupDatabase() {
-        DatabaseAdapter.updateUserInfo(this);
+        DatabaseAdapter.updateUserInfo();
         mDatabase = DatabaseAdapter.getInstance();
     }
 
