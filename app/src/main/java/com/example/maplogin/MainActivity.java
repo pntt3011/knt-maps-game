@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.maplogin.ui.FollowFragment;
+import com.example.maplogin.ui.follow.FollowFragment;
 import com.example.maplogin.ui.MapFragment;
 import com.example.maplogin.ui.UserFragment;
 import com.example.maplogin.utils.DatabaseAdapter;
