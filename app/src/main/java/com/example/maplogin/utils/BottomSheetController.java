@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import com.directions.route.AbstractRouting;
 import com.example.maplogin.QuizActivity;
 import com.example.maplogin.R;
+import com.example.maplogin.ScanActivity;
 import com.example.maplogin.struct.InfoType;
 import com.example.maplogin.struct.LocationInfo;
 import com.google.android.gms.maps.model.LatLng;
@@ -96,7 +97,7 @@ public class BottomSheetController {
         ImageButton checkInButton = mActivity.findViewById(R.id.bs_check_in_button);
         checkInButton.setOnClickListener(v -> {
             if (mCheckInListener.canCheckIn(position)) {
-                Intent i = new Intent(mActivity, QuizActivity.class);
+                Intent i = new Intent(mActivity, ScanActivity.class);
                 i.putExtra(Constants.LOCATION_ID, id);
                 mActivity.startActivity(i);
 
