@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,7 +45,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
 
         setupDatabase();
-        setupNavigation(savedInstanceState);
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            setupNavigation(savedInstanceState);
+
+        } else {
+            Toast.makeText(this, "Please enable GPS to use this app.", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     private void setupDatabase() {

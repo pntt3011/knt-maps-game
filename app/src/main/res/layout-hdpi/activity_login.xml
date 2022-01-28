@@ -12,6 +12,8 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:orientation="vertical"
         android:paddingLeft="20dp"
         android:paddingTop="180dp"
@@ -29,10 +31,13 @@
         android:id="@+id/buttonLoginGuest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:src="@drawable/ic_button_login_guest"
         android:layout_below="@+id/buttonLoginGoogle"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:src="@drawable/ic_button_login_guest" />
 
 
 
