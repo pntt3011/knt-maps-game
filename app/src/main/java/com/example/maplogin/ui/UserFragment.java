@@ -57,7 +57,13 @@ public class UserFragment extends Fragment {
         bindText2TextView(view, R.id.name, displayName);
         bindText2TextView(view, R.id.numCheckin, textNumCheckin);
         bindText2TextView(view, R.id.numBadges, "0");
-        bindText2TextView(view, R.id.uid_text, mDatabase.getCurrentUser().getUid());
+        if (!mDatabase.isAnonymousUser()) {
+            bindText2TextView(view, R.id.uid_text, mDatabase.getCurrentUser().getUid());
+        }
+        else {
+            bindText2TextView(view, R.id.uid_text, "Anonymous don't have a UID");
+        }
+        
         addDataToRecyclerView(view);
 
         view.findViewById(R.id.copy_button).setOnClickListener(v -> {
