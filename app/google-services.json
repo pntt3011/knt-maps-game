@@ -23,14 +23,6 @@
           }
         },
         {
-          "client_id": "572601590938-3i2amncq817lqts3sksagbi4lfnpa0f8.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.maplogin",
-            "certificate_hash": "decba5efbbde0d33cda0caff845825399814b966"
-          }
-        },
-        {
           "client_id": "572601590938-aofvqfiehnc6jru3gligdmltf239rklk.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
