@@ -1,9 +1,14 @@
 package com.example.maplogin.ui.follow;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -75,7 +80,19 @@ public class FollowFragment extends Fragment {
     }
 
     private void showInfo(Map.Entry<String, User> user) {
-        // TODO
+        final Dialog inforDialog = new Dialog(getActivity());
+        inforDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        inforDialog.setContentView(R.layout.person_infor_dialog);
+
+        Window window = inforDialog.getWindow();
+        if(window == null){
+            return;
+        }
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        inforDialog.setCancelable(true);
+
+        inforDialog.show();
     }
 
     @Override

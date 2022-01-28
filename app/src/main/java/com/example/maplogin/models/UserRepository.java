@@ -75,7 +75,7 @@ public class UserRepository {
     private Map<String, Boolean> getUserFollows(String id) {
         User user = getUserInfo(id);
         Map<String, Boolean> data;
-        if (user == null)
+        if (user == null || user.follows == null)
             data = new HashMap<>();
         else
             data = user.follows;
