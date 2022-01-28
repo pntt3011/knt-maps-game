@@ -31,18 +31,23 @@
         <entry key="..\:/Android/knt-maps-game/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1046875" />
         <entry key="..\:/Android/knt-maps-game/app/src/main/res/mipmap-anydpi-v26/ic_star_icon.xml" value="0.1" />
         <entry key="..\:/Android/knt-maps-game/app/src/main/res/mipmap-anydpi-v26/ic_star_icon_round.xml" value="0.11614583333333334" />
+        <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/drawable-ldpi/ic_button_login_guest_ontouch.xml" value="0.10989583333333333" />
         <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/drawable/ic_button_checkin.xml" value="0.18088888888888888" />
         <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/drawable/ic_button_direct.xml" value="0.18088888888888888" />
+        <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/drawable/ic_button_login_guest.xml" value="0.10989583333333333" />
+        <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/drawable/ic_follow.xml" value="0.10989583333333333" />
+        <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/drawable/ic_follow_clicked.xml" value="0.10989583333333333" />
         <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/layout/activity_final_result.xml" value="0.22" />
         <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/layout/activity_quiz.xml" value="0.1" />
         <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/layout/activity_quiz_main.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/layout/bottom_sheet_content.xml" value="0.5" />
+        <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/layout/fragment_follow.xml" value="0.1" />
+        <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/layout/fragment_user.xml" value="0.1" />
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/drawable-v24/border_bottom.xml" value="0.2755208333333333" />
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2755208333333333" />
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/drawable/border_bottom.xml" value="0.2755208333333333" />
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/drawable/ic_address.xml" value="0.2598958333333333" />
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/drawable/ic_baseline_exit_to_app_24.xml" value="0.2598958333333333" />
-        <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/drawable/ic_copy.xml" value="0.2755208333333333" />
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/drawable/ic_mail.xml" value="0.2598958333333333" />
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/drawable/ic_phone.xml" value="0.2598958333333333" />
@@ -66,7 +71,7 @@
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/layout/bottom_sheet_content.xml" value="0.3106796116504854" />
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/layout/content_scrolling.xml" value="0.259375" />
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/layout/fragment_follow.xml" value="0.259375" />
-        <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/layout/fragment_user.xml" value="0.4" />
+        <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/layout/fragment_user.xml" value="0.19882246376811594" />
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/layout/pager_item.xml" value="0.12588652482269502" />
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/layout/people_item.xml" value="0.259375" />
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/menu/activity_main_drawer.xml" value="0.2553846153846154" />

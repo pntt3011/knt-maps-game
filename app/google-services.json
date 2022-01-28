@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "572601590938-0m1clt32tqlj8cff7ql4f7i4m1c8ku83.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.maplogin",
+            "certificate_hash": "cb4015cb6b55621f13c5aec2dd4af3310e7b84ad"
+          }
+        },
+        {
+          "client_id": "572601590938-3i2amncq817lqts3sksagbi4lfnpa0f8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.maplogin",
+            "certificate_hash": "decba5efbbde0d33cda0caff845825399814b966"
+          }
+        },
+        {
           "client_id": "572601590938-aofvqfiehnc6jru3gligdmltf239rklk.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -30,6 +46,43 @@
             "certificate_hash": "1790a974bc39a275ab4dd34cb7b56761f944e05e"
           }
         },
+        {
+          "client_id": "572601590938-oicpja78s4e2laqf7ubnt8fipsemf177.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.maplogin",
+            "certificate_hash": "542894f6e6df79850de465dd07379156ab364c58"
+          }
+        },
+        {
+          "client_id": "572601590938-ledt1q2c3d6gu17gvgk63rg6606mvgbh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCo49_NmBugfPtQA5kuzsvQS3S-gfHtZPU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "572601590938-226qrbr5rc2n2iqgbkcovjnpnd58i9q1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:572601590938:android:509951b4c4e9ee70e5eb23",
+        "android_client_info": {
+          "package_name": "com.example.test2"
+        }
+      },
+      "oauth_client": [
         {
           "client_id": "572601590938-ledt1q2c3d6gu17gvgk63rg6606mvgbh.apps.googleusercontent.com",
           "client_type": 3
