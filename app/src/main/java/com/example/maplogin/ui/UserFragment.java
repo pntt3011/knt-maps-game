@@ -1,18 +1,16 @@
 package com.example.maplogin.ui;
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,17 +23,12 @@ import com.example.maplogin.databinding.FragmentUserBinding;
 import com.example.maplogin.struct.LocationInfo;
 import com.example.maplogin.utils.CheckinRecyclerAdapter;
 import com.example.maplogin.utils.DatabaseAdapter;
-import com.example.maplogin.utils.MarkerController;
-import com.example.maplogin.utils.NearestRecyclerAdapter;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class UserFragment extends Fragment {
     private FragmentUserBinding binding;
@@ -57,7 +50,6 @@ public class UserFragment extends Fragment {
 
         FirebaseUser user = mDatabase.getCurrentUser();
         HashMap<String, Long> capturedLocation = (HashMap<String, Long>) mDatabase.getCapturedLocations();
-        HashMap<String, LocationInfo> locationHashMap = (HashMap<String, LocationInfo>) mDatabase.getAllLocations();
         String displayName = mDatabase.isAnonymousUser() ? "Anonymous user" : user.getDisplayName();
         String textNumCheckin = Integer.toString(capturedLocation.size());
 
@@ -65,19 +57,18 @@ public class UserFragment extends Fragment {
         bindText2TextView(view, R.id.name, displayName);
         bindText2TextView(view, R.id.numCheckin, textNumCheckin);
         bindText2TextView(view, R.id.numBadges, "0");
+        bindText2TextView(view, R.id.uid_text, mDatabase.getCurrentUser().getUid());
         addDataToRecyclerView(view);
 
-        view.findViewById(R.id.copy_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                TextView uid = (TextView)view.findViewById(R.id.uid_text);
-                ClipboardManager myClipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                String text = uid.getText().toString();
+        view.findViewById(R.id.copy_button).setOnClickListener(v -> {
+            TextView uid = view.findViewById(R.id.uid_text);
+            ClipboardManager myClipboard =
+                    (ClipboardManager) mActivity.getSystemService(Context.CLIPBOARD_SERVICE);
+            String text = uid.getText().toString();
 
-                ClipData myClip = ClipData.newPlainText("text", text);
-                myClipboard.setPrimaryClip(myClip);
-            }
+            ClipData myClip = ClipData.newPlainText("text", text);
+            myClipboard.setPrimaryClip(myClip);
+            Toast.makeText(getContext(), "UID copied", Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -94,7 +85,7 @@ public class UserFragment extends Fragment {
                 locationEntries.add(entry);
 
         // set recycler view adapter
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_checkin_place);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_people);
         CheckinRecyclerAdapter adapter = new CheckinRecyclerAdapter(mActivity, locationEntries);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));

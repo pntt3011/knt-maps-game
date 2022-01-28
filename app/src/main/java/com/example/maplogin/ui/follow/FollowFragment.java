@@ -43,7 +43,7 @@ public class FollowFragment extends Fragment {
     }
 
     private void initRecyclerView(View view){
-        RecyclerView recyclerView = view.findViewById(R.id./*TODO*/);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_people);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         adapter = new FollowRecyclerAdapter();
@@ -52,8 +52,8 @@ public class FollowFragment extends Fragment {
     }
 
     private void subscribeListeners(View view) {
-        ImageButton addBtn = view.findViewById(R.id./*TODO*/);
-        EditText uid = view.findViewById((R.id./*TODO*/));
+        ImageButton addBtn = view.findViewById(R.id.follow_button);
+        EditText uid = view.findViewById((R.id.id_search_text));
         addBtn.setOnClickListener(v -> viewModel.followUser(uid.getText().toString()));
     }
 

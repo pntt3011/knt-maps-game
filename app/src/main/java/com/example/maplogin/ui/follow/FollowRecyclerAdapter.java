@@ -30,7 +30,7 @@ public class FollowRecyclerAdapter
     @Override
     public FollowViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout./*TODO*/, parent, false);
+                .inflate(R.layout.people_item, parent, false);
         return new FollowViewHolder(view);
     }
 
@@ -52,13 +52,13 @@ public class FollowRecyclerAdapter
     }
 
     public class FollowViewHolder extends RecyclerView.ViewHolder{
-        private TextView name;
-        private ImageView avatar;
+        private final TextView name;
+        private final ImageView avatar;
 
         public FollowViewHolder(@NonNull View itemView) {
             super(itemView);
-            name = itemView.findViewById(R.id./*TODO*/);
-            avatar = itemView.findViewById(R.id./*TODO*/);
+            name = itemView.findViewById(R.id.people_text);
+            avatar = itemView.findViewById(R.id.people_image);
 
             itemView.setOnClickListener(view -> {
                 int position = getAdapterPosition();

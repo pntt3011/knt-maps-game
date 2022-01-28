@@ -22,13 +22,13 @@
 
     <TextView
         android:id="@+id/people_text"
-        android:gravity="center|start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_marginTop="3dp"
         android:layout_toRightOf="@id/people_image"
         android:fontFamily="@font/raleway_bold"
+        android:gravity="center|start"
         android:text="Nguyễn Ngọc Khôi Nguyên"
         android:textColor="@android:color/black"
         android:textSize="@dimen/sizeHeader" />
