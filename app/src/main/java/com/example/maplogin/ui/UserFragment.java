@@ -1,6 +1,11 @@
 package com.example.maplogin.ui;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,7 +38,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class UserFragment extends Fragment {
-
     private FragmentUserBinding binding;
     DatabaseAdapter mDatabase;
     private Activity mActivity;
@@ -62,6 +66,19 @@ public class UserFragment extends Fragment {
         bindText2TextView(view, R.id.numCheckin, textNumCheckin);
         bindText2TextView(view, R.id.numBadges, "0");
         addDataToRecyclerView(view);
+
+        view.findViewById(R.id.copy_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                TextView uid = (TextView)view.findViewById(R.id.uid_text);
+                ClipboardManager myClipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                String text = uid.getText().toString();
+
+                ClipData myClip = ClipData.newPlainText("text", text);
+                myClipboard.setPrimaryClip(myClip);
+            }
+        });
     }
 
     private void addDataToRecyclerView(View view) {
