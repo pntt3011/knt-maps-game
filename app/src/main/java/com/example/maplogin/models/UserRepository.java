@@ -11,9 +11,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 public class UserRepository {
     private final static String FOLLOW_NODE = "follows";
@@ -44,8 +43,8 @@ public class UserRepository {
         allUsersRef.child(followee).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.getValue() == null) {
-                    allUsersRef.child(follower).child(FOLLOW_NODE).push().setValue(followee);
+                if (snapshot.getValue() != null) {
+                    allUsersRef.child(follower).child(FOLLOW_NODE).child(followee).setValue(Boolean.TRUE);
                     followState.setValue("OK");
                 }
                 else {
@@ -59,16 +58,10 @@ public class UserRepository {
     }
 
     public MediatorLiveData<HashMap<String, User>> getFollowsLiveData(String uid) {
-        FirebaseQueryLiveData userFollowLiveData =
-                new FirebaseQueryLiveData(allUsersRef.child(uid).child(FOLLOW_NODE));
         MediatorLiveData<HashMap<String, User>> followLiveData = new MediatorLiveData<>();
-
-        followLiveData.addSource(userFollowLiveData, followList -> {
-            if (followList != null) {
-                GenericTypeIndicator<List<String>> type = new GenericTypeIndicator<List<String>>(){};
-                List<String> data = followList.getValue(type);
-                if (data == null)
-                    data = new ArrayList<>();
+        followLiveData.addSource(allUsers, users -> {
+            if (users != null) {
+                Map<String, Boolean> data = getUserFollows(uid);
                 HashMap<String, User> followInfos = getUserInfos(data);
                 followLiveData.postValue(followInfos);
             }
@@ -79,14 +72,14 @@ public class UserRepository {
         return followLiveData;
     }
 
-    private HashMap<String, User> getUserInfos(List<String> data) {
-        HashMap<String, User> userInfos = new HashMap<>();
-        for (String id: data) {
-            User userInfo = getUserInfo(id);
-            if (userInfo != null)
-                userInfos.put(id, userInfo);
-        }
-        return userInfos;
+    private Map<String, Boolean> getUserFollows(String id) {
+        User user = getUserInfo(id);
+        Map<String, Boolean> data;
+        if (user == null)
+            data = new HashMap<>();
+        else
+            data = user.follows;
+        return data;
     }
 
     private User getUserInfo(String id) {
@@ -94,5 +87,15 @@ public class UserRepository {
         if (allUsersMap != null)
             return allUsersMap.getOrDefault(id, null);
         return null;
+    }
+
+    private HashMap<String, User> getUserInfos(Map<String, Boolean> data) {
+        HashMap<String, User> userInfos = new HashMap<>();
+        for (String id: data.keySet()) {
+            User userInfo = getUserInfo(id);
+            if (userInfo != null)
+                userInfos.put(id, userInfo);
+        }
+        return userInfos;
     }
 }

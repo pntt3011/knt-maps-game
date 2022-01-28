@@ -9,13 +9,13 @@ import java.util.Map;
 public class User {
     public String name;
     public String photo_url;
-    public List<String> follows;
+    public Map<String, Boolean> follows;
     public Map<String, Long> captured;
 
     public User() {
     }
 
-    public User(String name, String photo_url, List<String> follows, Map<String, Long> captured) {
+    public User(String name, String photo_url, Map<String, Boolean> follows, Map<String, Long> captured) {
         this.name = name;
         this.photo_url = photo_url;
         this.follows = follows;

@@ -22,8 +22,8 @@ import java.util.Map;
 public class FollowRecyclerAdapter
         extends RecyclerView.Adapter<FollowRecyclerAdapter.FollowViewHolder> {
 
-    private static final String TAG = "DailyTaskListRecyclerAdapter";
-    private final List<Map.Entry<String, User>> tasks = new ArrayList<>();
+    private static final String TAG = "FollowRecyclerAdapter";
+    private final List<Map.Entry<String, User>> follows = new ArrayList<>();
     private OnItemClickListener listener;
 
     @NonNull
@@ -36,18 +36,18 @@ public class FollowRecyclerAdapter
 
     @Override
     public void onBindViewHolder(@NonNull FollowViewHolder holder, int position) {
-        holder.bind(tasks.get(position));
+        holder.bind(follows.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return tasks.size();
+        return follows.size();
     }
 
-    public void setFollows(Map<String, User> taskMaps){
-        tasks.clear();
-        tasks.addAll(taskMaps.entrySet());
-        Log.d(TAG, tasks.size() + "");
+    public void setFollows(Map<String, User> userMaps){
+        follows.clear();
+        follows.addAll(userMaps.entrySet());
+        Log.d(TAG, follows.size() + "");
         notifyDataSetChanged();
     }
 
@@ -63,7 +63,7 @@ public class FollowRecyclerAdapter
             itemView.setOnClickListener(view -> {
                 int position = getAdapterPosition();
                 if (listener != null && position != RecyclerView.NO_POSITION) {
-                    listener.onItemClick(tasks.get(position));
+                    listener.onItemClick(follows.get(position));
                 }
             });
         }
