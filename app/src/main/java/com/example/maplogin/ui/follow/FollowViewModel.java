@@ -21,7 +21,11 @@ public class FollowViewModel extends ViewModel {
     }
 
     public void followUser(String uid) {
-        userRepository.subscribe(this.uid, uid, followState);
+        if (!uid.equals(this.uid)) {
+            userRepository.subscribe(this.uid, uid, followState);
+        } else {
+            followState.setValue("ERROR");
+        }
     }
 
     public MediatorLiveData<HashMap<String, User>> getFollowsLiveData() {
