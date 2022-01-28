@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.maplogin.ui.FollowFragment;
 import com.example.maplogin.ui.MapFragment;
 import com.example.maplogin.ui.UserFragment;
 import com.example.maplogin.utils.DatabaseAdapter;
@@ -136,6 +137,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 switchToUser();
                 break;
 
+            case R.id.nav_follow:
+                switchToFollow();
+                break;
+
             case R.id.nav_link:
                 linkAccount();
                 break;
@@ -162,6 +167,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .replace(R.id.fragment_container, new UserFragment()).commit();
         mNavigationView.setCheckedItem(R.id.nav_user);
         changeTitle("User info");
+    }
+
+    private void switchToFollow() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new FollowFragment()).commit();
+        mNavigationView.setCheckedItem(R.id.nav_follow);
+        changeTitle("Follow list");
     }
 
     private void changeTitle(String s) {
