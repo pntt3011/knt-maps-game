@@ -170,10 +170,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void switchToFollow() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new FollowFragment()).commit();
-        mNavigationView.setCheckedItem(R.id.nav_follow);
-        changeTitle("Follow list");
+        if (!mDatabase.isAnonymousUser()) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new FollowFragment()).commit();
+            mNavigationView.setCheckedItem(R.id.nav_follow);
+            changeTitle("Follow list");
+        } else {
+            Toast.makeText(this, "Anonymous user cannot follow other users.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void changeTitle(String s) {

@@ -204,9 +204,12 @@ public class DatabaseAdapter {
         mCaptureListeners = new ArrayList<>();
         mLocationListeners = new ArrayList<>();
 
-        DatabaseReference userRef = getPathReference(USER_INFO_ROOT, new String[]{mUid});
-        userRef.child("name").setValue(getCurrentUser().getDisplayName());
-        userRef.child("photo_url").setValue(getCurrentUser().getPhotoUrl().toString());
+        if (!isAnonymousUser()) {
+            assert getCurrentUser().getPhotoUrl() != null;
+            DatabaseReference userRef = getPathReference(USER_INFO_ROOT, new String[]{mUid});
+            userRef.child("name").setValue(getCurrentUser().getDisplayName());
+            userRef.child("photo_url").setValue(getCurrentUser().getPhotoUrl().toString());
+        }
     }
 
     private String getCurrentUserId() {
