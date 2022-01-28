@@ -45,10 +45,47 @@
             android:textColor="@android:color/black"
             android:textSize="@dimen/sizeTitle" />
 
+
         <LinearLayout
+            android:id="@+id/uid_component"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/name"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:fontFamily="@font/open_sans"
+                android:text="UID:"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/sizePhoneText" />
+
+            <TextView
+                android:id="@+id/uid_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:fontFamily="@font/open_sans"
+                android:text="42342342"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/sizePhoneText" />
+
+            <ImageButton
+                android:id="@+id/copy_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:background="@drawable/ic_copy"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/uid_component"
             android:layout_centerHorizontal="true"
             android:orientation="horizontal">
 
