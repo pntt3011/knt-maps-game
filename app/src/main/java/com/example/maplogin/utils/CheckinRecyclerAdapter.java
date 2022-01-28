@@ -1,23 +1,17 @@
 package com.example.maplogin.utils;
 
 import android.content.Context;
-import android.location.Location;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.maplogin.R;
 import com.example.maplogin.struct.LocationInfo;
-import com.google.android.gms.maps.model.LatLng;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -25,21 +19,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CheckinRecyclerAdapter extends RecyclerView.Adapter<CheckinRecyclerAdapter.LocationViewHolder> {
-    private LayoutInflater layoutInflater;
-    private ArrayList<Map.Entry<String, LocationInfo>> items;
-    private HashMap<String, Long> mCaptured;
+    private final LayoutInflater layoutInflater;
+    private final ArrayList<Map.Entry<String, LocationInfo>> items;
+    private final Map<String, Long> mCaptured;
 
-    public CheckinRecyclerAdapter(Context context, ArrayList<Map.Entry<String, LocationInfo>> locations) {
+    public CheckinRecyclerAdapter(Context context,
+                                  ArrayList<Map.Entry<String, LocationInfo>> locations,
+                                  @NonNull Map<String, Long> captured) {
         layoutInflater = LayoutInflater.from(context);
         items = locations;
-        mCaptured = (HashMap<String, Long>) DatabaseAdapter.getInstance().getCapturedLocations();
+        mCaptured = captured;
     }
 
     @NonNull
     @Override
     public LocationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = layoutInflater.inflate(R.layout.checkin_place_item, parent, false);
-        return new LocationViewHolder(itemView, this);
+        return new LocationViewHolder(itemView);
     }
 
     @Override
@@ -48,7 +44,7 @@ public class CheckinRecyclerAdapter extends RecyclerView.Adapter<CheckinRecycler
         LocationInfo currentLocation = currentEntry.getValue();
         holder.setIcon(currentLocation.iconUrl);
         holder.setName(currentLocation.name);
-        String point = Long.toString(mCaptured.get(currentEntry.getKey())) + "pt";
+        String point = mCaptured.get(currentEntry.getKey()) + "pt";
         holder.setPoint(point);
     }
 
@@ -57,15 +53,13 @@ public class CheckinRecyclerAdapter extends RecyclerView.Adapter<CheckinRecycler
         return items.size();
     }
 
-    public class LocationViewHolder extends RecyclerView.ViewHolder{
-        private ImageView iconView = null;
-        private TextView nameView = null;
-        private TextView textViewPoint = null;
-        private CheckinRecyclerAdapter adapter;
+    public static class LocationViewHolder extends RecyclerView.ViewHolder{
+        private final ImageView iconView;
+        private final TextView nameView;
+        private final TextView textViewPoint;
 
-        public LocationViewHolder(View itemView, CheckinRecyclerAdapter locationAdapter) {
+        public LocationViewHolder(View itemView) {
             super(itemView);
-            adapter = locationAdapter;
             iconView = itemView.findViewById(R.id.iconLocation);
             nameView = itemView.findViewById(R.id.titleLocation);
 

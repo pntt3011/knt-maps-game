@@ -86,7 +86,10 @@ public class UserFragment extends Fragment {
 
         // set recycler view adapter
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view_people);
-        CheckinRecyclerAdapter adapter = new CheckinRecyclerAdapter(mActivity, locationEntries);
+        CheckinRecyclerAdapter adapter = new CheckinRecyclerAdapter(
+                mActivity,
+                locationEntries,
+                mDatabase.getCapturedLocations());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
     }
