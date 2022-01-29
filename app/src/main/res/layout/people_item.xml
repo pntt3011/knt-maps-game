@@ -31,6 +31,13 @@
         android:gravity="center|start"
         android:text="Nguyễn Ngọc Khôi Nguyên"
         android:textColor="@android:color/black"
-        android:textSize="@dimen/sizeHeader" />
+        android:textSize="@dimen/sizePhoneText" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_unfollow"
+        android:layout_centerInParent="true"
+        android:layout_alignParentEnd="true"/>
 
 </RelativeLayout>

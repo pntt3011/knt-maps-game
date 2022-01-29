@@ -37,12 +37,14 @@
         <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/drawable/ic_button_login_guest.xml" value="0.10989583333333333" />
         <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/drawable/ic_follow.xml" value="0.10989583333333333" />
         <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/drawable/ic_follow_clicked.xml" value="0.10989583333333333" />
+        <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/drawable/ic_unfollow.xml" value="0.14791666666666667" />
         <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/layout/activity_final_result.xml" value="0.22" />
         <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/layout/activity_quiz.xml" value="0.1" />
         <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/layout/activity_quiz_main.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/layout/bottom_sheet_content.xml" value="0.5" />
         <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/layout/fragment_follow.xml" value="0.1" />
         <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/layout/fragment_user.xml" value="0.13333333333333333" />
+        <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/layout/people_item.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/COMPUTER/Desktop/knt-maps-game/app/src/main/res/layout/person_infor_dialog.xml" value="0.1308876811594203" />
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/drawable-v24/border_bottom.xml" value="0.2755208333333333" />
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2755208333333333" />
