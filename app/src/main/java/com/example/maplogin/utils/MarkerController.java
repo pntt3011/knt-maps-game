@@ -5,11 +5,12 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.example.maplogin.R;
+import com.example.maplogin.models.UserLocation;
 import com.example.maplogin.struct.LocationInfo;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -24,7 +25,6 @@ import java.util.HashSet;
 public class MarkerController {
     // Convert color
     private static final float NULL_OPACITY = 1.0f;
-    private static final float CAPTURE_OPACITY = 1.0f;
     public static final int NOT_CAPTURED_ALPHA = 0x85;
 
     // Store all markers for future use
@@ -48,6 +48,7 @@ public class MarkerController {
             this.id = id;
             this.url = url;
         }
+        @NonNull
         public String toString() {
             return "ID: " + id + " URL: " + url;
         }
@@ -55,10 +56,6 @@ public class MarkerController {
 
     public HashMap<String, Marker> getMarkerMap() {
         return mMarkerMap;
-    }
-
-    public HashMap<String, Bitmap> getMarkerIconMap() {
-        return mMarkerIconMap;
     }
 
     public MarkerController(Activity activity, GoogleMap map) {
@@ -75,16 +72,16 @@ public class MarkerController {
             public void add(String id, LocationInfo locationInfo) {
                 addMarker(id, locationInfo.latitude,
                         locationInfo.longitude,
-                        locationInfo.iconUrl,
-                        NULL_OPACITY);
+                        locationInfo.iconUrl
+                );
             }
 
             @Override
             public void change(String id, LocationInfo locationInfo) {
                 addMarker(id, locationInfo.latitude,
                         locationInfo.longitude,
-                        locationInfo.iconUrl,
-                        NULL_OPACITY);
+                        locationInfo.iconUrl
+                );
             }
 
             @Override
@@ -112,8 +109,8 @@ public class MarkerController {
     }
 
     public void updateAllIcons(HashMap<String, Boolean> isNearMap) {
-        HashMap<String, Long> capturedLocations =
-                (HashMap<String, Long>) DatabaseAdapter.getInstance().getCapturedLocations();
+        HashMap<String, UserLocation> capturedLocations =
+                (HashMap<String, UserLocation>) DatabaseAdapter.getInstance().getCapturedLocations();
 
         for (HashMap.Entry<String, Marker> entry : mMarkerMap.entrySet()) {
             String key = entry.getKey();
@@ -121,6 +118,7 @@ public class MarkerController {
             Bitmap bitmap = mMarkerIconMap.get(key);
             Boolean isNear = isNearMap.get(key);
             Boolean isCaptured = capturedLocations.containsKey(key);
+            assert bitmap != null;
             updateMarkerIcon(marker, bitmap, isNear, isCaptured);
         }
     }
@@ -143,18 +141,19 @@ public class MarkerController {
             Drawable exclamationDrawable = ContextCompat.getDrawable(mActivity, R.drawable.ic_exclamation);
             int width = bitmap.getWidth();
             int height = bitmap.getHeight();
+            assert exclamationDrawable != null;
             exclamationDrawable.setBounds(width / 8, 0, width, height * 5 / 8);
             exclamationDrawable.draw(canvas);
         }
         marker.setIcon(BitmapDescriptorFactory.fromBitmap(newBitmap));
     }
 
-    private void addMarker(String id, Double lat, Double lng, String iconUrl, float opacity) {
+    private void addMarker(String id, Double lat, Double lng, String iconUrl) {
         LatLng latLng = new LatLng(lat, lng);
 
         Marker marker = mMap.addMarker(new MarkerOptions()
                 .position(latLng)
-                .alpha(opacity)
+                .alpha(MarkerController.NULL_OPACITY)
                 // this is the default icon so we will hide it here
                 .visible(false));
 
@@ -173,14 +172,5 @@ public class MarkerController {
                     .resize(64,64)
                     .into(picassoMarker);
         }
-    }
-
-    private void switchMarkerType(String id, Marker marker, float dstOpacity) {
-        Tag t = (Tag) marker.getTag();
-        addMarker(id, marker.getPosition().latitude,
-                marker.getPosition().longitude,
-                t != null ? t.url : null,
-                dstOpacity);
-        marker.remove();
     }
 }

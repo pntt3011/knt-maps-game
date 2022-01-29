@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.maplogin.R;
 import com.example.maplogin.databinding.FragmentFollowBinding;
 import com.example.maplogin.models.User;
+import com.example.maplogin.models.UserLocation;
 import com.example.maplogin.struct.LocationInfo;
 import com.example.maplogin.utils.CheckinRecyclerAdapter;
 import com.example.maplogin.utils.DatabaseAdapter;
@@ -139,7 +140,7 @@ public class FollowFragment extends Fragment {
         return value.name;
     }
 
-    private Map<String, Long> getUserCaptured(User value) {
+    private Map<String, UserLocation> getUserCaptured(User value) {
         if (value.captured == null)
             return new HashMap<>();
         return value.captured;
@@ -160,7 +161,7 @@ public class FollowFragment extends Fragment {
         textView.setText(text);
     }
 
-    private void addDataToRecyclerView(Dialog dialog, Map<String, Long> captured) {
+    private void addDataToRecyclerView(Dialog dialog, Map<String, UserLocation> captured) {
         // get location and captured location info
         HashMap<String, LocationInfo> locationInfoHashMap =
                 (HashMap<String, LocationInfo>) database.getAllLocations();
