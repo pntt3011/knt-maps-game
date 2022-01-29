@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ public class FollowRecyclerAdapter
     private static final String TAG = "FollowRecyclerAdapter";
     private final List<Map.Entry<String, User>> follows = new ArrayList<>();
     private OnItemClickListener listener;
+    private OnUnfollowClickListener unfollowListener;
 
     @NonNull
     @Override
@@ -59,11 +61,19 @@ public class FollowRecyclerAdapter
             super(itemView);
             name = itemView.findViewById(R.id.people_text);
             avatar = itemView.findViewById(R.id.people_image);
+            ImageButton unfollow = itemView.findViewById(R.id.people_unfollow);
 
             itemView.setOnClickListener(view -> {
                 int position = getAdapterPosition();
                 if (listener != null && position != RecyclerView.NO_POSITION) {
                     listener.onItemClick(follows.get(position));
+                }
+            });
+
+            unfollow.setOnClickListener(view -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    unfollowListener.onItemClick(follows.get(position));
                 }
             });
         }
@@ -79,7 +89,15 @@ public class FollowRecyclerAdapter
         void onItemClick(Map.Entry<String, User> userEntry);
     }
 
+    public interface OnUnfollowClickListener {
+        void onItemClick(Map.Entry<String, User> userEntry);
+    }
+
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnUnfollowClickListener(OnUnfollowClickListener listener) {
+        this.unfollowListener = listener;
     }
 }

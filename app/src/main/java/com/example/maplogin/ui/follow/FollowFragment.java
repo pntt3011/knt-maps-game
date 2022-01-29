@@ -71,6 +71,9 @@ public class FollowFragment extends Fragment {
 
         adapter = new FollowRecyclerAdapter();
         adapter.setOnItemClickListener(this::showInfo);
+        adapter.setOnUnfollowClickListener(user -> {
+            viewModel.unfollowUser(user.getKey());
+        });
         recyclerView.setAdapter(adapter);
     }
 

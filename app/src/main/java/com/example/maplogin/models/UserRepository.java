@@ -57,6 +57,10 @@ public class UserRepository {
         });
     }
 
+    public void unsubscribe(String follower, String followee) {
+        allUsersRef.child(follower).child(FOLLOW_NODE).child(followee).removeValue();
+    }
+
     public MediatorLiveData<HashMap<String, User>> getFollowsLiveData(String uid) {
         MediatorLiveData<HashMap<String, User>> followLiveData = new MediatorLiveData<>();
         followLiveData.addSource(allUsers, users -> {

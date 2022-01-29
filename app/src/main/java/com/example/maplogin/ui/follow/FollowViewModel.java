@@ -28,6 +28,10 @@ public class FollowViewModel extends ViewModel {
         }
     }
 
+    public void unfollowUser(String uid) {
+        userRepository.unsubscribe(this.uid, uid);
+    }
+
     public MediatorLiveData<HashMap<String, User>> getFollowsLiveData() {
         return userRepository.getFollowsLiveData(uid);
     }
