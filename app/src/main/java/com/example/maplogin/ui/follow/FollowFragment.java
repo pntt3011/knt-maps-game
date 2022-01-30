@@ -71,9 +71,7 @@ public class FollowFragment extends Fragment {
 
         adapter = new FollowRecyclerAdapter();
         adapter.setOnItemClickListener(this::showInfo);
-        adapter.setOnUnfollowClickListener(user -> {
-            viewModel.unfollowUser(user.getKey());
-        });
+        adapter.setOnUnfollowClickListener(user -> viewModel.unfollowUser(user.getKey()));
         recyclerView.setAdapter(adapter);
     }
 
@@ -94,7 +92,7 @@ public class FollowFragment extends Fragment {
 
         viewModel.getAddFollowResult().removeObservers(getViewLifecycleOwner());
         viewModel.getAddFollowResult().observe(getViewLifecycleOwner(), status -> {
-            if (status == null || status.equals("ERROR")) {
+            if (status == null || status == FollowViewModel.FollowState.ERROR) {
                 Toast.makeText(activity, "Invalid user id.", Toast.LENGTH_SHORT).show();
             }
         });

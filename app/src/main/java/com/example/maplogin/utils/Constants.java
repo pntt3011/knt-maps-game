@@ -5,6 +5,7 @@ public class Constants {
     public static final String USER_INFO_ROOT = "users";
     public static final String QUESTION_INFO_ROOT = "questions";
     public static final String LOCATION_INFO_ROOT = "locations";
+    public static final String SHOP_ITEMS_INFO_ROOT = "items";
 
     public static final String LOCATION_ID = "LOCATION_ID";
     public static final String SUBJECT = "subject";
@@ -17,4 +18,6 @@ public class Constants {
     public static final int INCORRECT_POINT = 2;
 
     public static final String DATE_FORMAT = "dd MMM YYYY hh:mm a";
+
+    public static final String DEFAULT_ITEM = "default";
 }

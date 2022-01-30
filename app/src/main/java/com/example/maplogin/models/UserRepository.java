@@ -3,6 +3,7 @@ package com.example.maplogin.models;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MediatorLiveData;
 
+import com.example.maplogin.ui.follow.FollowViewModel.FollowState;
 import com.example.maplogin.utils.Constants;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 public class UserRepository {
     private final static String FOLLOW_NODE = "follows";
+    private final static String ITEMS_NODE = "items";
     private final MediatorLiveData<HashMap<String, User>> allUsers;
     private final DatabaseReference allUsersRef;
 
@@ -39,16 +41,16 @@ public class UserRepository {
         });
     }
 
-    public void subscribe(String follower, String followee, MediatorLiveData<String> followState) {
+    public void subscribe(String follower, String followee, MediatorLiveData<FollowState> followState) {
         allUsersRef.child(followee).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
                     allUsersRef.child(follower).child(FOLLOW_NODE).child(followee).setValue(Boolean.TRUE);
-                    followState.setValue("OK");
+                    followState.setValue(FollowState.OK);
                 }
                 else {
-                    followState.setValue("ERROR");
+                    followState.setValue(FollowState.ERROR);
                 }
             }
 
@@ -59,6 +61,51 @@ public class UserRepository {
 
     public void unsubscribe(String follower, String followee) {
         allUsersRef.child(follower).child(FOLLOW_NODE).child(followee).removeValue();
+    }
+
+    public void buyItem(String uid, String itemId) {
+        DatabaseReference userRef = allUsersRef.child(uid);
+        userRef.child(ITEMS_NODE).child(itemId).setValue(Boolean.FALSE);
+    }
+
+    public void selectItem(String uid, String itemId) {
+        DatabaseReference userItemRef = allUsersRef.child(uid).child(ITEMS_NODE);
+        userItemRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    GenericTypeIndicator<HashMap<String, Boolean>> type =
+                            new GenericTypeIndicator<HashMap<String, Boolean>>() {};
+                    HashMap<String, Boolean> ownedItems = snapshot.getValue(type);
+
+                    if (ownedItems == null)
+                        ownedItems = new HashMap<>();
+
+                    ownedItems.replaceAll((k, v) -> Boolean.FALSE);
+                    ownedItems.put(itemId, Boolean.TRUE);
+
+                }
+                else {
+                    userItemRef.child(itemId).setValue(Boolean.TRUE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) { }
+        });
+    }
+
+    public MediatorLiveData<User> getUserLiveData(String uid) {
+        FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(allUsersRef.child(uid));
+        MediatorLiveData<User> userLiveData = new MediatorLiveData<>();
+        userLiveData.addSource(liveData, user -> {
+            if (user != null) {
+                new Thread(() -> userLiveData.postValue(user.getValue(User.class))).start();
+            } else {
+                userLiveData.postValue(new User());
+            }
+        });
+        return userLiveData;
     }
 
     public MediatorLiveData<HashMap<String, User>> getFollowsLiveData(String uid) {

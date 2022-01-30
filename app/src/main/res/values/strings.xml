@@ -118,4 +118,8 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="menu_follow">Following</string>
+    <string name="menu_shop">Shop</string>
+    <string name="search">Search</string>
+    <string name="owned_item">You already own this model.</string>
+    <string name="ask_buy">Do you want to buy this model?</string>
 </resources>

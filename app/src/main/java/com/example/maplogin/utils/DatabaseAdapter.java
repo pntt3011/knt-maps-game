@@ -1,5 +1,7 @@
 package com.example.maplogin.utils;
 
+import static com.example.maplogin.utils.Constants.DEFAULT_ITEM;
+
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -22,6 +24,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -206,6 +209,17 @@ public class DatabaseAdapter {
             DatabaseReference userRef = getPathReference(Constants.USER_INFO_ROOT, new String[]{mUid});
             userRef.child("name").setValue(getCurrentUser().getDisplayName());
             userRef.child("photo_url").setValue(getCurrentUser().getPhotoUrl().toString());
+            userRef.child("items").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.getValue() == null) {
+                        userRef.child("items").child(DEFAULT_ITEM).setValue(Boolean.TRUE);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) { }
+            });
         }
     }
 

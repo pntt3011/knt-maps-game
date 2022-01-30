@@ -11,8 +11,13 @@ import java.util.HashMap;
 
 public class FollowViewModel extends ViewModel {
     private final UserRepository userRepository;
-    private final MediatorLiveData<String> followState;
+    private final MediatorLiveData<FollowState> followState;
     private final String uid;
+
+    public enum FollowState {
+        OK,
+        ERROR
+    }
 
     public FollowViewModel() {
         userRepository = new UserRepository();
@@ -24,7 +29,7 @@ public class FollowViewModel extends ViewModel {
         if (!uid.equals(this.uid)) {
             userRepository.subscribe(this.uid, uid, followState);
         } else {
-            followState.setValue("ERROR");
+            followState.setValue(FollowState.ERROR);
         }
     }
 
@@ -36,7 +41,7 @@ public class FollowViewModel extends ViewModel {
         return userRepository.getFollowsLiveData(uid);
     }
 
-    public MediatorLiveData<String> getAddFollowResult() {
+    public MediatorLiveData<FollowState> getAddFollowResult() {
         return followState;
     }
 }
