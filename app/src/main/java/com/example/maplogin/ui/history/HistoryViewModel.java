@@ -141,13 +141,13 @@ public class HistoryViewModel extends ViewModel {
 
     void changeForward(){
         if (currentYear != null && currentYear.getValue() != null) {
-            currentYear.postValue(currentYear.getValue() + 1);
+            currentYear.setValue(currentYear.getValue() + 1);
         }
     }
 
     void changeBack(){
         if (currentYear != null && currentYear.getValue() != null) {
-            currentYear.postValue(currentYear.getValue() - 1);
+            currentYear.setValue(currentYear.getValue() - 1);
         }
     }
 }

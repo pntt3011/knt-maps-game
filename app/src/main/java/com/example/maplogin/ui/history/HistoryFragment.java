@@ -111,7 +111,6 @@ public class HistoryFragment extends Fragment {
         barChart.invalidate();
     }
 
-
     private void init() {
         viewModel.initHistory();
     }
