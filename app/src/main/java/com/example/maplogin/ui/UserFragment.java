@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.maplogin.R;
 import com.example.maplogin.databinding.FragmentUserBinding;
+import com.example.maplogin.models.UserLocation;
 import com.example.maplogin.struct.LocationInfo;
 import com.example.maplogin.utils.CheckinRecyclerAdapter;
 import com.example.maplogin.utils.DatabaseAdapter;
@@ -49,7 +50,8 @@ public class UserFragment extends Fragment {
         mDatabase = DatabaseAdapter.getInstance();
 
         FirebaseUser user = mDatabase.getCurrentUser();
-        HashMap<String, Long> capturedLocation = (HashMap<String, Long>) mDatabase.getCapturedLocations();
+        HashMap<String, UserLocation> capturedLocation =
+                (HashMap<String, UserLocation>) mDatabase.getCapturedLocations();
         String displayName = mDatabase.isAnonymousUser() ? "Anonymous user" : user.getDisplayName();
         String textNumCheckin = Integer.toString(capturedLocation.size());
 
@@ -61,7 +63,7 @@ public class UserFragment extends Fragment {
             bindText2TextView(view, R.id.uid_text, mDatabase.getCurrentUser().getUid());
         }
         else {
-            bindText2TextView(view, R.id.uid_text, "Anonymous don't have a UID");
+            bindText2TextView(view, R.id.uid_text, "Google Account only");
         }
         
         addDataToRecyclerView(view);
@@ -82,7 +84,8 @@ public class UserFragment extends Fragment {
         // get location and captured location info
         HashMap<String, LocationInfo> locationInfoHashMap =
                 (HashMap<String, LocationInfo>) mDatabase.getAllLocations();
-        HashMap<String, Long> mCaptured = (HashMap<String, Long>) DatabaseAdapter.getInstance().getCapturedLocations();
+        HashMap<String, UserLocation> mCaptured =
+                (HashMap<String, UserLocation>) DatabaseAdapter.getInstance().getCapturedLocations();
 
         // filter non-captured location out from list of entries
         ArrayList<Map.Entry<String, LocationInfo>> locationEntries = new ArrayList<>();

@@ -1,5 +1,7 @@
 package com.example.maplogin.utils;
 
+import static com.example.maplogin.utils.Constants.DEFAULT_ITEM;
+
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -9,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.maplogin.FirebaseLogin;
+import com.example.maplogin.models.UserLocation;
 import com.example.maplogin.struct.Info;
 import com.example.maplogin.struct.InfoType;
 import com.example.maplogin.struct.LocationInfo;
@@ -21,11 +24,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class DatabaseAdapter {
     private static DatabaseAdapter instance = null;
@@ -38,8 +43,8 @@ public class DatabaseAdapter {
 
     // Data syncs
     private HashMap<String, LocationInfo> mAllLocations;
-    private HashMap<String, Long> mFailedLocations;
-    private HashMap<String, Long> mCapturedLocations;
+    private HashMap<String, UserLocation> mFailedLocations;
+    private HashMap<String, UserLocation> mCapturedLocations;
     private HashMap<String, QuestionInfo> mAllQuestions;
 
     // Listeners
@@ -101,9 +106,9 @@ public class DatabaseAdapter {
         return mAllLocations;
     }
 
-    public Map<String, Long> getFailedLocations() {return new HashMap<>(mFailedLocations);}
+    public Map<String, UserLocation> getFailedLocations() {return new HashMap<>(mFailedLocations);}
 
-    public Map<String, Long> getCapturedLocations() {
+    public Map<String, UserLocation> getCapturedLocations() {
         return new HashMap<>(mCapturedLocations);
     }
 
@@ -111,14 +116,14 @@ public class DatabaseAdapter {
 
     public void addCapturedLocation(String id, Long point) {
         if (mCapturedLocations.containsKey(id))
-            if (mCapturedLocations.get(id) >= point)
+            if (Objects.requireNonNull(mCapturedLocations.get(id)).score >= point)
                 return;
 
         if (mFailedLocations.containsKey(id))
             removeFailedLocation(id);
 
         DatabaseReference capturedMarkersRef = getCapturedMarkerReference();
-        capturedMarkersRef.child(id).setValue(point);
+        capturedMarkersRef.child(id).setValue(new UserLocation(point, System.currentTimeMillis()));
     }
 
     private void removeFailedLocation(String id) {
@@ -128,14 +133,14 @@ public class DatabaseAdapter {
 
     public void addFailedLocation(String id, Long point) {
         if (mFailedLocations.containsKey(id))
-            if (mFailedLocations.get(id) >= point)
+            if (Objects.requireNonNull(mFailedLocations.get(id)).score >= point)
                 return;
 
         if (mCapturedLocations.containsKey(id))
             return;
 
         DatabaseReference failedMarkersRef = getFailedMarkerReference();
-        failedMarkersRef.child(id).setValue(point);
+        failedMarkersRef.child(id).setValue(new UserLocation(point, System.currentTimeMillis()));
     }
 
     // Get location or question info
@@ -204,6 +209,17 @@ public class DatabaseAdapter {
             DatabaseReference userRef = getPathReference(Constants.USER_INFO_ROOT, new String[]{mUid});
             userRef.child("name").setValue(getCurrentUser().getDisplayName());
             userRef.child("photo_url").setValue(getCurrentUser().getPhotoUrl().toString());
+            userRef.child("items").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.getValue() == null) {
+                        userRef.child("items").child(DEFAULT_ITEM).setValue(Boolean.TRUE);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) { }
+            });
         }
     }
 
@@ -265,9 +281,9 @@ public class DatabaseAdapter {
         ChildEventListener childListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Long num = snapshot.getValue(Long.class);
+                UserLocation loc = snapshot.getValue(UserLocation.class);
                 String key = snapshot.getKey();
-                mCapturedLocations.put(key, num);
+                mCapturedLocations.put(key, loc);
                 for (OnModifyCaptureListener listener: mCaptureListeners) {
                     listener.add(key);
                 }
@@ -275,9 +291,9 @@ public class DatabaseAdapter {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Long num = snapshot.getValue(Long.class);
+                UserLocation loc = snapshot.getValue(UserLocation.class);
                 String key = snapshot.getKey();
-                mCapturedLocations.put(key, num);
+                mCapturedLocations.put(key, loc);
             }
 
             @Override
@@ -307,16 +323,16 @@ public class DatabaseAdapter {
         ChildEventListener childListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Long num = snapshot.getValue(Long.class);
+                UserLocation loc = snapshot.getValue(UserLocation.class);
                 String key = snapshot.getKey();
-                mFailedLocations.put(key, num);
+                mFailedLocations.put(key, loc);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Long num = snapshot.getValue(Long.class);
+                UserLocation loc = snapshot.getValue(UserLocation.class);
                 String key = snapshot.getKey();
-                mFailedLocations.put(key, num);
+                mFailedLocations.put(key, loc);
             }
 
             @Override

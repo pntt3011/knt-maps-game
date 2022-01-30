@@ -13,6 +13,7 @@ import com.example.maplogin.ui.follow.FollowFragment;
 import com.example.maplogin.ui.MapFragment;
 import com.example.maplogin.ui.UserFragment;
 import com.example.maplogin.ui.history.HistoryFragment;
+import com.example.maplogin.ui.shop.ShopFragment;
 import com.example.maplogin.utils.DatabaseAdapter;
 import com.google.android.material.navigation.NavigationView;
 
@@ -23,6 +24,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.example.maplogin.databinding.ActivityNavigationDrawerBinding;
 import com.squareup.picasso.Picasso;
@@ -147,6 +149,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 switchToFollow();
                 break;
 
+            case R.id.nav_shop:
+                switchToShop();
+                break;
+
             case R.id.nav_link:
                 linkAccount();
                 break;
@@ -162,35 +168,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void switchToMap() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new MapFragment()).commit();
-        mNavigationView.setCheckedItem(R.id.nav_map);
-        changeTitle("Map");
+        switchToFragment(new MapFragment(), R.id.nav_map, "Map");
     }
 
     private void switchToUser() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new UserFragment()).commit();
-        mNavigationView.setCheckedItem(R.id.nav_user);
-        changeTitle("User info");
+        switchToFragment(new UserFragment(), R.id.nav_user, "User info");
     }
 
     private void switchToHistory() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new HistoryFragment()).commit();
-        mNavigationView.setCheckedItem(R.id.nav_user);
-        changeTitle("History");
+        switchToFragment(new HistoryFragment(), R.id.nav_history, "History");
     }
 
     private void switchToFollow() {
         if (!mDatabase.isAnonymousUser()) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new FollowFragment()).commit();
-            mNavigationView.setCheckedItem(R.id.nav_follow);
-            changeTitle("Follow list");
+            switchToFragment(new FollowFragment(), R.id.nav_follow, "Following");
         } else {
             Toast.makeText(this, "Anonymous user cannot follow other users.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void switchToShop() {
+        switchToFragment(new ShopFragment(), R.id.nav_shop, "Shop");
+    }
+
+    private void switchToFragment(Fragment fragment, int id, String title) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment).commit();
+        mNavigationView.setCheckedItem(id);
+        changeTitle(title);
     }
 
     private void changeTitle(String s) {

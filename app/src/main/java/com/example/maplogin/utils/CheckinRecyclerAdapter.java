@@ -11,21 +11,22 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.maplogin.R;
+import com.example.maplogin.models.UserLocation;
 import com.example.maplogin.struct.LocationInfo;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class CheckinRecyclerAdapter extends RecyclerView.Adapter<CheckinRecyclerAdapter.LocationViewHolder> {
     private final LayoutInflater layoutInflater;
     private final ArrayList<Map.Entry<String, LocationInfo>> items;
-    private final Map<String, Long> mCaptured;
+    private final Map<String, UserLocation> mCaptured;
 
     public CheckinRecyclerAdapter(Context context,
                                   ArrayList<Map.Entry<String, LocationInfo>> locations,
-                                  @NonNull Map<String, Long> captured) {
+                                  @NonNull Map<String, UserLocation> captured) {
         layoutInflater = LayoutInflater.from(context);
         items = locations;
         mCaptured = captured;
@@ -44,7 +45,7 @@ public class CheckinRecyclerAdapter extends RecyclerView.Adapter<CheckinRecycler
         LocationInfo currentLocation = currentEntry.getValue();
         holder.setIcon(currentLocation.iconUrl);
         holder.setName(currentLocation.name);
-        String point = mCaptured.get(currentEntry.getKey()) + "pt";
+        String point = Objects.requireNonNull(mCaptured.get(currentEntry.getKey())).score + "pt";
         holder.setPoint(point);
     }
 

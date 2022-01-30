@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/background_user_info"
-    android:paddingStart="16dp"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
     android:layout_marginLeft="10dp"
@@ -34,6 +33,7 @@
         android:textSize="@dimen/sizePhoneText" />
 
     <ImageButton
+        android:id="@+id/people_unfollow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/ic_unfollow"

@@ -26,6 +26,7 @@ import com.directions.route.AbstractRouting;
 import com.example.maplogin.QuizActivity;
 import com.example.maplogin.R;
 import com.example.maplogin.ScanActivity;
+import com.example.maplogin.models.UserLocation;
 import com.example.maplogin.struct.InfoType;
 import com.example.maplogin.struct.LocationInfo;
 import com.google.android.gms.maps.model.LatLng;
@@ -36,6 +37,7 @@ import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 public class BottomSheetController {
     private final Activity mActivity;
@@ -123,7 +125,7 @@ public class BottomSheetController {
     }
 
     private boolean isCaptured(String id) {
-        Map<String, Long> captured = mDatabase.getCapturedLocations();
+        Map<String, UserLocation> captured = mDatabase.getCapturedLocations();
         return captured.containsKey(id);
     }
 
@@ -159,11 +161,11 @@ public class BottomSheetController {
         String point;
 
         if (mDatabase.getCapturedLocations().containsKey(id)) {
-            point = mDatabase.getCapturedLocations().get(id).toString();
+            point = Objects.requireNonNull(mDatabase.getCapturedLocations().get(id)).score.toString();
             resid = R.drawable.ic_point_green;
 
         } else if (mDatabase.getFailedLocations().containsKey(id)) {
-            point = mDatabase.getFailedLocations().get(id).toString();
+            point = Objects.requireNonNull(mDatabase.getFailedLocations().get(id)).score.toString();
 
         } else {
             point = "0";
