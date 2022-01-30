@@ -97,7 +97,10 @@
         <entry key="..\:/Users/Shigure/AndroidStudioProjects/MapLogin/app/src/main/res/xml/file_paths.xml" value="0.259375" />
         <entry key="..\:/workspace/Android/knt-maps-game/app/src/main/res/layout/bottom_sheet_content.xml" value="0.1" />
         <entry key="..\:/workspace/Android/knt-maps-game/app/src/main/res/layout/fragment_map.xml" value="0.1" />
+        <entry key="..\:/workspace/Android/knt-maps-game/app/src/main/res/layout/fragment_my_ar.xml" value="0.1" />
         <entry key="..\:/workspace/Android/knt-maps-game/app/src/main/res/layout/qr_scanner_layout.xml" value="0.1" />
+        <entry key="..\:/workspace/Android/knt-maps-game/app/src/main/res/menu/activity_main_drawer.xml" value="0.1" />
+        <entry key="..\:/workspace/Android/knt-maps-game/app/src/main/res/menu/menu_user.xml" value="0.1" />
       </map>
     </option>
   </component>

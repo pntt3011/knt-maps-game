@@ -1,6 +1,7 @@
 package com.example.maplogin;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -14,6 +15,7 @@ import com.example.maplogin.ui.MapFragment;
 import com.example.maplogin.ui.UserFragment;
 import com.example.maplogin.ui.history.HistoryFragment;
 import com.example.maplogin.ui.shop.ShopFragment;
+import com.example.maplogin.utils.Constants;
 import com.example.maplogin.utils.DatabaseAdapter;
 import com.google.android.material.navigation.NavigationView;
 
@@ -142,6 +144,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 switchToUser();
                 break;
 
+            case R.id.nav_ar:
+                switchToAr();
+                break;
+
             case R.id.nav_history:
                 switchToHistory();
                 break;
@@ -166,6 +172,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void switchToAr() {
+        Intent i = new Intent(this, MyArActivity.class);
+        startActivity(i);
     }
 
     private void switchToMap() {
