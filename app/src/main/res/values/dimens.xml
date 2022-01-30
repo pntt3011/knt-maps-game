@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="sizeBig">25dp</dimen>
     <dimen name="sizeTitle">23sp</dimen>
     <dimen name="sizeHeader">18sp</dimen>
     <dimen name="sizePhoneText">13sp</dimen>

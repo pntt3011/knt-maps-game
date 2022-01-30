@@ -12,6 +12,12 @@
             android:id="@+id/nav_user"
             android:icon="@drawable/ic_baseline_info_24"
             android:title="@string/menu_user" />
+
+        <item
+            android:id="@+id/nav_history"
+            android:icon="@drawable/ic_baseline_history_edu_24"
+            android:title="@string/menu_history" />
+
         <item
             android:id="@+id/nav_follow"
             android:icon="@drawable/ic_baseline_people_24"

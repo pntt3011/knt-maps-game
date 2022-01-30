@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.example.maplogin.ui.follow.FollowFragment;
 import com.example.maplogin.ui.MapFragment;
 import com.example.maplogin.ui.UserFragment;
+import com.example.maplogin.ui.history.HistoryFragment;
 import com.example.maplogin.utils.DatabaseAdapter;
 import com.google.android.material.navigation.NavigationView;
 
@@ -139,6 +140,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 switchToUser();
                 break;
 
+            case R.id.nav_history:
+                switchToHistory();
+
             case R.id.nav_follow:
                 switchToFollow();
                 break;
@@ -169,6 +173,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .replace(R.id.fragment_container, new UserFragment()).commit();
         mNavigationView.setCheckedItem(R.id.nav_user);
         changeTitle("User info");
+    }
+
+    private void switchToHistory() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new HistoryFragment()).commit();
+        mNavigationView.setCheckedItem(R.id.nav_user);
+        changeTitle("History");
     }
 
     private void switchToFollow() {
