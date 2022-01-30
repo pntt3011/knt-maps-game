@@ -144,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.nav_history:
                 switchToHistory();
+                break;
 
             case R.id.nav_follow:
                 switchToFollow();
