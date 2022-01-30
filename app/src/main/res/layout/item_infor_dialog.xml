@@ -47,7 +47,7 @@
         android:layout_marginTop="2dp"
         android:layout_marginEnd="2dp"
         android:layout_marginBottom="2dp"
-        android:background="@drawable/ic_point_red"
+        android:background="@drawable/ic_point_green"
         android:fontFamily="@font/open_sans_semibold"
         android:paddingTop="2dp"
         android:paddingEnd="7dp"

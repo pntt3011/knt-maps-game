@@ -70,13 +70,13 @@ public class ArViewModel extends ViewModel {
                 });
     }
 
-    public MediatorLiveData<String> getCurrentItemLiveData() {
-        MediatorLiveData<String> currentItemLiveData = new MediatorLiveData<>();
+    public MediatorLiveData<ShopItem> getCurrentItemLiveData() {
+        MediatorLiveData<ShopItem> currentItemLiveData = new MediatorLiveData<>();
         currentItemLiveData.addSource(ownedItemsLiveData, ownedItems -> {
             if (ownedItems != null) {
                 for (Map.Entry<String, ShopItemExt> entry: ownedItems.entrySet()) {
                     if (entry.getValue().inUsed) {
-                        currentItemLiveData.setValue(entry.getKey());
+                        currentItemLiveData.setValue(entry.getValue());
                         break;
                     }
                 }

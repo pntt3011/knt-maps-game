@@ -49,7 +49,7 @@
                 android:layout_marginEnd="2dp"
                 android:layout_marginBottom="2dp"
                 android:layout_toEndOf="@+id/shop_item_photo"
-                android:background="@drawable/ic_point_red"
+                android:background="@drawable/ic_point_green"
                 android:fontFamily="@font/open_sans_semibold"
                 android:paddingTop="2dp"
                 android:paddingEnd="7dp"
