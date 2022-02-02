@@ -46,7 +46,7 @@
             android:name=".ScanActivity"
             android:exported="true" />
         <activity
-            android:name=".MyArActivity"
+            android:name=".ui.ar.MyArActivity"
             android:exported="true" />
         <activity
             android:name=".MainActivity"

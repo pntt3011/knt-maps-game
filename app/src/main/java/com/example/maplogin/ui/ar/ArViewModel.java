@@ -2,6 +2,8 @@ package com.example.maplogin.ui.ar;
 
 import static com.example.maplogin.utils.Constants.DEFAULT_ITEM;
 
+import android.util.Log;
+
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -37,7 +39,7 @@ public class ArViewModel extends ViewModel {
 
         public ShopItemExt(ShopItem item, Boolean inUsed) {
             super(item);
-            this.inUsed = inUsed != null && inUsed;
+            this.inUsed = inUsed;
         }
     }
 
@@ -100,5 +102,6 @@ public class ArViewModel extends ViewModel {
         }
 
         userRepository.selectItem(uid, itemId);
+        Log.d("hehe", itemId);
     }
 }

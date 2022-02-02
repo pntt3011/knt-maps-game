@@ -1,9 +1,10 @@
-package com.example.maplogin;
+package com.example.maplogin.ui.ar;
 
 
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.Toast;
@@ -13,7 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentOnAttachListener;
+import androidx.lifecycle.MediatorLiveData;
 
+import com.example.maplogin.R;
+import com.example.maplogin.models.ShopItem;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.Config;
 import com.google.ar.core.HitResult;
@@ -49,8 +53,8 @@ public class MyArActivity extends AppCompatActivity implements
     private Anchor anchor;
     private AppAnchorState appAnchorState = AppAnchorState.NONE;
     private boolean isPlaced = false;
-    private SharedPreferences prefs;
-    private SharedPreferences.Editor editor;
+    private ArViewModel viewModel;
+    private MediatorLiveData<ShopItem> currentItemLiveData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +62,13 @@ public class MyArActivity extends AppCompatActivity implements
 
         setContentView(R.layout.fragment_my_ar);
         getSupportFragmentManager().addFragmentOnAttachListener(this);
+        viewModel = new ArViewModel();
+        currentItemLiveData = viewModel.getCurrentItemLiveData();
+        currentItemLiveData.observe(this, currentItem -> {
+            loadModels(currentItem.model);
+            Log.d("hehe", currentItem.model);
+        });
 
-        prefs = getSharedPreferences("AnchorId", MODE_PRIVATE);
-        editor = prefs.edit();
 
         if (savedInstanceState == null) {
             if (Sceneform.isSupported(this)) {
@@ -69,7 +77,6 @@ public class MyArActivity extends AppCompatActivity implements
                         .commit();
             }
         }
-        loadModels();
     }
 
     @Override
@@ -99,10 +106,10 @@ public class MyArActivity extends AppCompatActivity implements
         subscribeListeners();
     }
 
-    public void loadModels() {
+    public void loadModels(String modelUrl) {
         WeakReference<MyArActivity> weakActivity = new WeakReference<>(this);
         ModelRenderable.builder()
-                .setSource(this, Uri.parse("https://storage.googleapis.com/ar-answers-in-search-models/static/Tiger/model.glb"))
+                .setSource(this, Uri.parse(modelUrl))
                 .setIsFilamentGltf(true)
                 .setAsyncLoadEnabled(true)
                 .build()
@@ -166,29 +173,30 @@ public class MyArActivity extends AppCompatActivity implements
                 appAnchorState = AppAnchorState.HOSTED;
 
                 String anchorId = anchor.getCloudAnchorId();
-                editor.putString("anchorId", anchorId);
-                editor.apply();
 
                 Toast.makeText(this, "Id: " + anchorId, Toast.LENGTH_SHORT).show();
             }
         });
 
         Button button = findViewById(R.id.btn_resolve);
-        button.setOnClickListener(v-> {
-            String anchorId = prefs.getString("anchorId", "null");
-
-            if (anchorId.equals("null")) {
-                Toast.makeText(this, "No anchor found", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (arFragment.getArSceneView().getSession() == null) {
-                Toast.makeText(this, "Load session failed.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            Anchor resolvedAnchor = arFragment.getArSceneView().getSession().resolveCloudAnchor(anchorId);
-            placeModel(resolvedAnchor);
+        button.setOnClickListener(v -> {
+            viewModel.selectItem("elaina");
         });
+//        button.setOnClickListener(v-> {
+//            String anchorId = prefs.getString("anchorId", "null");
+//
+//            if (anchorId.equals("null")) {
+//                Toast.makeText(this, "No anchor found", Toast.LENGTH_SHORT).show();
+//                return;
+//            }
+//
+//            if (arFragment.getArSceneView().getSession() == null) {
+//                Toast.makeText(this, "Load session failed.", Toast.LENGTH_SHORT).show();
+//                return;
+//            }
+//
+//            Anchor resolvedAnchor = arFragment.getArSceneView().getSession().resolveCloudAnchor(anchorId);
+//            placeModel(resolvedAnchor);
+//        });
     }
 }

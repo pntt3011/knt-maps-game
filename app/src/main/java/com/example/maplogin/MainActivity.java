@@ -10,12 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.maplogin.ui.ar.MyArActivity;
 import com.example.maplogin.ui.follow.FollowFragment;
 import com.example.maplogin.ui.MapFragment;
 import com.example.maplogin.ui.UserFragment;
 import com.example.maplogin.ui.history.HistoryFragment;
 import com.example.maplogin.ui.shop.ShopFragment;
-import com.example.maplogin.utils.Constants;
 import com.example.maplogin.utils.DatabaseAdapter;
 import com.google.android.material.navigation.NavigationView;
 
