@@ -83,6 +83,7 @@ public class UserRepository {
 
                     ownedItems.replaceAll((k, v) -> Boolean.FALSE);
                     ownedItems.put(itemId, Boolean.TRUE);
+                    userItemRef.setValue(ownedItems);
 
                 }
                 else {
