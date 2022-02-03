@@ -4,10 +4,31 @@
     android:background="@drawable/background_bottom_card"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="5dp">
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="@dimen/popupNearPlaceHeight"
         android:id="@+id/recycler_view_near_place"
         />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <ImageButton
+            android:id="@+id/suggest_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_suggest_new_place"
+            />
+
+    </LinearLayout>
+
+
 </LinearLayout>

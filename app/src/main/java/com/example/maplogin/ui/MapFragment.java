@@ -5,12 +5,14 @@ import static java.lang.Math.min;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -253,6 +256,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         LayoutInflater inflater = (LayoutInflater)
                 mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout popupView = (LinearLayout) inflater.inflate(R.layout.popup_location_list_window, null);
+
+        ImageButton suggestBtn = popupView.findViewById(R.id.suggest_button);
+        suggestBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent openSuggest = new Intent(Intent.ACTION_VIEW);
+                openSuggest.setData(Uri.parse(getString(R.string.suggest_link)));
+                startActivity(openSuggest);
+            }
+        });
 
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
