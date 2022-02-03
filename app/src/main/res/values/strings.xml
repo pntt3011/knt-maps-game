@@ -123,4 +123,7 @@
     <string name="search">Search</string>
     <string name="owned_item">You already own this model.</string>
     <string name="ask_buy">Do you want to buy this model?</string>
+
+
+    <string name="suggest_link">https://forms.gle/byumm1U588GcDn8Z7</string>
 </resources>
