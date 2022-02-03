@@ -83,6 +83,7 @@ public class UserRepository {
 
                     ownedItems.replaceAll((k, v) -> Boolean.FALSE);
                     ownedItems.put(itemId, Boolean.TRUE);
+                    userItemRef.setValue(ownedItems);
 
                 }
                 else {
@@ -93,6 +94,10 @@ public class UserRepository {
             @Override
             public void onCancelled(@NonNull DatabaseError error) { }
         });
+    }
+
+    public MediatorLiveData<HashMap<String, User>> getAllUsersLiveData() {
+        return allUsers;
     }
 
     public MediatorLiveData<User> getUserLiveData(String uid) {

@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.maplogin.ui.ar.MyArFragment;
 import com.example.maplogin.ui.follow.FollowFragment;
 import com.example.maplogin.ui.MapFragment;
 import com.example.maplogin.ui.UserFragment;
@@ -142,6 +143,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 switchToUser();
                 break;
 
+            case R.id.nav_ar:
+                switchToAr();
+                break;
+
             case R.id.nav_history:
                 switchToHistory();
                 break;
@@ -166,6 +171,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void switchToAr() {
+        switchToFragment(new MyArFragment(), R.id.nav_ar, "AR");
     }
 
     private void switchToMap() {

@@ -2,6 +2,8 @@ package com.example.maplogin.ui.ar;
 
 import static com.example.maplogin.utils.Constants.DEFAULT_ITEM;
 
+import android.util.Log;
+
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -16,11 +18,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ArViewModel extends ViewModel {
-    private final UserRepository userRepository;
-    private final MediatorLiveData<HashMap<String, ShopItem>> itemsLiveData;
-    private final MediatorLiveData<User> userLiveData;
-    private final MediatorLiveData<HashMap<String, ShopItemExt>> ownedItemsLiveData;
-    private final String uid;
+    protected final UserRepository userRepository;
+    protected final MediatorLiveData<HashMap<String, ShopItem>> itemsLiveData;
+    protected final MediatorLiveData<User> userLiveData;
+    protected final MediatorLiveData<HashMap<String, ShopItemExt>> ownedItemsLiveData;
+
+    protected final MediatorLiveData<ShopItem> currentItemLiveData;
+    protected final String uid;
 
     public ArViewModel() {
         userRepository = new UserRepository();
@@ -30,6 +34,9 @@ public class ArViewModel extends ViewModel {
         itemsLiveData = shopRepository.getItemsLiveData();
         userLiveData = userRepository.getUserLiveData(uid);
         ownedItemsLiveData = combineOwnedItemsLiveData();
+
+        currentItemLiveData = new MediatorLiveData<>();
+        bindCurrentItemLiveData();
     }
 
     public static class ShopItemExt extends ShopItem {
@@ -37,7 +44,7 @@ public class ArViewModel extends ViewModel {
 
         public ShopItemExt(ShopItem item, Boolean inUsed) {
             super(item);
-            this.inUsed = inUsed != null && inUsed;
+            this.inUsed = inUsed;
         }
     }
 
@@ -70,8 +77,7 @@ public class ArViewModel extends ViewModel {
                 });
     }
 
-    public MediatorLiveData<ShopItem> getCurrentItemLiveData() {
-        MediatorLiveData<ShopItem> currentItemLiveData = new MediatorLiveData<>();
+    private void bindCurrentItemLiveData() {
         currentItemLiveData.addSource(ownedItemsLiveData, ownedItems -> {
             if (ownedItems != null) {
                 for (Map.Entry<String, ShopItemExt> entry: ownedItems.entrySet()) {
@@ -84,6 +90,9 @@ public class ArViewModel extends ViewModel {
                 selectItem(DEFAULT_ITEM);
             }
         });
+    }
+
+    public MediatorLiveData<ShopItem> getCurrentItemLiveData() {
         return currentItemLiveData;
     }
 
@@ -100,5 +109,6 @@ public class ArViewModel extends ViewModel {
         }
 
         userRepository.selectItem(uid, itemId);
+        Log.d("hehe", itemId);
     }
 }
