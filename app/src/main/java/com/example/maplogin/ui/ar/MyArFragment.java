@@ -65,7 +65,7 @@ public class MyArFragment extends Fragment implements
 
         mActivity = getActivity();
         getChildFragmentManager().addFragmentOnAttachListener(this);
-        viewModel = new ArViewModel();
+        viewModel = new MultiArViewModel();
         currentItemLiveData = viewModel.getCurrentItemLiveData();
         currentItemLiveData.observe(this, currentItem -> {
             loadModels(currentItem.model);

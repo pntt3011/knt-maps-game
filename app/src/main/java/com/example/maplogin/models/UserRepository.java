@@ -96,6 +96,10 @@ public class UserRepository {
         });
     }
 
+    public MediatorLiveData<HashMap<String, User>> getAllUsersLiveData() {
+        return allUsers;
+    }
+
     public MediatorLiveData<User> getUserLiveData(String uid) {
         FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(allUsersRef.child(uid));
         MediatorLiveData<User> userLiveData = new MediatorLiveData<>();
