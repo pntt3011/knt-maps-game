@@ -1,12 +1,18 @@
 package com.example.maplogin.ui.ar;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -15,6 +21,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentOnAttachListener;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.maplogin.R;
 import com.example.maplogin.databinding.FragmentMyArBinding;
@@ -34,6 +42,7 @@ import com.google.ar.sceneform.ux.BaseArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,7 +69,9 @@ public class MyArFragment extends Fragment implements
     private MultiArViewModel viewModel;
     private MediatorLiveData<ShopItem> currentItemLiveData;
     private MediatorLiveData<HashMap<String, ArViewModel.ShopItemExt>> ownedItemsLiveData;
-    MediatorLiveData<HashMap<String, MultiArViewModel.AnchorExt>> anchorsInfoLiveData;
+    private MediatorLiveData<HashMap<String, MultiArViewModel.AnchorExt>> anchorsInfoLiveData;
+    private SelectingRecyclerAdapter adapter;
+    private Dialog dialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,7 +81,8 @@ public class MyArFragment extends Fragment implements
         getChildFragmentManager().addFragmentOnAttachListener(this);
 
         viewModel = new MultiArViewModel();
-        // setup load model when select model
+
+        // setup callback to load model when select item
         currentItemLiveData = viewModel.getCurrentItemLiveData();
         currentItemLiveData.observe(this, currentItem -> {
             loadModels(currentItem.model);
@@ -89,10 +101,22 @@ public class MyArFragment extends Fragment implements
                 loadAndPlaceModel(modelUrl, resolvedAnchor);
             }
         });
+
+        // set callback for adapter of recycler view that show all owned item for selecting
+        ownedItemsLiveData = viewModel.getOwnedItemsLiveData();
+        ownedItemsLiveData.observe(this, itemHashMap -> {
+            ArrayList<Map.Entry<String, ArViewModel.ShopItemExt>> itemList = new ArrayList<>(itemHashMap.entrySet());
+            adapter = new SelectingRecyclerAdapter(mActivity, itemList, entry -> {
+                viewModel.selectItem(entry.getKey());
+                Toast.makeText(mActivity, "Selected model " + entry.getValue().name, Toast.LENGTH_LONG).show();
+                dialog.dismiss();
+            });
+        });
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        // create new AR fragment
         if (savedInstanceState == null) {
             getChildFragmentManager().beginTransaction()
                     .add(R.id.arFragment, ArFragment.class, null)
@@ -200,6 +224,7 @@ public class MyArFragment extends Fragment implements
     }
 
     private void subscribeListeners() {
+        // upload anchor when push successful to Cloud Anchor
         arFragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
             if (appAnchorState != AppAnchorState.HOSTING)
                 return;
@@ -220,9 +245,36 @@ public class MyArFragment extends Fragment implements
             }
         });
 
-        Button button = binding.btnResolve;
+        Button button = binding.btnSelect;
         button.setOnClickListener(v -> {
-            viewModel.selectItem("default");
+            showSelectingDialog();
         });
+    }
+
+    // function showing dialog for selecting model
+    private void showSelectingDialog() {
+        dialog = new Dialog(mActivity);
+        dialog.setContentView(R.layout.dialog_select_item);
+
+        Window window = dialog.getWindow();
+
+        if (window == null) {
+            return;
+        }
+
+        window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        WindowManager.LayoutParams windowAttributes = window.getAttributes();
+        windowAttributes.gravity = Gravity.CENTER;
+        window.setAttributes(windowAttributes);
+
+        dialog.show();
+
+        // binding data (list of owned item) adapter to recycler view
+        RecyclerView recyclerView = dialog.findViewById(R.id.recycler_view_select_item);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+        recyclerView.setAdapter(this.adapter);
     }
 }
