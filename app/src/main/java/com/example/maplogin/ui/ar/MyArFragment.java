@@ -1,22 +1,24 @@
 package com.example.maplogin.ui.ar;
 
-
-import android.content.SharedPreferences;
+import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentOnAttachListener;
 import androidx.lifecycle.MediatorLiveData;
 
 import com.example.maplogin.R;
+import com.example.maplogin.databinding.FragmentMyArBinding;
 import com.example.maplogin.models.ShopItem;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.Config;
@@ -25,7 +27,6 @@ import com.google.ar.core.Plane;
 import com.google.ar.core.Session;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.ArSceneView;
-import com.google.ar.sceneform.Sceneform;
 import com.google.ar.sceneform.rendering.CameraStream;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
@@ -35,12 +36,14 @@ import com.google.ar.sceneform.ux.TransformableNode;
 
 import java.lang.ref.WeakReference;
 
-public class MyArActivity extends AppCompatActivity implements
+public class MyArFragment extends Fragment implements
         FragmentOnAttachListener,
         BaseArFragment.OnTapArPlaneListener,
         BaseArFragment.OnSessionConfigurationListener,
         ArFragment.OnViewCreatedListener {
 
+    private FragmentMyArBinding binding;
+    private Activity mActivity;
     private ArFragment arFragment;
     private Renderable model;
 
@@ -57,26 +60,27 @@ public class MyArActivity extends AppCompatActivity implements
     private MediatorLiveData<ShopItem> currentItemLiveData;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.fragment_my_ar);
-        getSupportFragmentManager().addFragmentOnAttachListener(this);
+        mActivity = getActivity();
+        getChildFragmentManager().addFragmentOnAttachListener(this);
         viewModel = new ArViewModel();
         currentItemLiveData = viewModel.getCurrentItemLiveData();
         currentItemLiveData.observe(this, currentItem -> {
             loadModels(currentItem.model);
-            Log.d("hehe", currentItem.model);
         });
+    }
 
-
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            if (Sceneform.isSupported(this)) {
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.arFragment, ArFragment.class, null)
-                        .commit();
-            }
+            getChildFragmentManager().beginTransaction()
+                    .add(R.id.arFragment, ArFragment.class, null)
+                    .commit();
         }
+        binding = FragmentMyArBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -107,21 +111,21 @@ public class MyArActivity extends AppCompatActivity implements
     }
 
     public void loadModels(String modelUrl) {
-        WeakReference<MyArActivity> weakActivity = new WeakReference<>(this);
+        WeakReference<MyArFragment> weakActivity = new WeakReference<>(this);
         ModelRenderable.builder()
-                .setSource(this, Uri.parse(modelUrl))
+                .setSource(mActivity, Uri.parse(modelUrl))
                 .setIsFilamentGltf(true)
                 .setAsyncLoadEnabled(true)
                 .build()
                 .thenAccept(model -> {
-                    MyArActivity activity = weakActivity.get();
-                    if (activity != null) {
-                        activity.model = model;
+                    MyArFragment fragment = weakActivity.get();
+                    if (fragment != null) {
+                        fragment.model = model;
                     }
                 })
                 .exceptionally(throwable -> {
                     Toast.makeText(
-                            this, "Unable to load model", Toast.LENGTH_LONG).show();
+                            mActivity, "Unable to load model", Toast.LENGTH_LONG).show();
                     return null;
                 });
     }
@@ -129,12 +133,12 @@ public class MyArActivity extends AppCompatActivity implements
     @Override
     public void onTapPlane(HitResult hitResult, Plane plane, MotionEvent motionEvent) {
         if (model == null) {
-            Toast.makeText(this, "Loading...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, "Loading...", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (arFragment.getArSceneView().getSession() == null) {
-            Toast.makeText(this, "Load session failed.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, "Load session failed.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -167,20 +171,21 @@ public class MyArActivity extends AppCompatActivity implements
             Anchor.CloudAnchorState cloudAnchorState = anchor.getCloudAnchorState();
 
             if (cloudAnchorState.isError()) {
-                Toast.makeText(this, cloudAnchorState.toString(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, cloudAnchorState.toString(), Toast.LENGTH_SHORT).show();
+                Log.d("hehe", cloudAnchorState.toString());
 
             } else if (cloudAnchorState == Anchor.CloudAnchorState.SUCCESS) {
                 appAnchorState = AppAnchorState.HOSTED;
 
                 String anchorId = anchor.getCloudAnchorId();
 
-                Toast.makeText(this, "Id: " + anchorId, Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, "Id: " + anchorId, Toast.LENGTH_SHORT).show();
             }
         });
 
-        Button button = findViewById(R.id.btn_resolve);
+        Button button = binding.btnResolve;
         button.setOnClickListener(v -> {
-            viewModel.selectItem("elaina");
+            viewModel.selectItem("default");
         });
 //        button.setOnClickListener(v-> {
 //            String anchorId = prefs.getString("anchorId", "null");

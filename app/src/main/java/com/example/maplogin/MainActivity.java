@@ -1,7 +1,6 @@
 package com.example.maplogin;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -10,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.maplogin.ui.ar.MyArActivity;
+import com.example.maplogin.ui.ar.MyArFragment;
 import com.example.maplogin.ui.follow.FollowFragment;
 import com.example.maplogin.ui.MapFragment;
 import com.example.maplogin.ui.UserFragment;
@@ -175,8 +174,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void switchToAr() {
-        Intent i = new Intent(this, MyArActivity.class);
-        startActivity(i);
+        switchToFragment(new MyArFragment(), R.id.nav_ar, "AR");
     }
 
     private void switchToMap() {

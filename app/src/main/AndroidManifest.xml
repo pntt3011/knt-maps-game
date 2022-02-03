@@ -46,9 +46,6 @@
             android:name=".ScanActivity"
             android:exported="true" />
         <activity
-            android:name=".ui.ar.MyArActivity"
-            android:exported="true" />
-        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/title_activity_navigation_drawer"
