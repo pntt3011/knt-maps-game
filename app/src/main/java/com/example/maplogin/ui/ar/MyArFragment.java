@@ -243,7 +243,11 @@ public class MyArFragment extends Fragment implements
 
     private void fillCommentInfo(View v, AnchorExt anchorExt) {
         TextView name = v.findViewById(R.id.comment_name);
-        name.setText(anchorExt.userInfo.name);
+        if (anchorExt.userInfo.name != null) {
+            name.setText(anchorExt.userInfo.name);
+        } else {
+            name.setText("Anonymous");
+        }
 
         TextView content = v.findViewById(R.id.comment_content);
         content.setText(anchorExt.comment);
