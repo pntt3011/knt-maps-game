@@ -64,11 +64,13 @@ public class MultiArViewModel extends ArViewModel{
         return anchorsInfoLiveData;
     }
 
-    public void placeAnchor(String anchorId) {
+    public void placeAnchor(String anchorId, String comment) {
         if (currentItemLiveData.getValue() == null)
             return;
 
         String modelId = currentItemLiveData.getValue().model;
-        anchorRepository.placeModel(anchorId, uid, modelId);
+        Anchor anchor = new Anchor(uid, modelId, comment);
+
+        anchorRepository.placeModel(anchorId, anchor);
     }
 }

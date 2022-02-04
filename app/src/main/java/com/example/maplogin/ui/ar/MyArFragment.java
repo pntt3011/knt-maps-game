@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.maplogin.R;
 import com.example.maplogin.databinding.FragmentMyArBinding;
 import com.example.maplogin.models.ShopItem;
+import com.example.maplogin.ui.ar.MultiArViewModel.AnchorExt;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.Config;
 import com.google.ar.core.HitResult;
@@ -34,9 +37,12 @@ import com.google.ar.core.Plane;
 import com.google.ar.core.Session;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.ArSceneView;
+import com.google.ar.sceneform.Node;
+import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.CameraStream;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
+import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.BaseArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
@@ -44,6 +50,7 @@ import com.google.ar.sceneform.ux.TransformableNode;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class MyArFragment extends Fragment implements
@@ -72,6 +79,8 @@ public class MyArFragment extends Fragment implements
     private MediatorLiveData<HashMap<String, MultiArViewModel.AnchorExt>> anchorsInfoLiveData;
     private SelectingRecyclerAdapter adapter;
     private Dialog dialog;
+    private String comment;
+    private HashSet<String> syncModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,37 +90,8 @@ public class MyArFragment extends Fragment implements
         getChildFragmentManager().addFragmentOnAttachListener(this);
 
         viewModel = new MultiArViewModel();
-
-        // setup callback to load model when select item
-        currentItemLiveData = viewModel.getCurrentItemLiveData();
-        currentItemLiveData.observe(this, currentItem -> {
-            loadModels(currentItem.model);
-        });
-
-        // load all anchor into user view
-        anchorsInfoLiveData = viewModel.getAnchorsInfoLiveData();
-        anchorsInfoLiveData.observe(this, anchors -> {
-            if (arFragment.getArSceneView().getSession() == null) {
-                Toast.makeText(mActivity, "Load session failed.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            for (Map.Entry<String, MultiArViewModel.AnchorExt> anchor: anchors.entrySet()) {
-                Anchor resolvedAnchor = arFragment.getArSceneView().getSession().resolveCloudAnchor(anchor.getKey());
-                String modelUrl = anchor.getValue().modelID;
-                loadAndPlaceModel(modelUrl, resolvedAnchor);
-            }
-        });
-
-        // set callback for adapter of recycler view that show all owned item for selecting
-        ownedItemsLiveData = viewModel.getOwnedItemsLiveData();
-        ownedItemsLiveData.observe(this, itemHashMap -> {
-            ArrayList<Map.Entry<String, ArViewModel.ShopItemExt>> itemList = new ArrayList<>(itemHashMap.entrySet());
-            adapter = new SelectingRecyclerAdapter(mActivity, itemList, entry -> {
-                viewModel.selectItem(entry.getKey());
-                Toast.makeText(mActivity, "Selected model " + entry.getValue().name, Toast.LENGTH_LONG).show();
-                dialog.dismiss();
-            });
-        });
+        syncModel = new HashSet<>();
+        subscribeObservers();
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -120,6 +100,7 @@ public class MyArFragment extends Fragment implements
         if (savedInstanceState == null) {
             getChildFragmentManager().beginTransaction()
                     .add(R.id.arFragment, ArFragment.class, null)
+                    .addToBackStack("")
                     .commit();
         }
         binding = FragmentMyArBinding.inflate(inflater, container, false);
@@ -147,26 +128,68 @@ public class MyArFragment extends Fragment implements
 
     @Override
     public void onViewCreated(ArSceneView arSceneView) {
-        arFragment.setOnViewCreatedListener(null);
+        mActivity = getActivity();
         arSceneView.getCameraStream()
                 .setDepthOcclusionMode(CameraStream.DepthOcclusionMode.DEPTH_OCCLUSION_ENABLED);
         subscribeListeners();
     }
 
-    private void loadAndPlaceModel(String modelUrl, Anchor anchor) {
-        ModelRenderable.builder()
-                .setSource(mActivity, Uri.parse(modelUrl))
-                .setIsFilamentGltf(true)
-                .setAsyncLoadEnabled(true)
-                .build()
-                .thenAccept(model -> {
-                    placeModel(anchor, model);
-                })
-                .exceptionally(throwable -> {
-                    Toast.makeText(
-                            mActivity, "Unable to load model", Toast.LENGTH_LONG).show();
-                    return null;
-                });
+    private void subscribeObservers() {
+        // setup callback to load model when select item
+        currentItemLiveData = viewModel.getCurrentItemLiveData();
+        currentItemLiveData.observe(this, currentItem -> loadModels(currentItem.model));
+
+        // load all anchor into user view
+        anchorsInfoLiveData = viewModel.getAnchorsInfoLiveData();
+        anchorsInfoLiveData.observe(this, anchors -> {
+            if (arFragment.getArSceneView().getSession() == null) {
+                Toast.makeText(mActivity, "Load session failed.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            for (Map.Entry<String, MultiArViewModel.AnchorExt> anchor: anchors.entrySet()) {
+                if (!syncModel.contains(anchor.getKey())) {
+                    Anchor resolvedAnchor = arFragment.getArSceneView().getSession()
+                            .resolveCloudAnchor(anchor.getKey());
+                    syncModel.add(anchor.getKey());
+                    loadAndPlaceCloudAnchorsModel(anchor.getValue(), resolvedAnchor);
+                }
+            }
+        });
+
+        // set callback for adapter of recycler view that show all owned item for selecting
+        ownedItemsLiveData = viewModel.getOwnedItemsLiveData();
+        ownedItemsLiveData.observe(this, itemHashMap -> {
+            ArrayList<Map.Entry<String, ArViewModel.ShopItemExt>> itemList = new ArrayList<>(itemHashMap.entrySet());
+            adapter = new SelectingRecyclerAdapter(mActivity, itemList, entry -> {
+                viewModel.selectItem(entry.getKey());
+                Toast.makeText(mActivity, "Selected model " + entry.getValue().name, Toast.LENGTH_LONG).show();
+                dialog.dismiss();
+            });
+        });
+    }
+
+    private void subscribeListeners() {
+        // upload anchor when push successful to Cloud Anchor
+        arFragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
+            if (appAnchorState != AppAnchorState.HOSTING)
+                return;
+            Anchor.CloudAnchorState cloudAnchorState = anchor.getCloudAnchorState();
+
+            if (cloudAnchorState.isError()) {
+                Toast.makeText(mActivity, cloudAnchorState.toString(), Toast.LENGTH_SHORT).show();
+//                Log.d("hehe", cloudAnchorState.toString());
+
+            } else if (cloudAnchorState == Anchor.CloudAnchorState.SUCCESS) {
+                appAnchorState = AppAnchorState.HOSTED;
+
+                String anchorId = anchor.getCloudAnchorId();
+                viewModel.placeAnchor(anchorId, comment);
+                Toast.makeText(mActivity, "Id: " + anchorId, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        Button button = binding.btnSelect;
+        button.setOnClickListener(v -> showSelectingDialog());
     }
 
     public void loadModels(String modelUrl) {
@@ -189,28 +212,45 @@ public class MyArFragment extends Fragment implements
                 });
     }
 
-    @Override
-    public void onTapPlane(HitResult hitResult, Plane plane, MotionEvent motionEvent) {
-        if (model == null) {
-            Toast.makeText(mActivity, "Loading...", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (arFragment.getArSceneView().getSession() == null) {
-            Toast.makeText(mActivity, "Load session failed.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (!isPlaced) {
-            anchor = arFragment.getArSceneView().getSession()
-                    .hostCloudAnchor(hitResult.createAnchor());
-            appAnchorState = AppAnchorState.HOSTING;
-            placeModel(anchor, this.model);
-            isPlaced = true;
-        }
+    private void loadAndPlaceCloudAnchorsModel(AnchorExt anchorExt, Anchor anchor) {
+        ModelRenderable.builder()
+                .setSource(mActivity, Uri.parse(anchorExt.modelID))
+                .setIsFilamentGltf(true)
+                .setAsyncLoadEnabled(true)
+                .build()
+                .thenAccept(model -> loadAndPlaceComment(anchorExt, anchor, model))
+                .exceptionally(throwable -> {
+                    Toast.makeText(
+                            mActivity, "Unable to load model", Toast.LENGTH_LONG).show();
+                    return null;
+                });
     }
 
-    private void placeModel(Anchor anchor, Renderable modelRenderable) {
+    private void loadAndPlaceComment(AnchorExt anchorExt, Anchor anchor, Renderable model) {
+        ViewRenderable.builder()
+                .setView(mActivity, R.layout.comment_layout)
+                .build()
+                .thenAccept(viewRenderable -> {
+                    fillCommentInfo(viewRenderable.getView(), anchorExt);
+                    placeModel(anchor, model, viewRenderable);
+                })
+                .exceptionally(throwable -> {
+                    Toast.makeText(
+                            mActivity, "Unable to load model", Toast.LENGTH_LONG).show();
+                    return null;
+                });
+    }
+
+    private void fillCommentInfo(View v, AnchorExt anchorExt) {
+        TextView name = v.findViewById(R.id.comment_name);
+        name.setText(anchorExt.userInfo.name);
+
+        TextView content = v.findViewById(R.id.comment_content);
+        content.setText(anchorExt.comment);
+    }
+
+    private void placeModel(Anchor anchor, Renderable modelRenderable,
+                            Renderable userCommentRenderable) {
         AnchorNode anchorNode = new AnchorNode(anchor);
         anchorNode.setParent(arFragment.getArSceneView().getScene());
 
@@ -220,46 +260,57 @@ public class MyArFragment extends Fragment implements
         model.getScaleController().setMaxScale(1.0f);
         model.setParent(anchorNode);
         model.setRenderable(modelRenderable);
-        model.select();
+
+        if (userCommentRenderable != null) {
+            Node titleNode = new Node();
+            titleNode.setParent(model);
+            titleNode.setEnabled(false);
+            titleNode.setLocalPosition(new Vector3(0.0f, 1.0f, 0.0f));
+            titleNode.setRenderable(userCommentRenderable);
+            titleNode.setEnabled(true);
+        }
     }
 
-    private void subscribeListeners() {
-        // upload anchor when push successful to Cloud Anchor
-        arFragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
-            if (appAnchorState != AppAnchorState.HOSTING)
-                return;
-            Anchor.CloudAnchorState cloudAnchorState = anchor.getCloudAnchorState();
+    @Override
+    public void onTapPlane(HitResult hitResult, Plane plane, MotionEvent motionEvent) {
+        if (model == null) {
+            Toast.makeText(mActivity, "Loading...", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-            if (cloudAnchorState.isError()) {
-                Toast.makeText(mActivity, cloudAnchorState.toString(), Toast.LENGTH_SHORT).show();
-//                Log.d("hehe", cloudAnchorState.toString());
-
-            } else if (cloudAnchorState == Anchor.CloudAnchorState.SUCCESS) {
-                appAnchorState = AppAnchorState.HOSTED;
-
-                String anchorId = anchor.getCloudAnchorId();
-
-                viewModel.placeAnchor(anchorId);
-
-                Toast.makeText(mActivity, "Id: " + anchorId, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        Button button = binding.btnSelect;
-        button.setOnClickListener(v -> {
-            showSelectingDialog();
-        });
+        if (!isPlaced) {
+            AnchorExt anchorExt = createTempAnchorExt();
+            showCommentDialog(anchorExt, hitResult);
+        }
     }
 
-    // function showing dialog for selecting model
-    private void showSelectingDialog() {
-        dialog = new Dialog(mActivity);
-        dialog.setContentView(R.layout.dialog_select_item);
+    private AnchorExt createTempAnchorExt() {
+        return new AnchorExt(
+                new com.example.maplogin.models.Anchor(),
+                viewModel.getCurrentUserInfo()
+        );
+    }
+
+
+    private void showCommentDialog(AnchorExt anchorExt, HitResult hitResult) {
+        Dialog dialog = createDialog(R.layout.comment_dialog);
+        if (dialog == null)
+            return;
+
+        Button placeButton = dialog.findViewById(R.id.button_place_model);
+        placeButton.setOnClickListener(v -> onPlaceModelListener(dialog, anchorExt, hitResult));
+        dialog.show();
+    }
+
+
+    private Dialog createDialog(int layoutID) {
+        Dialog dialog = new Dialog(mActivity);
+        dialog.setContentView(layoutID);
 
         Window window = dialog.getWindow();
 
         if (window == null) {
-            return;
+            return null;
         }
 
         window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
@@ -269,6 +320,33 @@ public class MyArFragment extends Fragment implements
         WindowManager.LayoutParams windowAttributes = window.getAttributes();
         windowAttributes.gravity = Gravity.CENTER;
         window.setAttributes(windowAttributes);
+        return dialog;
+    }
+
+    private void onPlaceModelListener(Dialog dialog, AnchorExt anchorExt, HitResult hitResult) {
+        // Retrieve comment
+        EditText commentEdTxt = dialog.findViewById(R.id.edit_text_comment);
+        comment = commentEdTxt.getText().toString();
+        anchorExt.comment = comment;
+
+        // Host anchor
+        if (arFragment.getArSceneView().getSession() == null) {
+            Toast.makeText(mActivity, "Load session failed.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        anchor = arFragment.getArSceneView().getSession()
+                .hostCloudAnchor(hitResult.createAnchor());
+        appAnchorState = AppAnchorState.HOSTING;
+        isPlaced = true;
+
+        dialog.dismiss();
+    }
+
+    // function showing dialog for selecting model
+    private void showSelectingDialog() {
+        dialog = createDialog(R.layout.dialog_select_item);
+        if (dialog == null)
+            return;
 
         dialog.show();
 
@@ -276,5 +354,11 @@ public class MyArFragment extends Fragment implements
         RecyclerView recyclerView = dialog.findViewById(R.id.recycler_view_select_item);
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
         recyclerView.setAdapter(this.adapter);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

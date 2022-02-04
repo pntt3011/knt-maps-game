@@ -38,8 +38,7 @@ public class AnchorRepository {
         return allAnchors;
     }
 
-    public void placeModel(String aid, String uid, String mid) {
-        Anchor anchor = new Anchor(uid, mid);
+    public void placeModel(String aid, Anchor anchor) {
         anchorsRef.child(aid).setValue(anchor);
     }
 }

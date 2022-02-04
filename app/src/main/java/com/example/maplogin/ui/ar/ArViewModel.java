@@ -111,4 +111,8 @@ public class ArViewModel extends ViewModel {
         userRepository.selectItem(uid, itemId);
         Log.d("hehe", itemId);
     }
+
+    public User getCurrentUserInfo() {
+        return userLiveData.getValue();
+    }
 }

@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.maplogin.databinding.ActivityNavigationDrawerBinding;
+import com.google.ar.sceneform.Sceneform;
 import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -174,7 +175,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void switchToAr() {
-        switchToFragment(new MyArFragment(), R.id.nav_ar, "AR");
+        if (Sceneform.isSupported(this)) {
+            switchToFragment(new MyArFragment(), R.id.nav_ar, "AR");
+        } else {
+            Toast.makeText(this,
+                    "AR not supported.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void switchToMap() {
@@ -193,7 +199,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (!mDatabase.isAnonymousUser()) {
             switchToFragment(new FollowFragment(), R.id.nav_follow, "Following");
         } else {
-            Toast.makeText(this, "Anonymous user cannot follow other users.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,
+                    "Anonymous user cannot follow other users.", Toast.LENGTH_SHORT).show();
         }
     }
 
